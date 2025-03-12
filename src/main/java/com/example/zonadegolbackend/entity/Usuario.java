@@ -4,8 +4,6 @@ package com.example.zonadegolbackend.entity;
 import com.example.zonadegolbackend.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode
 
-public class Usuario implements UserDetails {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -40,28 +38,28 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.ORDINAL)
     private Rol rol;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
-    }
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return List.of();
+//    }
+//
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return UserDetails.super.isAccountNonExpired();
+//    }
+//
+//    @Override
+//    public boolean isAccountNonLocked() {
+//        return UserDetails.super.isAccountNonLocked();
+//    }
+//
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return UserDetails.super.isCredentialsNonExpired();
+//    }
+//
+//    @Override
+//    public boolean isEnabled() {
+//        return UserDetails.super.isEnabled();
+//    }
 }
