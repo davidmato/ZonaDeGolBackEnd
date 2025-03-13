@@ -24,7 +24,7 @@ public class LigaService {
 
     @Transactional
     public Liga crearLiga(Liga liga) {
-        // Ensure the Trofeo entity is properly created and associated
+
         Trofeo trofeo = liga.getTrofeo();
         if (trofeo != null) {
             trofeoRepository.save(trofeo);
