@@ -1,3 +1,5 @@
+
+drop table entrenador;
 drop table clasificacion;
 drop table equipo_temporada;
 drop table equipo_liga;
@@ -36,21 +38,39 @@ create table jugador(
                         nombre varchar(100) not null,
                         apellido varchar(250) not null,
                         dorsal int not null,
-                        imagen varchar(800) not null,
+                        imagen varchar(800),
                         fecha_nacimiento timestamp not null,
                         posicion int not null,
+                        dni char(9) not null,
                         id_usuario int not null,
                         constraint fk_jugador_usuario foreign key(id_usuario) references usuario(id)
 );
 
 
-
+create table entrenador(
+                           id serial primary key,
+                           nombre varchar(100) not null,
+                           apellido varchar(250) not null,
+                           imagen varchar(800) not null,
+                           dni char(9) not null,
+                           fecha_nacimiento timestamp not null,
+                           id_usuario int not null,
+                           constraint fk_entrenador_usuario foreign key(id_usuario) references usuario(id)
+);
 
 create table equipo(
                        id serial primary key,
                        nombre varchar(200) not null,
                        descripcion varchar(700) not null,
                        fecha_fundacion timestamp not null,
+                       imagen varchar(800) not null,
+                       id_entrenador int not null,
+                       constraint fk_equipo_entrenador foreign key(id_entrenador) references entrenador(id)
+);
+
+create table trofeo(
+                       id serial primary key,
+                       nombre varchar(300) not null,
                        imagen varchar(800) not null
 );
 
@@ -60,7 +80,8 @@ create table liga(
                      num_equipos int not null,
                      descripcion varchar(700) not null,
                      fecha_fundacion timestamp not null,
-                     trofeos int not null
+                     id_trofeo int not null,
+                     constraint fk_liga_trofeo foreign key(id_trofeo) references trofeo(id)
 );
 
 
@@ -146,3 +167,6 @@ CREATE TABLE clasificacion (
                                puntos INT NOT NULL,
                                CONSTRAINT fk_clasificacion_equipo_liga FOREIGN KEY (id_equipo_liga) REFERENCES equipo_liga(id)
 );
+
+
+
