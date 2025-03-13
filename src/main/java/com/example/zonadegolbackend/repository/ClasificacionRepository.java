@@ -1,4 +1,7 @@
 package com.example.zonadegolbackend.repository;
 
-public interface ClasificacionRepository {
+import com.example.zonadegolbackend.entity.Clasificacion;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ClasificacionRepository extends JpaRepository<Clasificacion, Integer> {
 }

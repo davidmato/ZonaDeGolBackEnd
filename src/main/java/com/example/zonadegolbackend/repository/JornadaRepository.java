@@ -1,4 +1,7 @@
 package com.example.zonadegolbackend.repository;
 
-public interface JornadaRepository {
+import com.example.zonadegolbackend.entity.Jornada;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface JornadaRepository extends JpaRepository<Jornada, Integer> {
 }
