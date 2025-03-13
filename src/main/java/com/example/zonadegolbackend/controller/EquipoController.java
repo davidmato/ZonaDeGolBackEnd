@@ -25,4 +25,14 @@ public class EquipoController {
         return equipoService.create(equipo);
     }
 
+    @PutMapping("/editar/{idEquipo}")
+    public Equipo editarEquipo(@PathVariable Integer idEquipo, @RequestBody CrearEquipo equipo) {
+        return equipoService.update(idEquipo, equipo);
+    }
+
+    @DeleteMapping("/eliminar/{idEquipo}")
+    public void eliminarEquipo(@PathVariable Integer idEquipo) {
+        equipoService.delete(idEquipo);
+    }
+
 }
