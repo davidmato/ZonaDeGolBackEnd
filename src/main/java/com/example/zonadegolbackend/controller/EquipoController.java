@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.AsociarEquiposLigaDTO;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.services.EquipoService;
@@ -28,6 +29,11 @@ public class EquipoController {
     @PutMapping("/editar/{idEquipo}")
     public Equipo editarEquipo(@PathVariable Integer idEquipo, @RequestBody CrearEquipo equipo) {
         return equipoService.update(idEquipo, equipo);
+    }
+
+    @PostMapping("/asociarEquiposConLiga")
+    public void asociarEquiposConLiga(@RequestBody AsociarEquiposLigaDTO request) {
+        equipoService.associateTeamsWithLeague(request.getIdLiga(), request.getIdEquipos(), request.getIdTemporada());
     }
 
     @DeleteMapping("/eliminar/{idEquipo}")
