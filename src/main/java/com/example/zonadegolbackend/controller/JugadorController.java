@@ -27,9 +27,8 @@ public class JugadorController {
     }
 
     @PostMapping("/{idEquipo}/jugadores")
-    public ResponseEntity<Void> associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
+    public void associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
         jugadorService.associatePlayersWithTeam(idEquipo, idJugadores);
-        return ResponseEntity.ok().build();
     }
 
 

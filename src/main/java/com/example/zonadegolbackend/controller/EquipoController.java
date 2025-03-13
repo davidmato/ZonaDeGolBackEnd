@@ -5,6 +5,7 @@ import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,11 @@ public class EquipoController {
     @PostMapping("/asociarEquiposConLiga")
     public void asociarEquiposConLiga(@RequestBody AsociarEquiposLigaDTO request) {
         equipoService.associateTeamsWithLeague(request.getIdLiga(), request.getIdEquipos(), request.getIdTemporada());
+    }
+
+    @PostMapping("/asociarTemporadaConEquipo/{idEquipo}/temporada")
+    public void asociarTemporadaConEquipo(@PathVariable Integer idEquipo, @RequestBody List<Integer> idTemporada) {
+        equipoService.associateTemporadasWithTeam(idEquipo, idTemporada);
     }
 
     @DeleteMapping("/eliminar/{idEquipo}")

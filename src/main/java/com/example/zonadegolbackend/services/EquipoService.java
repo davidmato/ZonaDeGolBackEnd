@@ -20,6 +20,7 @@ public class EquipoService {
     private final LigaRepository ligaRepository;
     private final LigaEquipoRepository ligaEquipoRepository;
     private final TemporadaRepository temporadaRepository;
+    private final EquipoTemporadaRepository equipoTemporadaRepository;
 
     public List<Equipo> findAll() {
         return equipoRepository.findAll();
@@ -81,7 +82,6 @@ public class EquipoService {
         equipoRepository.delete(equipo);
     }
 
-    //AÚN POR PROBAR
     @Transactional
     public void associateTeamsWithLeague(Integer idLiga, List<Integer> idEquipos, Integer idTemporada) {
         Liga liga = ligaRepository.findById(idLiga)
@@ -103,4 +103,19 @@ public class EquipoService {
         }
     }
 
+    @Transactional
+    public void associateTemporadasWithTeam(Integer idTemporada, List<Integer> idEquipos) {
+        Temporada temporada = temporadaRepository.findById(idTemporada)
+                .orElseThrow(() -> new RuntimeException("Temporada no encontrada"));
+
+        for (Integer idEquipo : idEquipos) {
+            Equipo equipo = equipoRepository.findById(idEquipo)
+                    .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+            EquipoTemporada equipoTemporada = new EquipoTemporada();
+            equipoTemporada.setEquipo(equipo);
+            equipoTemporada.setTemporada(temporada);
+            equipoTemporadaRepository.save(equipoTemporada);
+        }
+    }
 }
