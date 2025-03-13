@@ -2,6 +2,8 @@ package com.example.zonadegolbackend.entity;
 
 
 import com.example.zonadegolbackend.enums.Rol;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +39,10 @@ public class Usuario {
     @Column(name = "rol", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private Rol rol;
+
+    @JsonBackReference
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+    private Jugador jugador;
 
 //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
