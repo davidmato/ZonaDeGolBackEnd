@@ -83,6 +83,13 @@ public class EquipoService {
     }
 
 
+    public Equipo findByEntrenador(Integer idEntrenador) {
+        Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+        return equipoRepository.findByEntrenador(entrenador);
+    }
+
+
 
 
 }
