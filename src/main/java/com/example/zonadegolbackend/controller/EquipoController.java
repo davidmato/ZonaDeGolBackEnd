@@ -1,11 +1,28 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.CrearEquipo;
+import com.example.zonadegolbackend.entity.Equipo;
+import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/equipo")
 public class EquipoController {
+
+    private final EquipoService equipoService;
+
+    @GetMapping("/listar")
+    public List<Equipo> listarEquipos() {
+        return equipoService.findAll();
+    }
+
+    @PostMapping("/crear")
+    public Equipo crearEquipo(@RequestBody CrearEquipo equipo) {
+        return equipoService.create(equipo);
+    }
+
 }
