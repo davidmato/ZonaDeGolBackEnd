@@ -3,8 +3,11 @@ package com.example.zonadegolbackend.controller;
 
 import com.example.zonadegolbackend.entity.Liga;
 import com.example.zonadegolbackend.entity.Temporada;
+import com.example.zonadegolbackend.entity.Trofeo;
+import com.example.zonadegolbackend.repository.LigaRepository;
 import com.example.zonadegolbackend.services.LigaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 public class LigaController {
 
     private final LigaService ligaService;
+    private final LigaRepository ligaRepository;
 
     @GetMapping("/all")
     public List<Liga> findAll() {
@@ -22,7 +26,8 @@ public class LigaController {
     }
 
     @PostMapping("/crear")
-    public void crearLiga(@RequestBody Liga liga) {
-        ligaService.crearLiga(liga);
+    public ResponseEntity<Liga> crearLiga(@RequestBody Liga liga) {
+        Liga savedLiga = ligaService.crearLiga(liga);
+        return ResponseEntity.ok(savedLiga);
     }
 }

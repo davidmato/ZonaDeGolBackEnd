@@ -35,8 +35,9 @@ public class Liga {
     @Column(name="fecha_fundacion", nullable = false)
     private LocalDateTime fecha_fundacion;
 
-    @Column(name="trofeos", nullable = false)
-    private Integer trofeos;
+    @OneToOne
+    @JoinColumn(name = "id_trofeo", referencedColumnName = "id", nullable = false)
+    private Trofeo trofeo;
 
     @OneToMany(mappedBy = "liga", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
