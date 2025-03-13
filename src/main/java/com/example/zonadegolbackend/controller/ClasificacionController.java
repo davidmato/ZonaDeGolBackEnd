@@ -21,7 +21,7 @@ public class ClasificacionController {
     }
 
     @PostMapping("/crear")
-    public void crearClasificacion(@RequestBody Clasificacion clasificacion) {
-        clasificacionService.crearClasificacion(clasificacion);
+    public Clasificacion crearClasificacion(@RequestBody Clasificacion clasificacion) {
+        return clasificacionService.crearClasificacion(clasificacion);
     }
 }
