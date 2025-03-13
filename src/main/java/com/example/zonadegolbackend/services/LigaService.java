@@ -2,7 +2,10 @@ package com.example.zonadegolbackend.services;
 
 
 import com.example.zonadegolbackend.entity.Liga;
+import com.example.zonadegolbackend.entity.Trofeo;
 import com.example.zonadegolbackend.repository.LigaRepository;
+import com.example.zonadegolbackend.repository.TrofeoRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,21 +16,22 @@ import java.util.List;
 public class LigaService {
 
     private final LigaRepository ligaRepository;
+    private final TrofeoRepository trofeoRepository;
 
     public List<Liga> findAll() {
         return ligaRepository.findAll();
     }
 
-    public void crearLiga(Liga liga) {
-
-        Liga nuevaLiga = new Liga();
-
-        nuevaLiga.setNombre(liga.getNombre());
-        nuevaLiga.setNumEquipos(liga.getNumEquipos());
-        nuevaLiga.setDescripcion(liga.getDescripcion());
-        nuevaLiga.setFecha_fundacion(liga.getFecha_fundacion());
-        nuevaLiga.setTrofeos(liga.getTrofeos());
-
-        ligaRepository.save(nuevaLiga);
+    @Transactional
+    public Liga crearLiga(Liga liga) {
+        // Ensure the Trofeo entity is properly created and associated
+        Trofeo trofeo = liga.getTrofeo();
+        if (trofeo != null) {
+            trofeoRepository.save(trofeo);
+        }
+        return ligaRepository.save(liga);
     }
+
+
+
 }
