@@ -15,8 +15,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Clasificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/liga")
+@RequestMapping("/api/liga")
 public class LigaController {
 
     private final LigaService ligaService;

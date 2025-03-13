@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/noticias")
+@RequestMapping("/api/noticias")
 
 public class NoticiasController {
 
