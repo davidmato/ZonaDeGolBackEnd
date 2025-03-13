@@ -10,6 +10,7 @@ import com.example.zonadegolbackend.repository.EquipoRepository;
 import com.example.zonadegolbackend.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -53,4 +54,35 @@ public class EquipoService {
 
         return equipoRepository.save(equipo);
     }
+
+    public Equipo update(Integer idEquipo, CrearEquipo crearEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        equipo.setNombre(crearEquipo.getNombre());
+        equipo.setDescripcion(crearEquipo.getDescripcion());
+        equipo.setFechaFundacion(crearEquipo.getFechaFundacion());
+        equipo.setImagen(crearEquipo.getImagen());
+
+        Entrenador entrenador = equipo.getEntrenador();
+        entrenador.setNombre(crearEquipo.getNombreEntrenador());
+        entrenador.setApellido(crearEquipo.getApellido());
+        entrenador.setFechaNacimiento(crearEquipo.getFechaNacimiento());
+        entrenador.setImagen(crearEquipo.getImagenEntrenador());
+        entrenador.setDni(crearEquipo.getDni());
+        entrenadorRepository.save(entrenador);
+
+        return equipoRepository.save(equipo);
+    }
+
+
+    public void delete(Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+        equipoRepository.delete(equipo);
+    }
+
+
+
+
 }
