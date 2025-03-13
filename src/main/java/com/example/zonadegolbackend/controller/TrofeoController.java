@@ -21,7 +21,7 @@ public class TrofeoController {
     }
 
     @PostMapping("/crear")
-    public void crearTrofeo(@RequestBody Trofeo trofeo) {
-        trofeoService.crearTrofeo(trofeo);
+    public Trofeo crearTrofeo(@RequestBody Trofeo trofeo) {
+        return trofeoService.crearTrofeo(trofeo);
     }
 }

@@ -20,7 +20,7 @@ public class JugadorController {
     }
 
     @PostMapping("/crear")
-    public void crearJugador(@RequestBody Jugador jugador) {
-        jugadorService.crearJugador(jugador);
+    public Jugador crearJugador(@RequestBody Jugador jugador) {
+        return jugadorService.crearJugador(jugador);
     }
 }

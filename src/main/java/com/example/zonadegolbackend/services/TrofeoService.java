@@ -18,13 +18,13 @@ public class TrofeoService {
 
     public List<Trofeo> findAll() {return trofeoRepository.findAll();}
 
-    public void crearTrofeo(Trofeo trofeo){
+    public Trofeo crearTrofeo(Trofeo trofeo){
 
         Trofeo nuevoTrofeo = new Trofeo();
 
         nuevoTrofeo.setNombre(trofeo.getNombre());
         nuevoTrofeo.setImagen(trofeo.getImagen());
 
-        trofeoRepository.save(nuevoTrofeo);
+        return trofeoRepository.save(nuevoTrofeo);
     }
 }

@@ -21,7 +21,7 @@ public class TemporadaController {
     }
 
     @PostMapping("/crear")
-    public void crearTemporada(@RequestBody Temporada temporada) {
-        temporadaService.crearTemporada(temporada);
+    public Temporada crearTemporada(@RequestBody Temporada temporada) {
+        return temporadaService.crearTemporada(temporada);
     }
 }
