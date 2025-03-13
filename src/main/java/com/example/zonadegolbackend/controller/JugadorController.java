@@ -3,9 +3,11 @@ package com.example.zonadegolbackend.controller;
 import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.services.JugadorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +23,14 @@ public class JugadorController {
 
     @PostMapping("/crear")
     public Jugador crearJugador(@RequestBody Jugador jugador) {
-        return jugadorService.crearJugador(jugador);
+       return jugadorService.crearJugador(jugador);
     }
+
+    @PostMapping("/{idEquipo}/jugadores")
+    public ResponseEntity<Void> associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
+        jugadorService.associatePlayersWithTeam(idEquipo, idJugadores);
+        return ResponseEntity.ok().build();
+    }
+
+
 }
