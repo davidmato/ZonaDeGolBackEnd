@@ -37,4 +37,40 @@ public class EntrenadorService {
     }
 
 
+    public Entrenador update(Integer idEntrenador, CrearEntrenador crearEntrenador) {
+        Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+
+        Usuario usuario = entrenador.getUsuario();
+        usuario.setUsername(crearEntrenador.getUsername());
+        usuario.setPassword(crearEntrenador.getPassword());
+        usuario.setCorreo(crearEntrenador.getCorreo());
+        usuarioRepository.save(usuario);
+
+        entrenador.setNombre(crearEntrenador.getNombre());
+        entrenador.setApellido(crearEntrenador.getApellido());
+        entrenador.setFechaNacimiento(crearEntrenador.getFechaNacimiento());
+        entrenador.setDni(crearEntrenador.getDni());
+        entrenador.setImagen(crearEntrenador.getImagen());
+        entrenador.setUsuario(usuario);
+
+        return entrenadorRepository.save(entrenador);
+    }
+
+    public void delete(Integer idEntrenador) {
+        Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+        entrenadorRepository.delete(entrenador);
+    }
+
+    public void deleteEyU(Integer idEntrenador) {
+        Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+        Usuario usuario = entrenador.getUsuario();
+        entrenadorRepository.delete(entrenador);
+        usuarioRepository.delete(usuario);
+    }
+
+
+
 }
