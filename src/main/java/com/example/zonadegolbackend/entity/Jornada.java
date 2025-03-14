@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +27,7 @@ public class Jornada {
 
     @ManyToOne
     @JoinColumn(name = "id_equipo_local", nullable = false)
+    @JsonIgnore
     private Equipo equipoLocal;
 
     @ManyToOne

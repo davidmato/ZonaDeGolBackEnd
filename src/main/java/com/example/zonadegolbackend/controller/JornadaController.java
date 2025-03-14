@@ -15,7 +15,7 @@ public class JornadaController {
     private final JornadaService jornadaService;
 
     @GetMapping("/listar")
-    public List<Jornada> listarJornadas() {
+    public List<Jornada> findAll() {
         return jornadaService.findAll();
     }
 

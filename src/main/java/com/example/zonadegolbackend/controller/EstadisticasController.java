@@ -15,7 +15,7 @@ public class EstadisticasController {
     private final EstadisticasService estadisticasService;
 
     @GetMapping("/listar")
-    public List<Estadisticas> listarEstadisticas() {
+    public List<Estadisticas> findAll() {
         return estadisticasService.findAll();
     }
 
