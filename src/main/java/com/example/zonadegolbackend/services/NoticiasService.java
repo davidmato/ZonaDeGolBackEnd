@@ -18,7 +18,7 @@ public class NoticiasService {
         return noticiasRepository.findAll();
     }
 
-    public void crearNoticia(Noticias noticia) {
+    public Noticias crearNoticia(Noticias noticia) {
 
         Noticias noticiaNueva = new Noticias();
 
@@ -26,6 +26,6 @@ public class NoticiasService {
         noticiaNueva.setTitulo(noticia.getTitulo());
         noticiaNueva.setDescripcion(noticia.getDescripcion());
 
-        noticiasRepository.save(noticiaNueva);
+        return noticiasRepository.save(noticiaNueva);
     }
 }

@@ -1,13 +1,9 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.CrearEquipo;
-import com.example.zonadegolbackend.entity.Entrenador;
-import com.example.zonadegolbackend.entity.Equipo;
-import com.example.zonadegolbackend.entity.Usuario;
+import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
-import com.example.zonadegolbackend.repository.EntrenadorRepository;
-import com.example.zonadegolbackend.repository.EquipoRepository;
-import com.example.zonadegolbackend.repository.UsuarioRepository;
+import com.example.zonadegolbackend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +17,10 @@ public class EquipoService {
     private final EquipoRepository equipoRepository;
     private final UsuarioRepository usuarioRepository;
     private final EntrenadorRepository entrenadorRepository;
+    private final LigaRepository ligaRepository;
+    private final LigaEquipoRepository ligaEquipoRepository;
+    private final TemporadaRepository temporadaRepository;
+    private final EquipoTemporadaRepository equipoTemporadaRepository;
 
     public List<Equipo> findAll() {
         return equipoRepository.findAll();
@@ -82,6 +82,17 @@ public class EquipoService {
         equipoRepository.delete(equipo);
     }
 
+    @Transactional
+    public void associateTeamsWithLeague(Integer idLiga, List<Integer> idEquipos, Integer idTemporada) {
+        Liga liga = ligaRepository.findById(idLiga)
+                .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+
+        Temporada temporada = temporadaRepository.findById(idTemporada)
+                .orElseThrow(() -> new RuntimeException("Temporada no encontrada"));
+
+        for (Integer idEquipo : idEquipos) {
+            Equipo equipo = equipoRepository.findById(idEquipo)
+                    .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
 
     public Equipo findByEntrenador(Integer idEntrenador) {
         Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
@@ -91,5 +102,27 @@ public class EquipoService {
 
 
 
+            EquipoLiga equipoLiga = new EquipoLiga();
+            equipoLiga.setLiga(liga);
+            equipoLiga.setEquipo(equipo);
+            equipoLiga.setTemporada(temporada);
+            ligaEquipoRepository.save(equipoLiga);
+        }
+    }
 
+    @Transactional
+    public void associateTemporadasWithTeam(Integer idTemporada, List<Integer> idEquipos) {
+        Temporada temporada = temporadaRepository.findById(idTemporada)
+                .orElseThrow(() -> new RuntimeException("Temporada no encontrada"));
+
+        for (Integer idEquipo : idEquipos) {
+            Equipo equipo = equipoRepository.findById(idEquipo)
+                    .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+            EquipoTemporada equipoTemporada = new EquipoTemporada();
+            equipoTemporada.setEquipo(equipo);
+            equipoTemporada.setTemporada(temporada);
+            equipoTemporadaRepository.save(equipoTemporada);
+        }
+    }
 }

@@ -17,7 +17,7 @@ public class TemporadaService {
         return temporadaRepository.findAll();
     }
 
-    public void crearTemporada(Temporada temporada) {
+    public Temporada crearTemporada(Temporada temporada) {
 
         Temporada nuevaTemporada = new Temporada();
 
@@ -25,6 +25,6 @@ public class TemporadaService {
         nuevaTemporada.setFechaFin(temporada.getFechaFin());
         nuevaTemporada.setLiga(temporada.getLiga());
 
-        temporadaRepository.save(nuevaTemporada);
+        return temporadaRepository.save(nuevaTemporada);
     }
 }

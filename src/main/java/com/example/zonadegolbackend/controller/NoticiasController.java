@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/noticias")
+@RequestMapping("/api/noticias")
 
 public class NoticiasController {
 
@@ -23,6 +23,6 @@ public class NoticiasController {
     }
 
     @PostMapping("/crear")
-    public void crearNoticia(@RequestBody Noticias noticia) {noticiasService.crearNoticia(noticia);
+    public Noticias crearNoticia(@RequestBody Noticias noticia) { return noticiasService.crearNoticia(noticia);
     }
 }
