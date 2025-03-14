@@ -47,4 +47,9 @@ public class EquipoController {
         equipoService.delete(idEquipo);
     }
 
+
+    @GetMapping("/buscar/{idEntrenador}")
+    public Equipo buscarPorEntrenador(@PathVariable Integer idEntrenador) {
+        return equipoService.findByEntrenador(idEntrenador);
+    }
 }

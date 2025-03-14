@@ -102,6 +102,11 @@ public class EquipoService {
             ligaEquipoRepository.save(equipoLiga);
         }
     }
+    public Equipo findByEntrenador(Integer idEntrenador) {
+        Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+        return equipoRepository.findByEntrenador(entrenador);
+    }
 
     @Transactional
     public void associateTemporadasWithTeam(Integer idTemporada, List<Integer> idEquipos) {

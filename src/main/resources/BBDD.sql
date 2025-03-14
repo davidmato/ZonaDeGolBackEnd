@@ -1,4 +1,4 @@
-
+drop table trofeo;
 drop table entrenador;
 drop table clasificacion;
 drop table equipo_temporada;
