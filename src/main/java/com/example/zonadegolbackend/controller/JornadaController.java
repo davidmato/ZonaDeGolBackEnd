@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/jornada")
+@RequestMapping("/api/jornada")
 public class JornadaController {
 
     private final JornadaService jornadaService;

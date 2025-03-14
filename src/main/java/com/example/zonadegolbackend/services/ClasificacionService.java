@@ -17,7 +17,9 @@ public class ClasificacionService {
         return clasificacionRepository.findAll();
     }
 
-    //AÚN POR PROBAR
+    //FUNCA
+    //GF - GC = GD
+    //Victoria +3, Empate +1, Derrota +0
     public Clasificacion crearClasificacion(Clasificacion clasificacion) {
 
         Clasificacion nuevoClasificacion = new Clasificacion();

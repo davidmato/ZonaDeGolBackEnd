@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,6 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class EquipoLiga {
 
     @Id

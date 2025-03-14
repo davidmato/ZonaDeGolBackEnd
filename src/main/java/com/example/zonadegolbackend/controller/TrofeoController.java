@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/trofeo")
+@RequestMapping("/api/trofeo")
 public class TrofeoController {
 
     private final TrofeoService trofeoService;
