@@ -47,7 +47,6 @@ public class Usuario implements UserDetails {
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private Jugador jugador;
 
-    @JsonBackReference
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private TokenAcceso token;
 
