@@ -2,6 +2,7 @@ package com.example.zonadegolbackend.entity;
 
 
 import com.example.zonadegolbackend.enums.Rol;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -48,6 +49,7 @@ public class Usuario implements UserDetails {
 //    private Jugador jugador;
 
 //    @JsonBackReference
+    @JsonIgnore
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private TokenAcceso token;
 
