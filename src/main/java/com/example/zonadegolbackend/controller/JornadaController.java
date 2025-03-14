@@ -5,12 +5,19 @@ import com.example.zonadegolbackend.services.JornadaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/jornada")
 public class JornadaController {
 
     private final JornadaService jornadaService;
+
+    @GetMapping("/listar")
+    public List<Jornada> findAll() {
+        return jornadaService.findAll();
+    }
 
     @PostMapping("/crear")
     public Jornada crearJornada(@RequestBody Jornada jornada) {

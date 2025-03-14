@@ -9,6 +9,7 @@ import com.example.zonadegolbackend.repository.EstadisticasRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +17,10 @@ import java.util.Optional;
 public class EstadisticasService {
 
     private final EstadisticasRepository estadisticasRepository;
+
+    public List<Estadisticas> findAll() {
+        return estadisticasRepository.findAll();
+    }
 
     public Estadisticas crearEstadisticas(Estadisticas estadisticas) {
 
