@@ -5,12 +5,19 @@ import com.example.zonadegolbackend.services.EstadisticasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/estadisticas")
 public class EstadisticasController {
 
     private final EstadisticasService estadisticasService;
+
+    @GetMapping("/listar")
+    public List<Estadisticas> listarEstadisticas() {
+        return estadisticasService.findAll();
+    }
 
     @PostMapping("/crear")
     public Estadisticas crearEstadisticas(@RequestBody Estadisticas estadisticas) {
