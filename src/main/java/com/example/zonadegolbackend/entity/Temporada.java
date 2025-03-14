@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Temporada {
 

@@ -2,6 +2,7 @@ package com.example.zonadegolbackend.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Liga {
 
     @Id
