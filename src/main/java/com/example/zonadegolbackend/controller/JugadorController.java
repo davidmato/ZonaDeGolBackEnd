@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/jugador")
+@RequestMapping("/api/jugador")
 public class JugadorController {
 
     private final JugadorService jugadorService;
@@ -27,9 +27,8 @@ public class JugadorController {
     }
 
     @PostMapping("/{idEquipo}/jugadores")
-    public ResponseEntity<Void> associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
+    public void associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
         jugadorService.associatePlayersWithTeam(idEquipo, idJugadores);
-        return ResponseEntity.ok().build();
     }
 
 

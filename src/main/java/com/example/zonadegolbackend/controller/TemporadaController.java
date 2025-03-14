@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/temporadas")
+@RequestMapping("/api/temporadas")
 public class TemporadaController {
 
     private final TemporadaService temporadaService;

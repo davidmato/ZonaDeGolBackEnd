@@ -1,6 +1,8 @@
 package com.example.zonadegolbackend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -48,6 +50,7 @@ public class Clasificacion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo_liga", nullable = false)
+    @JsonIgnore
     private EquipoLiga equipoLiga;
 
 

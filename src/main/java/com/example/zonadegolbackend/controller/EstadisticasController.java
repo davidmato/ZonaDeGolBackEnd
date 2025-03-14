@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/estadisticas")
+@RequestMapping("/api/estadisticas")
 public class EstadisticasController {
 
     private final EstadisticasService estadisticasService;
