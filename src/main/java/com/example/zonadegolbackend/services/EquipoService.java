@@ -94,6 +94,13 @@ public class EquipoService {
             Equipo equipo = equipoRepository.findById(idEquipo)
                     .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
 
+    public Equipo findByEntrenador(Integer idEntrenador) {
+        Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+        return equipoRepository.findByEntrenador(entrenador);
+    }
+
+
 
             EquipoLiga equipoLiga = new EquipoLiga();
             equipoLiga.setLiga(liga);
