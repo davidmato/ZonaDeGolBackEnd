@@ -27,7 +27,6 @@ public class Jornada {
 
     @ManyToOne
     @JoinColumn(name = "id_equipo_local", nullable = false)
-    @JsonIgnore
     private Equipo equipoLocal;
 
     @ManyToOne
