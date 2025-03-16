@@ -1,8 +1,8 @@
 package com.example.zonadegolbackend.services;
 
-import com.example.zonadegolbackend.dtos.CrearEntrenador;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.CrearJugador;
+import com.example.zonadegolbackend.dtos.EntrenadorDTO;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
@@ -23,7 +23,7 @@ public class EntrenadorService {
     private final EquipoJugadorRepository equipoJugadorRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Entrenador create(CrearEntrenador crearEntrenador) {
+    public Entrenador create(EntrenadorDTO crearEntrenador) {
         Usuario usuario = new Usuario();
         usuario.setUsername(crearEntrenador.getUsername());
         usuario.setPassword(crearEntrenador.getPassword());
@@ -44,7 +44,7 @@ public class EntrenadorService {
     }
 
 
-    public Entrenador update(Integer idEntrenador, CrearEntrenador crearEntrenador) {
+    public Entrenador update(Integer idEntrenador, EntrenadorDTO crearEntrenador) {
         Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
@@ -109,6 +109,7 @@ public class EntrenadorService {
     public Jugador createJugador(CrearJugador crearJugador) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+        System.out.println("Username obtenido: " + username);
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

@@ -1,8 +1,9 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.CrearEntrenador;
+import com.example.zonadegolbackend.dtos.EntrenadorDTO;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.CrearJugador;
+import com.example.zonadegolbackend.dtos.EntrenadorDTO;
 import com.example.zonadegolbackend.entity.Entrenador;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
@@ -20,12 +21,12 @@ public class EntrenadorController {
     private final EntrenadorService entrenadorService;
 
     @PostMapping("/crear")
-    public Entrenador crearEntrenador(@RequestBody CrearEntrenador crearEntrenador) {
+    public Entrenador crearEntrenador(@RequestBody EntrenadorDTO crearEntrenador) {
         return entrenadorService.create(crearEntrenador);
     }
 
     @PutMapping("/editar/{idEntrenador}")
-    public Entrenador editarEntrenador(@PathVariable Integer idEntrenador, @RequestBody CrearEntrenador crearEntrenador) {
+    public Entrenador editarEntrenador(@PathVariable Integer idEntrenador, @RequestBody EntrenadorDTO crearEntrenador) {
         return entrenadorService.update(idEntrenador, crearEntrenador);
     }
 

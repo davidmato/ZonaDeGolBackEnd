@@ -16,7 +16,6 @@ public class CrearJugador {
     private String imagen;
     private String dni;
     private LocalDate fechaNacimiento;
-    private Usuario usuario;
     private String correo;
 
 }
