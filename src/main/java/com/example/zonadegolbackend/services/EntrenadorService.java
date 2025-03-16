@@ -1,6 +1,6 @@
 package com.example.zonadegolbackend.services;
 
-import com.example.zonadegolbackend.dtos.CrearEntrenador;
+import com.example.zonadegolbackend.dtos.EntrenadorDTO;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.CrearJugador;
 import com.example.zonadegolbackend.entity.*;
@@ -11,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -23,42 +26,62 @@ public class EntrenadorService {
     private final EquipoJugadorRepository equipoJugadorRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Entrenador create(CrearEntrenador crearEntrenador) {
+
+    public List<EntrenadorDTO> listarEntrenador() {
+        List<Entrenador> entrenadores = entrenadorRepository.findAll();
+        List<EntrenadorDTO> entrenadorDTOS = new ArrayList<>();
+
+        for (Entrenador entrenador : entrenadores) {
+            EntrenadorDTO entrenadorDTO = new EntrenadorDTO();
+            entrenadorDTO.setNombre(entrenador.getNombre());
+            entrenadorDTO.setApellido(entrenador.getApellido());
+            entrenadorDTO.setFechaNacimiento(entrenador.getFechaNacimiento());
+            entrenadorDTO.setDni(entrenador.getDni());
+            entrenadorDTO.setImagen(entrenador.getImagen());
+            entrenadorDTO.setUsername(entrenador.getUsuario().getUsername());
+            entrenadorDTO.setCorreo(entrenador.getUsuario().getCorreo());
+            entrenadorDTOS.add(entrenadorDTO);
+        }
+        return entrenadorDTOS;
+    }
+
+
+    public Entrenador create(EntrenadorDTO entrenadorDTO) {
         Usuario usuario = new Usuario();
-        usuario.setUsername(crearEntrenador.getUsername());
-        usuario.setPassword(crearEntrenador.getPassword());
-        usuario.setCorreo(crearEntrenador.getCorreo());
+        usuario.setUsername(entrenadorDTO.getUsername());
+        usuario.setPassword(entrenadorDTO.getPassword());
+        usuario.setCorreo(entrenadorDTO.getCorreo());
         usuario.setRol(Rol.ENTRENADOR);
 
         usuarioRepository.save(usuario);
 
         Entrenador entrenador = new Entrenador();
-        entrenador.setNombre(crearEntrenador.getNombre());
-        entrenador.setApellido(crearEntrenador.getApellido());
-        entrenador.setFechaNacimiento(crearEntrenador.getFechaNacimiento());
-        entrenador.setDni(crearEntrenador.getDni());
-        entrenador.setImagen(crearEntrenador.getImagen());
+        entrenador.setNombre(entrenadorDTO.getNombre());
+        entrenador.setApellido(entrenadorDTO.getApellido());
+        entrenador.setFechaNacimiento(entrenadorDTO.getFechaNacimiento());
+        entrenador.setDni(entrenadorDTO.getDni());
+        entrenador.setImagen(entrenadorDTO.getImagen());
         entrenador.setUsuario(usuario);
 
         return entrenadorRepository.save(entrenador);
     }
 
 
-    public Entrenador update(Integer idEntrenador, CrearEntrenador crearEntrenador) {
+    public Entrenador update(Integer idEntrenador, EntrenadorDTO entrenadorDTO) {
         Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
         Usuario usuario = entrenador.getUsuario();
-        usuario.setUsername(crearEntrenador.getUsername());
-        usuario.setPassword(crearEntrenador.getPassword());
-        usuario.setCorreo(crearEntrenador.getCorreo());
+        usuario.setUsername(entrenadorDTO.getUsername());
+        usuario.setPassword(entrenadorDTO.getPassword());
+        usuario.setCorreo(entrenadorDTO.getCorreo());
         usuarioRepository.save(usuario);
 
-        entrenador.setNombre(crearEntrenador.getNombre());
-        entrenador.setApellido(crearEntrenador.getApellido());
-        entrenador.setFechaNacimiento(crearEntrenador.getFechaNacimiento());
-        entrenador.setDni(crearEntrenador.getDni());
-        entrenador.setImagen(crearEntrenador.getImagen());
+        entrenador.setNombre(entrenadorDTO.getNombre());
+        entrenador.setApellido(entrenadorDTO.getApellido());
+        entrenador.setFechaNacimiento(entrenadorDTO.getFechaNacimiento());
+        entrenador.setDni(entrenadorDTO.getDni());
+        entrenador.setImagen(entrenadorDTO.getImagen());
         entrenador.setUsuario(usuario);
 
         return entrenadorRepository.save(entrenador);
