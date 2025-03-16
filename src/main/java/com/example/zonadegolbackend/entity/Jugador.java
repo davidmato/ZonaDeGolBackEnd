@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,10 +33,10 @@ public class Jugador {
     private String apellido;
 
     @Column(name = "fecha_nacimiento", nullable = false)
-    @DateTimeFormat()
-    private LocalDateTime fechaNacimiento;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate fechaNacimiento;
 
-    @Column(name = "posicion", nullable = false)
+    @Column(name = "posicion", nullable = true)
     private Posicion posicion;
 
     @Column(name = "dorsal", nullable = false)
