@@ -4,6 +4,7 @@ import com.example.zonadegolbackend.entity.Usuario;
 import com.example.zonadegolbackend.enums.Posicion;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,7 +15,7 @@ public class CrearJugador {
     private Integer dorsal;
     private String imagen;
     private String dni;
-    private LocalDateTime fechaNacimiento;
+    private LocalDate fechaNacimiento;
     private Usuario usuario;
     private String correo;
 

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,7 +17,7 @@ public class CrearEquipo {
     private String imagen;
     private String nombreEntrenador;
     private String apellido;
-    private LocalDateTime fechaNacimiento;
+    private LocalDate fechaNacimiento;
     private String dni;
     private String imagenEntrenador;
     private String username;
