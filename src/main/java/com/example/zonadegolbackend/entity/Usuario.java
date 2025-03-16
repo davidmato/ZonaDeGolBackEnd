@@ -43,12 +43,13 @@ public class Usuario implements UserDetails {
     @Column(name = "rol", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private Rol rol;
-
+//
 //    @JsonBackReference
 //    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
 //    private Jugador jugador;
 
-//    @JsonBackReference
+
+    @JsonIgnore
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
     private TokenAcceso token;
 

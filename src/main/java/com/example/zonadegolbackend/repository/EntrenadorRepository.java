@@ -5,8 +5,12 @@ import com.example.zonadegolbackend.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface EntrenadorRepository extends JpaRepository<Entrenador,Integer> {
 
-    Entrenador findByUsuario(Usuario usuario);
+//    Entrenador findByUsuario(Usuario usuario);
+    Optional<Entrenador> findByUsuario(Usuario usuario);
+
 }

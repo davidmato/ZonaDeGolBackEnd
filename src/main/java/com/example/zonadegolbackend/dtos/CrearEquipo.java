@@ -22,4 +22,5 @@ public class CrearEquipo {
     private String username;
     private String password;
     private String correo;
+    private Integer usuarioId;
 }
