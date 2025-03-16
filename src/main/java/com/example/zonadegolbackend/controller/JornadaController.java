@@ -1,8 +1,10 @@
 package com.example.zonadegolbackend.controller;
 
 import com.example.zonadegolbackend.entity.Jornada;
+import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.services.JornadaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,5 +34,11 @@ public class JornadaController {
     @DeleteMapping("/eliminar/{id}")
     public void eliminarJornada(@PathVariable Integer id) {
         jornadaService.eliminarJornada(id);
+    }
+
+    @PostMapping("/generar")
+    public ResponseEntity<List<Jornada>> generarJornadas(@RequestBody Temporada temporada) {
+        List<Jornada> jornadas = jornadaService.generarJornadas(temporada);
+        return ResponseEntity.ok(jornadas);
     }
 }
