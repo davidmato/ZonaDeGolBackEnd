@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface EquipoRepository extends JpaRepository<Equipo, Integer> {
 
     Equipo findByEntrenador(Entrenador entrenador);
+
+    boolean existsByEntrenador(Entrenador entrenador);
 }
