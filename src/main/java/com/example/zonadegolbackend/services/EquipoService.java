@@ -18,9 +18,9 @@ public class EquipoService {
     private final UsuarioRepository usuarioRepository;
     private final EntrenadorRepository entrenadorRepository;
     private final LigaRepository ligaRepository;
-    private final LigaEquipoRepository ligaEquipoRepository;
+//    private final LigaEquipoRepository ligaEquipoRepository;
     private final TemporadaRepository temporadaRepository;
-    private final EquipoTemporadaRepository equipoTemporadaRepository;
+//    private final EquipoTemporadaRepository equipoTemporadaRepository;
 
     public List<Equipo> findAll() {
         return equipoRepository.findAll();
@@ -82,45 +82,45 @@ public class EquipoService {
         equipoRepository.delete(equipo);
     }
 
-    @Transactional
-    public void associateTeamsWithLeague(Integer idLiga, List<Integer> idEquipos, Integer idTemporada) {
-        Liga liga = ligaRepository.findById(idLiga)
-                .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
-
-        Temporada temporada = temporadaRepository.findById(idTemporada)
-                .orElseThrow(() -> new RuntimeException("Temporada no encontrada"));
-
-        for (Integer idEquipo : idEquipos) {
-            Equipo equipo = equipoRepository.findById(idEquipo)
-                    .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
-
-
-            EquipoLiga equipoLiga = new EquipoLiga();
-            equipoLiga.setLiga(liga);
-            equipoLiga.setEquipo(equipo);
-            equipoLiga.setTemporada(temporada);
-            ligaEquipoRepository.save(equipoLiga);
-        }
-    }
+//    @Transactional
+//    public void associateTeamsWithLeague(Integer idLiga, List<Integer> idEquipos, Integer idTemporada) {
+//        Liga liga = ligaRepository.findById(idLiga)
+//                .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+//
+//        Temporada temporada = temporadaRepository.findById(idTemporada)
+//                .orElseThrow(() -> new RuntimeException("Temporada no encontrada"));
+//
+//        for (Integer idEquipo : idEquipos) {
+//            Equipo equipo = equipoRepository.findById(idEquipo)
+//                    .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+//
+//
+//            EquipoLiga equipoLiga = new EquipoLiga();
+//            equipoLiga.setLiga(liga);
+//            equipoLiga.setEquipo(equipo);
+//            equipoLiga.setTemporada(temporada);
+//            ligaEquipoRepository.save(equipoLiga);
+//        }
+//    }
     public Equipo findByEntrenador(Integer idEntrenador) {
         Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
         return equipoRepository.findByEntrenador(entrenador);
     }
 
-    @Transactional
-    public void associateTemporadasWithTeam(Integer idTemporada, List<Integer> idEquipos) {
-        Temporada temporada = temporadaRepository.findById(idTemporada)
-                .orElseThrow(() -> new RuntimeException("Temporada no encontrada"));
-
-        for (Integer idEquipo : idEquipos) {
-            Equipo equipo = equipoRepository.findById(idEquipo)
-                    .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
-
-            EquipoTemporada equipoTemporada = new EquipoTemporada();
-            equipoTemporada.setEquipo(equipo);
-            equipoTemporada.setTemporada(temporada);
-            equipoTemporadaRepository.save(equipoTemporada);
-        }
-    }
+//    @Transactional
+//    public void associateTemporadasWithTeam(Integer idTemporada, List<Integer> idEquipos) {
+//        Temporada temporada = temporadaRepository.findById(idTemporada)
+//                .orElseThrow(() -> new RuntimeException("Temporada no encontrada"));
+//
+//        for (Integer idEquipo : idEquipos) {
+//            Equipo equipo = equipoRepository.findById(idEquipo)
+//                    .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+//
+//            EquipoTemporada equipoTemporada = new EquipoTemporada();
+//            equipoTemporada.setEquipo(equipo);
+//            equipoTemporada.setTemporada(temporada);
+//            equipoTemporadaRepository.save(equipoTemporada);
+//        }
+//    }
 }

@@ -50,11 +50,13 @@ public class Clasificacion {
     @Column(name="puntos", nullable = false)
     private Integer puntos;
 
-//    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_equipo_liga", nullable = false)
-    private EquipoLiga equipoLiga;
+    @JoinColumn(name = "id_equipo", nullable = false)
+    private Equipo equipo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_temporada", nullable = false)
+    private Temporada temporada;
 
 
 }

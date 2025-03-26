@@ -36,9 +36,9 @@ public class JornadaController {
         jornadaService.eliminarJornada(id);
     }
 
-    @PostMapping("/generar")
-    public ResponseEntity<List<Jornada>> generarJornadas(@RequestBody Temporada temporada) {
-        List<Jornada> jornadas = jornadaService.generarJornadas(temporada);
-        return ResponseEntity.ok(jornadas);
-    }
+//    @PostMapping("/generar")
+//    public ResponseEntity<List<Jornada>> generarJornadas(@RequestBody Temporada temporada) {
+//        List<Jornada> jornadas = jornadaService.generarJornadas(temporada);
+//        return ResponseEntity.ok(jornadas);
+//    }
 }

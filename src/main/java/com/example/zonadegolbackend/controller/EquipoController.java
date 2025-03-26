@@ -32,15 +32,15 @@ public class EquipoController {
         return equipoService.update(idEquipo, equipo);
     }
 
-    @PostMapping("/asociarEquiposConLiga")
-    public void asociarEquiposConLiga(@RequestBody AsociarEquiposLigaDTO request) {
-        equipoService.associateTeamsWithLeague(request.getIdLiga(), request.getIdEquipos(), request.getIdTemporada());
-    }
-
-    @PostMapping("/asociarTemporadaConEquipo/{idEquipo}/temporada")
-    public void asociarTemporadaConEquipo(@PathVariable Integer idEquipo, @RequestBody List<Integer> idTemporada) {
-        equipoService.associateTemporadasWithTeam(idEquipo, idTemporada);
-    }
+//    @PostMapping("/asociarEquiposConLiga")
+//    public void asociarEquiposConLiga(@RequestBody AsociarEquiposLigaDTO request) {
+//        equipoService.associateTeamsWithLeague(request.getIdLiga(), request.getIdEquipos(), request.getIdTemporada());
+//    }
+//
+//    @PostMapping("/asociarTemporadaConEquipo/{idEquipo}/temporada")
+//    public void asociarTemporadaConEquipo(@PathVariable Integer idEquipo, @RequestBody List<Integer> idTemporada) {
+//        equipoService.associateTemporadasWithTeam(idEquipo, idTemporada);
+//    }
 
     @DeleteMapping("/eliminar/{idEquipo}")
     public void eliminarEquipo(@PathVariable Integer idEquipo) {

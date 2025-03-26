@@ -1,172 +1,157 @@
-drop table trofeo;
-drop table entrenador;
-drop table clasificacion;
-drop table equipo_temporada;
-drop table equipo_liga;
-drop table equipo_jugador;
-drop table noticias;
-drop table jornada;
-drop table estadisticas;
-drop table temporada;
-drop table liga;
-drop table equipo;
-drop table jugador;
-drop table token_acceso;
-drop table usuario;
+-- Eliminar tablas si existen
+DROP TABLE IF EXISTS clasificacion;
+DROP TABLE IF EXISTS estadisticas;
+DROP TABLE IF EXISTS jornada;
+DROP TABLE IF EXISTS temporada;
+DROP TABLE IF EXISTS noticias;
+DROP TABLE IF EXISTS jugador;
+DROP TABLE IF EXISTS trofeo;
+DROP TABLE IF EXISTS equipo;
+DROP TABLE IF EXISTS liga;
+DROP TABLE IF EXISTS entrenador;
+DROP TABLE IF EXISTS token_acceso;
+DROP TABLE IF EXISTS usuario;
 
 
-
-create table usuario(
-                        id serial primary key,
-                        username varchar(250) not null,
-                        password varchar (800) not null,
-                        correo varchar (200) not null,
-                        rol int not null
-);
-
-create table token_acceso (
-                              id serial primary key,
-                              token varchar(500) not null,
-                              fecha_expiracion timestamp not null,
-                              id_usuario int not null,
-                              constraint fk_token_acceso_usuario foreign key(id_usuario) references usuario(id)
+-- Crear tablas
+CREATE TABLE IF NOT EXISTS usuario(
+id SERIAL PRIMARY KEY,
+username VARCHAR(250) NOT NULL,
+password VARCHAR (800) NOT NULL,
+correo VARCHAR (200) NOT NULL,
+rol INT NOT NULL
 );
 
 
-create table jugador(
-                        id serial primary key,
-                        nombre varchar(100) not null,
-                        apellido varchar(250) not null,
-                        dorsal int not null,
-                        imagen varchar(800),
-                        fecha_nacimiento timestamp not null,
-                        posicion int not null,
-                        dni char(9) not null,
-                        id_usuario int not null,
-                        constraint fk_jugador_usuario foreign key(id_usuario) references usuario(id)
+CREATE TABLE IF NOT EXISTS token_acceso (
+id SERIAL PRIMARY KEY,
+token VARCHAR(500) NOT NULL,
+fecha_expiracion TIMESTAMP NOT NULL,
+id_usuario INT NOT NULL,
+CONSTRAINT fk_token_acceso_usuario FOREIGN KEY(id_usuario) REFERENCES usuario(id)
 );
 
 
-create table entrenador(
-                           id serial primary key,
-                           nombre varchar(100) not null,
-                           apellido varchar(250) not null,
-                           imagen varchar(800) not null,
-                           dni char(9) not null,
-                           fecha_nacimiento timestamp not null,
-                           id_usuario int not null,
-                           constraint fk_entrenador_usuario foreign key(id_usuario) references usuario(id)
-);
-
-create table equipo(
-                       id serial primary key,
-                       nombre varchar(200) not null,
-                       descripcion varchar(700) not null,
-                       fecha_fundacion timestamp not null,
-                       imagen varchar(800) not null,
-                       id_entrenador int not null,
-                       constraint fk_equipo_entrenador foreign key(id_entrenador) references entrenador(id)
-);
-
-create table trofeo(
-                       id serial primary key,
-                       nombre varchar(300) not null,
-                       imagen varchar(800) not null
-);
-
-create table liga(
-                     id serial primary key,
-                     nombre varchar(200) not null,
-                     num_equipos int not null,
-                     descripcion varchar(700) not null,
-                     fecha_fundacion timestamp not null,
-                     id_trofeo int not null,
-                     constraint fk_liga_trofeo foreign key(id_trofeo) references trofeo(id)
+CREATE TABLE IF NOT EXISTS entrenador(
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+apellido VARCHAR(250) NOT NULL,
+imagen VARCHAR(800) NOT NULL,
+dni CHAR(9),
+fecha_nacimiento TIMESTAMP NOT NULL,
+id_usuario INT NOT NULL,
+CONSTRAINT fk_entrenador_usuario FOREIGN KEY(id_usuario) REFERENCES usuario(id)
 );
 
 
-
-create table noticias(
-                         id serial primary key,
-                         imagen varchar(800),
-                         titulo varchar(450) not null,
-                         descripcion varchar(1000) not null
-);
-
-create table temporada(
-                          id serial primary key,
-                          fecha_inicio timestamp not null,
-                          fecha_fin timestamp not null,
-                          id_liga int not null,
-                          constraint fk_temporada_liga foreign key(id_liga) references liga(id)
-);
-
-create table jornada(
-                        id serial primary key,
-                        fecha timestamp not null,
-                        id_equipo_local int not null,
-                        constraint fk_jornada_equipo_local foreign key(id_equipo_local) references equipo(id),
-                        id_equipo_visitante int not null,
-                        constraint fk_jornada_equipo_visitante foreign key(id_equipo_visitante) references equipo(id),
-                        id_temporada INT NOT null,
-                        CONSTRAINT fk_jornada_temporada FOREIGN KEY(id_temporada) REFERENCES temporada(id)
-);
-
-create table estadisticas(
-                             id serial primary key,
-                             partidos_jugados int,
-                             goles int,
-                             asistencias int,
-                             tarjetas_amarillas int,
-                             tarjetas_rojas int,
-                             porteria_cero int,
-                             id_temporada INT NOT null,
-                             CONSTRAINT fk_estadisticas_temporada FOREIGN KEY(id_temporada) REFERENCES temporada(id),
-                             id_jugador int not null,
-                             constraint fk_estadisticas_jugador foreign key (id_jugador) references jugador(id)
+CREATE TABLE IF NOT EXISTS liga(
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(200) NOT NULL,
+num_equipos INT NOT NULL,
+descripcion VARCHAR(700) NOT NULL,
+fecha_fundacion TIMESTAMP NOT NULL
 );
 
 
-CREATE TABLE equipo_temporada (
-                                  id SERIAL PRIMARY KEY,
-                                  id_equipo INT NOT NULL,
-                                  id_temporada INT NOT NULL,
-                                  CONSTRAINT fk_equipo FOREIGN KEY (id_equipo) REFERENCES equipo(id),
-                                  CONSTRAINT fk_temporada FOREIGN KEY (id_temporada) REFERENCES temporada(id)
-);
-
-CREATE TABLE equipo_jugador (
-                                id SERIAL PRIMARY KEY,
-                                id_equipo INT NOT NULL,
-                                id_jugador INT NOT NULL,
-                                CONSTRAINT fk_equipo FOREIGN KEY(id_equipo) REFERENCES equipo(id),
-                                CONSTRAINT fk_jugador FOREIGN KEY(id_jugador) REFERENCES jugador(id)
-);
-
-CREATE TABLE equipo_liga (
-                             id SERIAL PRIMARY KEY,
-                             id_equipo INT NOT NULL,
-                             id_liga INT NOT NULL,
-                             id_temporada INT NOT NULL,
-                             CONSTRAINT fk_equipo FOREIGN KEY (id_equipo) REFERENCES equipo(id),
-                             CONSTRAINT fk_liga FOREIGN KEY (id_liga) REFERENCES liga(id),
-                             CONSTRAINT fk_temporada FOREIGN KEY (id_temporada) REFERENCES temporada(id),
-                             UNIQUE (id_equipo, id_liga, id_temporada)
-);
-
-CREATE TABLE clasificacion (
-                               id SERIAL PRIMARY KEY,
-                               id_equipo_liga INT NOT NULL,
-                               puesto INT NOT NULL,
-                               victorias INT NOT NULL,
-                               empates INT NOT NULL,
-                               derrotas INT NOT NULL,
-                               goles_a_favor INT NOT NULL,
-                               goles_en_contra INT NOT NULL,
-                               goles_diferencia INT NOT NULL,
-                               puntos INT NOT NULL,
-                               CONSTRAINT fk_clasificacion_equipo_liga FOREIGN KEY (id_equipo_liga) REFERENCES equipo_liga(id)
+CREATE TABLE IF NOT EXISTS equipo(
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(200) NOT NULL,
+descripcion VARCHAR(700) NOT NULL,
+fecha_fundacion TIMESTAMP NOT NULL,
+imagen VARCHAR(800) NOT NULL,
+id_liga INT NOT NULL,
+CONSTRAINT fk_equipo_liga FOREIGN KEY(id_liga) REFERENCES liga(id),
+id_entrenador INT NOT NULL,
+CONSTRAINT fk_equipo_entrenador FOREIGN KEY(id_entrenador) REFERENCES entrenador(id)
 );
 
 
+CREATE TABLE IF NOT EXISTS trofeo(
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(300) NOT NULL,
+imagen VARCHAR(800) NOT NULL,
+id_liga INT NOT NULL,
+CONSTRAINT fk_trofeo_liga FOREIGN KEY(id_liga) REFERENCES liga(id),
+id_equipo INT NOT NULL,
+CONSTRAINT fk_trofeo_equipo FOREIGN KEY(id_equipo) REFERENCES equipo(id)
+);
 
+
+CREATE TABLE IF NOT EXISTS jugador(
+id SERIAL PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+apellido VARCHAR(250) NOT NULL,
+dorsal INT NOT NULL,
+imagen VARCHAR(800),
+fecha_nacimiento TIMESTAMP NOT NULL,
+posicion INT NOT NULL,
+dni CHAR(9) NOT NULL,
+id_usuario INT NOT NULL,
+CONSTRAINT fk_jugador_usuario FOREIGN KEY(id_usuario) REFERENCES usuario(id),
+id_equipo INT NOT NULL,
+CONSTRAINT fk_jugador_equipo FOREIGN KEY(id_equipo) REFERENCES equipo(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS noticias(
+id SERIAL PRIMARY KEY,
+imagen VARCHAR(800),
+titulo VARCHAR(450) NOT NULL,
+descripcion VARCHAR(1000) NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS temporada(
+id SERIAL PRIMARY KEY,
+fecha_inicio TIMESTAMP NOT NULL,
+fecha_fin TIMESTAMP NOT NULL,
+id_liga INT NOT NULL,
+CONSTRAINT fk_temporada_liga FOREIGN KEY(id_liga) REFERENCES liga(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS jornada(
+id SERIAL PRIMARY KEY,
+gol_local INT NOT NULL,
+gol_visitante INT NOT NULL,
+fecha TIMESTAMP NOT NULL,
+id_equipo_local INT NOT NULL,
+CONSTRAINT fk_jornada_equipo_local FOREIGN KEY(id_equipo_local) REFERENCES equipo(id),
+id_equipo_visitante INT NOT NULL,
+CONSTRAINT fk_jornada_equipo_visitante FOREIGN KEY(id_equipo_visitante) REFERENCES equipo(id),
+id_temporada INT NOT NULL,
+CONSTRAINT fk_jornada_temporada FOREIGN KEY(id_temporada) REFERENCES temporada(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS estadisticas(
+id SERIAL PRIMARY KEY,
+partidos_jugados INT,
+goles INT,
+asistencias INT,
+tarjetas_amarillas INT,
+tarjetas_rojas INT,
+porteria_cero INT,
+id_temporada INT NOT NULL,
+CONSTRAINT fk_estadisticas_temporada FOREIGN KEY(id_temporada) REFERENCES temporada(id),
+id_jugador INT NOT NULL,
+CONSTRAINT fk_estadisticas_jugador FOREIGN KEY (id_jugador) REFERENCES jugador(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS clasificacion (
+ id SERIAL PRIMARY KEY,
+ puesto INT NOT NULL,
+ victorias INT NOT NULL,
+ empates INT NOT NULL,
+ derrotas INT NOT NULL,
+ goles_a_favor INT NOT NULL,
+ goles_en_contra INT NOT NULL,
+ goles_diferencia INT NOT NULL,
+ puntos INT NOT NULL,
+ id_equipo INT NOT NULL,
+ CONSTRAINT fk_datos_equipo_equipo FOREIGN KEY (id_equipo) REFERENCES equipo(id),
+id_temporada INT NOT NULL,
+CONSTRAINT fk_datos_equipo_temporada FOREIGN KEY(id_temporada) REFERENCES temporada(id)
+);
+                                                                                                                            (5, 2, 1, 2, 5, 6, -1, 7, 5, 5);

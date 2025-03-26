@@ -25,4 +25,13 @@ public class Trofeo {
     @Column(name = "imagen", nullable = false)
     private String imagen;
 
+    @OneToOne
+    @JoinColumn(name = "id_liga", referencedColumnName = "id", nullable = false)
+    private Liga liga;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="id_equipo", nullable = false)
+    private Equipo equipo;
+
+
 }
