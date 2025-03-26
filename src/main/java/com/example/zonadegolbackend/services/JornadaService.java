@@ -1,12 +1,12 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.entity.Equipo;
-import com.example.zonadegolbackend.entity.EquipoLiga;
+//import com.example.zonadegolbackend.entity.EquipoLiga;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.repository.EquipoRepository;
 import com.example.zonadegolbackend.repository.JornadaRepository;
-import com.example.zonadegolbackend.repository.LigaEquipoRepository;
+//import com.example.zonadegolbackend.repository.LigaEquipoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class JornadaService {
 
     private final JornadaRepository jornadaRepository;
     private final EquipoRepository equipoRepository;
-    private final LigaEquipoRepository ligaEquipoRepository;
+//    private final LigaEquipoRepository ligaEquipoRepository;
 
     public List<Jornada> findAll() {
         return jornadaRepository.findAll();
@@ -54,14 +54,14 @@ public class JornadaService {
         jornadaRepository.deleteById(id);
     }
 
-    public List<Jornada> generarJornadas(Temporada temporada) {
-        List<EquipoLiga> equiposLiga = ligaEquipoRepository.findByTemporada(temporada);
-        List<Equipo> equipos = new ArrayList<Equipo>();
-        for (EquipoLiga equipoLiga : equiposLiga) {
-            equipos.add(equipoLiga.getEquipo());
-        }
-        return generarJornadas(equipos, temporada);
-    }
+//    public List<Jornada> generarJornadas(Temporada temporada) {
+//        List<EquipoLiga> equiposLiga = ligaEquipoRepository.findByTemporada(temporada);
+//        List<Equipo> equipos = new ArrayList<Equipo>();
+//        for (EquipoLiga equipoLiga : equiposLiga) {
+//            equipos.add(equipoLiga.getEquipo());
+//        }
+//        return generarJornadas(equipos, temporada);
+//    }
 
     public List<Jornada> generarJornadas(List<Equipo> equipos, Temporada temporada) {
         List<Jornada> jornadas = new ArrayList<>();

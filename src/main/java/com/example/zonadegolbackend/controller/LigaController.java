@@ -25,9 +25,9 @@ public class LigaController {
         return ligaService.findAll();
     }
 
-    @PostMapping("/crear")
-    public ResponseEntity<Liga> crearLiga(@RequestBody Liga liga) {
-        Liga savedLiga = ligaService.crearLiga(liga);
-        return ResponseEntity.ok(savedLiga);
-    }
+//    @PostMapping("/crear")
+//    public ResponseEntity<Liga> crearLiga(@RequestBody Liga liga) {
+//        Liga savedLiga = ligaService.crearLiga(liga);
+//        return ResponseEntity.ok(savedLiga);
+//    }
 }

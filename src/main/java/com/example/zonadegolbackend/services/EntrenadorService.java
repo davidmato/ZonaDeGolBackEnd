@@ -23,7 +23,7 @@ public class EntrenadorService {
     private final UsuarioRepository usuarioRepository;
     private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
-    private final EquipoJugadorRepository equipoJugadorRepository;
+//    private final EquipoJugadorRepository equipoJugadorRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -168,11 +168,11 @@ public class EntrenadorService {
 
         jugador = jugadorRepository.save(jugador);
 
-        EquipoJugador equipoJugador = new EquipoJugador();
-        equipoJugador.setEquipo(equipo);
-        equipoJugador.setJugador(jugador);
-
-        equipoJugadorRepository.save(equipoJugador);
+//        EquipoJugador equipoJugador = new EquipoJugador();
+//        equipoJugador.setEquipo(equipo);
+//        equipoJugador.setJugador(jugador);
+//
+//        equipoJugadorRepository.save(equipoJugador);
 
         return jugador;
     }

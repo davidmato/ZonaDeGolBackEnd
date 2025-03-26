@@ -25,11 +25,11 @@ public class JugadorController {
     public Jugador crearJugador(@RequestBody Jugador jugador) {
        return jugadorService.crearJugador(jugador);
     }
-
-    @PostMapping("/{idEquipo}/jugadores")
-    public void associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
-        jugadorService.associatePlayersWithTeam(idEquipo, idJugadores);
-    }
+//
+//    @PostMapping("/{idEquipo}/jugadores")
+//    public void associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
+//        jugadorService.associatePlayersWithTeam(idEquipo, idJugadores);
+//    }
 
 
 }

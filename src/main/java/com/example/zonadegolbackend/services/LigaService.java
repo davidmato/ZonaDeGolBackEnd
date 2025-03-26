@@ -22,15 +22,15 @@ public class LigaService {
         return ligaRepository.findAll();
     }
 
-    @Transactional
-    public Liga crearLiga(Liga liga) {
-
-        Trofeo trofeo = liga.getTrofeo();
-        if (trofeo != null) {
-            trofeoRepository.save(trofeo);
-        }
-        return ligaRepository.save(liga);
-    }
+//    @Transactional
+//    public Liga crearLiga(Liga liga) {
+//
+//        Trofeo trofeo = liga.getTrofeo();
+//        if (trofeo != null) {
+//            trofeoRepository.save(trofeo);
+//        }
+//        return ligaRepository.save(liga);
+//    }
 
 
 
