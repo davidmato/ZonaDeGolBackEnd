@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,10 +26,10 @@ public class Temporada {
     private Integer id;
 
     @Column(name="fecha_inicio", nullable = false)
-    private LocalDateTime fechaInicio;
+    private LocalDate fechaInicio;
 
     @Column(name="fecha_fin", nullable = false)
-    private LocalDateTime fechaFin;
+    private LocalDate fechaFin;
 
     @ManyToOne
     @JoinColumn(name = "id_liga", referencedColumnName = "id")
