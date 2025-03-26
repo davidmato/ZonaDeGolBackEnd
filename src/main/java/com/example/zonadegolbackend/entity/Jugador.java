@@ -48,6 +48,10 @@ public class Jugador {
     @Column(name = "imagen", nullable = true)
     private String imagen;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_equipo", nullable = false)
+    private Equipo equipo;
+
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")

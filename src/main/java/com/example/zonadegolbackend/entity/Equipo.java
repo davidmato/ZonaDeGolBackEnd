@@ -39,4 +39,9 @@ public class Equipo {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_entrenador", nullable = false)
     private Entrenador entrenador;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_liga", nullable = false)
+    private Liga liga;
+
 }

@@ -22,8 +22,14 @@ public class Jornada {
     @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha;
+
+    @Column(name="gol_local",nullable = false)
+    private Integer golLocal;
+
+    @Column(name="gol_visitante",nullable = false)
+    private Integer golVisitante;
 
     @ManyToOne
     @JoinColumn(name = "id_equipo_local", nullable = false)
