@@ -36,4 +36,8 @@ public class TemporadaService {
         int currentYear = LocalDate.now().getYear();
         return temporadaRepository.findByYear(currentYear);
     }
+
+    public Temporada buscarTemporadaMasReciente() {
+        return temporadaRepository.findLatest().getFirst();
+    }
 }
