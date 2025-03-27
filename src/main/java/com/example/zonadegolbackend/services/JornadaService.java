@@ -7,6 +7,7 @@ import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.repository.EquipoRepository;
 import com.example.zonadegolbackend.repository.JornadaRepository;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
+import com.example.zonadegolbackend.repository.TemporadaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class JornadaService {
 
     private final JornadaRepository jornadaRepository;
     private final EquipoRepository equipoRepository;
+    private final TemporadaRepository temporadaRepository;
 //    private final LigaEquipoRepository ligaEquipoRepository;
 
     public List<Jornada> findAll() {
@@ -63,7 +65,11 @@ public class JornadaService {
 //        return generarJornadas(equipos, temporada);
 //    }
 
-    public List<Jornada> generarJornadas(List<Equipo> equipos, Temporada temporada) {
+    public List<Jornada> generarJornadas(List<Integer> equipoIds, Integer temporadaId) {
+        List<Equipo> equipos = equipoRepository.findAllById(equipoIds);
+        Temporada temporada = temporadaRepository.findById(temporadaId)
+                .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
+
         List<Jornada> jornadas = new ArrayList<>();
         Random random = new Random();
 
@@ -72,7 +78,6 @@ public class JornadaService {
         }
 
         Map<String, Integer> enfrentamientos = new HashMap<>();
-
         List<List<Equipo>> enfrentamientosPendientes = new ArrayList<>();
 
         for (int i = 0; i < equipos.size(); i++) {
@@ -90,29 +95,31 @@ public class JornadaService {
             enfrentamientos.putIfAbsent(claveEnfrentamiento, 0);
 
             if (enfrentamientos.get(claveEnfrentamiento) < 2) {
-
                 Jornada jornadaIda = new Jornada();
-                jornadaIda.setFecha(LocalDateTime.now().plusDays(jornadas.size())); // Espaciado de días para ejemplo
+                jornadaIda.setFecha(LocalDateTime.now().plusDays(jornadas.size()));
                 jornadaIda.setEquipoLocal(equipoLocal);
                 jornadaIda.setEquipoVisitante(equipoVisitante);
                 jornadaIda.setTemporada(temporada);
+                jornadaIda.setGolLocal(0);
+                jornadaIda.setGolVisitante(0);
                 jornadas.add(jornadaIda);
                 enfrentamientos.put(claveEnfrentamiento, enfrentamientos.get(claveEnfrentamiento) + 1);
-
 
                 Jornada jornadaVuelta = new Jornada();
                 jornadaVuelta.setFecha(LocalDateTime.now().plusDays(jornadas.size()));
                 jornadaVuelta.setEquipoLocal(equipoVisitante);
                 jornadaVuelta.setEquipoVisitante(equipoLocal);
                 jornadaVuelta.setTemporada(temporada);
+                jornadaVuelta.setGolLocal(0);
+                jornadaVuelta.setGolVisitante(0);
                 jornadas.add(jornadaVuelta);
                 enfrentamientos.put(claveEnfrentamiento, enfrentamientos.get(claveEnfrentamiento) + 1);
             }
         }
 
         jornadaRepository.saveAll(jornadas);
-
         return jornadas;
     }
+
 
 }
