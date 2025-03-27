@@ -2,9 +2,12 @@ package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.entity.Equipo;
 //import com.example.zonadegolbackend.entity.EquipoJugador;
+import com.example.zonadegolbackend.entity.Estadisticas;
 import com.example.zonadegolbackend.entity.Jugador;
 //import com.example.zonadegolbackend.repository.EquipoJugadorRepository;
+import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.repository.EquipoRepository;
+import com.example.zonadegolbackend.repository.EstadisticasRepository;
 import com.example.zonadegolbackend.repository.JugadorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ public class JugadorService {
     private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
 //    private final EquipoJugadorRepository equipoJugadorRepository;
+    private final EstadisticasRepository estadisticasRepository;
+    private final TemporadaService temporadaService;
 
 
     public List<Jugador> findAll() {
@@ -42,6 +47,16 @@ public class JugadorService {
         nuevoJugador.setPosicion(jugador.getPosicion());
         nuevoJugador.setDni(jugador.getDni());
         nuevoJugador.setUsuario(jugador.getUsuario());
+
+        Estadisticas estadisticas = new Estadisticas();
+        estadisticas.setGoles(0);
+        estadisticas.setAsistencias(0);
+        estadisticas.setTarjetasAmarillas(0);
+        estadisticas.setTarjetasRojas(0);
+        estadisticas.setPartidosJugados(0);
+        estadisticas.setPorteriaCero(0);
+        estadisticas.setTemporada(temporadaService.buscarTemporadaPorAnioActual());
+        estadisticas.setJugador(nuevoJugador);
 
         return jugadorRepository.save(nuevoJugador);
     }
