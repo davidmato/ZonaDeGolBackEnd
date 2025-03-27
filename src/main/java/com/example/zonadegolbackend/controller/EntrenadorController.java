@@ -42,9 +42,9 @@ public class EntrenadorController {
         entrenadorService.delete(idEntrenador);
     }
 
-    @PostMapping("/crear/equipo")
-    public Equipo crearEquipo(@RequestBody CrearEquipo crearEquipo) {
-       return entrenadorService.createEquipo(crearEquipo);
+    @PostMapping("/crear/equipo/{idLiga}")
+    public Equipo crearEquipo(@RequestBody CrearEquipo crearEquipo,@PathVariable Integer idLiga) {
+       return entrenadorService.createEquipo(crearEquipo,idLiga);
     }
 
 

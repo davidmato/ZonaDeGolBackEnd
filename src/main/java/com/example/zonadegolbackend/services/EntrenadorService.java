@@ -23,7 +23,7 @@ public class EntrenadorService {
     private final UsuarioRepository usuarioRepository;
     private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
-//    private final EquipoJugadorRepository equipoJugadorRepository;
+    private final LigaRepository ligaRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -101,7 +101,7 @@ public class EntrenadorService {
         usuarioRepository.delete(usuario);
     }
 
-    public Equipo createEquipo(CrearEquipo crearEquipo) {
+    public Equipo createEquipo(CrearEquipo crearEquipo, Integer idLiga) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -119,12 +119,16 @@ public class EntrenadorService {
             throw new RuntimeException("El entrenador ya tiene un equipo");
         }
 
+        Liga liga = ligaRepository.findById(idLiga)
+                .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+
         Equipo equipo = new Equipo();
         equipo.setNombre(crearEquipo.getNombre());
         equipo.setDescripcion(crearEquipo.getDescripcion());
         equipo.setFechaFundacion(crearEquipo.getFechaFundacion());
         equipo.setImagen(crearEquipo.getImagen());
         equipo.setEntrenador(entrenador);
+        equipo.setLiga(liga);
 
         return equipoRepository.save(equipo);
     }
@@ -165,14 +169,9 @@ public class EntrenadorService {
         jugador.setImagen(crearJugador.getImagen());
         jugador.setDni(crearJugador.getDni());
         jugador.setUsuario(usuarioJugador);
-
+        jugador.setEquipo(equipo);
         jugador = jugadorRepository.save(jugador);
 
-//        EquipoJugador equipoJugador = new EquipoJugador();
-//        equipoJugador.setEquipo(equipo);
-//        equipoJugador.setJugador(jugador);
-//
-//        equipoJugadorRepository.save(equipoJugador);
 
         return jugador;
     }

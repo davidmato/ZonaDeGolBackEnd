@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,8 +31,8 @@ public class Equipo {
     private String descripcion;
 
     @Column(name = "fecha_fundacion", nullable = false)
-    @DateTimeFormat()
-    private LocalDateTime fechaFundacion;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate fechaFundacion;
 
     @Column(name = "imagen", nullable = false)
     private String imagen;

@@ -1,5 +1,7 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.GenerarJornadaDTO;
+import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.services.JornadaService;
@@ -36,9 +38,9 @@ public class JornadaController {
         jornadaService.eliminarJornada(id);
     }
 
-//    @PostMapping("/generar")
-//    public ResponseEntity<List<Jornada>> generarJornadas(@RequestBody Temporada temporada) {
-//        List<Jornada> jornadas = jornadaService.generarJornadas(temporada);
-//        return ResponseEntity.ok(jornadas);
-//    }
+    @PostMapping("/generar")
+    public ResponseEntity<List<Jornada>> generarJornadas(@RequestBody GenerarJornadaDTO request) {
+        List<Jornada> jornadas = jornadaService.generarJornadas(request.getEquipos(), request.getTemporada());
+        return ResponseEntity.ok(jornadas);
+    }
 }
