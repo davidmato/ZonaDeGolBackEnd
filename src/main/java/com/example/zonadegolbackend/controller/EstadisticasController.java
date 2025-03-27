@@ -19,6 +19,11 @@ public class EstadisticasController {
         return estadisticasService.findAll();
     }
 
+    @GetMapping("/jugador/listar/{jugadorId}")
+    public List<Estadisticas> findByJugadorId(@PathVariable Integer jugadorId) {
+        return estadisticasService.findByJugadorId(jugadorId);
+    }
+
     @PostMapping("/crear")
     public Estadisticas crearEstadisticas(@RequestBody Estadisticas estadisticas) {
         return estadisticasService.crearEstadisticas(estadisticas);
@@ -27,6 +32,11 @@ public class EstadisticasController {
     @PutMapping("/editar/{id}")
     public Estadisticas editarEstadisticas(@PathVariable Integer id, @RequestBody Estadisticas estadisticas) {
         return estadisticasService.editarEstadisticas(id, estadisticas);
+    }
+
+    @PutMapping("/jugador/editar/{jugadorId}")
+    public Estadisticas editarEstadisticasJugador(@PathVariable Integer jugadorId, @RequestBody Estadisticas estadisticas) {
+        return estadisticasService.editarEstadisticasJugador(jugadorId, estadisticas);
     }
 
     @DeleteMapping("/eliminar/{id}")

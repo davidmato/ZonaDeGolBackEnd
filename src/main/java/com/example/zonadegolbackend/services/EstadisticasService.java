@@ -22,6 +22,10 @@ public class EstadisticasService {
         return estadisticasRepository.findAll();
     }
 
+    public List<Estadisticas> findByJugadorId(Integer jugadorId) {
+        return estadisticasRepository.findByJugadorId(jugadorId);
+    }
+
     public Estadisticas crearEstadisticas(Estadisticas estadisticas) {
 
         Estadisticas nuevaEstadisticas = new Estadisticas();
@@ -53,6 +57,27 @@ public class EstadisticasService {
 
         return estadisticasRepository.save(estadisticasExistente);
     }
+
+    public Estadisticas editarEstadisticasJugador(Integer idJugador, Estadisticas estadisticas) {
+        List<Estadisticas> estadisticasExistentes = estadisticasRepository.findLatestByJugadorId(idJugador);
+
+        if (estadisticasExistentes.isEmpty()) {
+            throw new RuntimeException("Estadisticas no encontradas");
+        }
+
+        Estadisticas estadisticasExistente = estadisticasExistentes.getFirst();
+
+        estadisticasExistente.setPartidosJugados(estadisticas.getPartidosJugados());
+        estadisticasExistente.setGoles(estadisticas.getGoles());
+        estadisticasExistente.setAsistencias(estadisticas.getAsistencias());
+        estadisticasExistente.setTarjetasAmarillas(estadisticas.getTarjetasAmarillas());
+        estadisticasExistente.setTarjetasRojas(estadisticas.getTarjetasRojas());
+        estadisticasExistente.setPorteriaCero(estadisticas.getPorteriaCero());
+
+        return estadisticasRepository.save(estadisticasExistente);
+    }
+
+
 
     public void eliminarEstadisticas(Integer id) {
         estadisticasRepository.deleteById(id);
