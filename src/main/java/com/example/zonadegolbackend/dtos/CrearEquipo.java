@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class CrearEquipo {
     private String nombre;
     private String descripcion;
-    private LocalDateTime fechaFundacion;
+    private LocalDate fechaFundacion;
     private String imagen;
     private String nombreEntrenador;
     private String apellido;
