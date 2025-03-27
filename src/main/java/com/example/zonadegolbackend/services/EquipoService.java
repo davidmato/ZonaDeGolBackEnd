@@ -45,12 +45,16 @@ public class EquipoService {
         entrenador.setUsuario(usuario);
         entrenadorRepository.save(entrenador);
 
+        Liga liga = ligaRepository.findById(crearEquipo.getIdLiga())
+                .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+
         Equipo equipo = new Equipo();
         equipo.setNombre(crearEquipo.getNombre());
         equipo.setDescripcion(crearEquipo.getDescripcion());
         equipo.setFechaFundacion(crearEquipo.getFechaFundacion());
         equipo.setImagen(crearEquipo.getImagen());
         equipo.setEntrenador(entrenador);
+        equipo.setLiga(liga);
 
         return equipoRepository.save(equipo);
     }
