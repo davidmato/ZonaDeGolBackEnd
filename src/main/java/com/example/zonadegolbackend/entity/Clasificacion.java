@@ -50,6 +50,9 @@ public class Clasificacion {
     @Column(name="puntos", nullable = false)
     private Integer puntos;
 
+    @Column(name="partidos_jugados", nullable = false)
+    private Integer partidosJugados;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo", nullable = false)
     private Equipo equipo;

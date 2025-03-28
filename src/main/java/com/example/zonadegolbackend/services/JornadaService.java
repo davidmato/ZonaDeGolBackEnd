@@ -1,9 +1,11 @@
 package com.example.zonadegolbackend.services;
 
+import com.example.zonadegolbackend.entity.Clasificacion;
 import com.example.zonadegolbackend.entity.Equipo;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
+import com.example.zonadegolbackend.repository.ClasificacionRepository;
 import com.example.zonadegolbackend.repository.EquipoRepository;
 import com.example.zonadegolbackend.repository.JornadaRepository;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
@@ -22,6 +24,8 @@ public class JornadaService {
     private final JornadaRepository jornadaRepository;
     private final EquipoRepository equipoRepository;
     private final TemporadaRepository temporadaRepository;
+    private final ClasificacionRepository clasificacionRepository;
+    private final ClasificacionService clasificacionService;
 //    private final LigaEquipoRepository ligaEquipoRepository;
 
     public List<Jornada> findAll() {
@@ -121,17 +125,49 @@ public class JornadaService {
         return jornadas;
     }
 
-//    public void actualizarPuntos (Jornada jornada) {
-//
-//        Equipo equipoLocal = jornada.getEquipoLocal();
-//        Equipo equipoVisitante = jornada.getEquipoVisitante();
-//
-//        int golesLocal = jornada.getGolLocal();
-//        int golesVisitante = jornada.getGolVisitante();
-//
-//        if(golesLocal > golesVisitante) {
-//            equipoLocal.setPuntos
-//        }
-//    }
+    public void actualizarPuntos (Jornada jornada) {
+
+        Equipo equipoLocal = jornada.getEquipoLocal();
+        Equipo equipoVisitante = jornada.getEquipoVisitante();
+        Temporada temporada = jornada.getTemporada();
+
+
+        Clasificacion clasificacionLocal = clasificacionRepository.findByEquipoAndTemporada(equipoLocal, temporada);
+        Clasificacion clasificacionVisitante = clasificacionRepository.findByEquipoAndTemporada(equipoVisitante, temporada);
+
+
+        int golesLocal = jornada.getGolLocal();
+        int golesVisitante = jornada.getGolVisitante();
+
+        if(golesLocal > golesVisitante) {
+            clasificacionLocal.setPuntos(clasificacionLocal.getPuntos() + 3);
+            clasificacionLocal.setVictorias(clasificacionLocal.getVictorias() + 1);
+            clasificacionVisitante.setDerrotas(clasificacionVisitante.getDerrotas() + 1);
+        }else if(golesLocal == golesVisitante) {
+            clasificacionLocal.setPuntos(clasificacionLocal.getPuntos() + 1);
+            clasificacionVisitante.setPuntos(clasificacionVisitante.getPuntos() + 1);
+            clasificacionLocal.setEmpates(clasificacionLocal.getEmpates() + 1);
+            clasificacionVisitante.setEmpates(clasificacionVisitante.getEmpates() + 1);
+        }else{
+            clasificacionVisitante.setPuntos(clasificacionVisitante.getPuntos() + 3);
+            clasificacionVisitante.setVictorias(clasificacionVisitante.getVictorias() + 1);
+            clasificacionLocal.setDerrotas(clasificacionLocal.getDerrotas() + 1);
+        }
+
+        clasificacionLocal.setGolAFavor(clasificacionLocal.getGolAFavor() + golesLocal);
+        clasificacionLocal.setGolEnContra(clasificacionLocal.getGolEnContra() + golesVisitante);
+        clasificacionVisitante.setGolAFavor(clasificacionVisitante.getGolAFavor() + golesVisitante);
+        clasificacionVisitante.setGolEnContra(clasificacionVisitante.getGolEnContra() + golesLocal);
+        clasificacionLocal.setPartidosJugados(clasificacionLocal.getPartidosJugados() + 1);
+        clasificacionVisitante.setPartidosJugados(clasificacionVisitante.getPartidosJugados() + 1);
+
+        clasificacionLocal.setGolDiferencia(clasificacionLocal.getGolAFavor() - clasificacionLocal.getGolEnContra());
+        clasificacionVisitante.setGolDiferencia(clasificacionVisitante.getGolAFavor() - clasificacionVisitante.getGolEnContra());
+
+        clasificacionRepository.save(clasificacionLocal);
+        clasificacionRepository.save(clasificacionVisitante);
+
+        clasificacionService.actualizarPuestos();
+    }
 
 }

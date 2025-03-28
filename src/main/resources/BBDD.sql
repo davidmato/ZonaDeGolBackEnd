@@ -149,9 +149,18 @@ CREATE TABLE IF NOT EXISTS clasificacion (
  goles_en_contra INT NOT NULL,
  goles_diferencia INT NOT NULL,
  puntos INT NOT NULL,
+ partidos_jugados INT NOT NULL,
  id_equipo INT NOT NULL,
  CONSTRAINT fk_datos_equipo_equipo FOREIGN KEY (id_equipo) REFERENCES equipo(id),
 id_temporada INT NOT NULL,
 CONSTRAINT fk_datos_equipo_temporada FOREIGN KEY(id_temporada) REFERENCES temporada(id)
 );
-                                                                                                                            (5, 2, 1, 2, 5, 6, -1, 7, 5, 5);
+
+create table temporada_liga(
+id serial primary key,
+id_temporada int not null,
+constraint fk_temporada_liga_temporada foreign key(id_temporada) references temporada(id),
+id_liga int not null,
+constraint fk_temporada_liga_liga foreign key(id_liga) references liga(id)
+);
+

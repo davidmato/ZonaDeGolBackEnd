@@ -43,4 +43,10 @@ public class JornadaController {
         List<Jornada> jornadas = jornadaService.generarJornadas(request.getEquipos(), request.getTemporada());
         return ResponseEntity.ok(jornadas);
     }
+
+    @PutMapping("/actualizar-puntos")
+    public ResponseEntity<Void> actualizarPuntos(@RequestBody Jornada jornada) {
+        jornadaService.actualizarPuntos(jornada);
+        return ResponseEntity.noContent().build();
+    }
 }
