@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -36,10 +36,5 @@ public class Liga {
     private String descripcion;
 
     @Column(name="fecha_fundacion", nullable = false)
-    private LocalDateTime fecha_fundacion;
-
-
-    @OneToMany(mappedBy = "liga", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Temporada> temporadas;
+    private LocalDate fecha_fundacion;
 }
