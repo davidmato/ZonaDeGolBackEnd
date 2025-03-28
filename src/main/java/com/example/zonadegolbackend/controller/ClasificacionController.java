@@ -41,8 +41,8 @@ public class ClasificacionController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/por-liga-y-temporada")
-    public List<Clasificacion> obtenerClasificacion(@RequestParam Integer ligaId, @RequestParam Integer temporadaId) {
+    @GetMapping("/buscar/liga/temporada/{ligaId}/{temporadaId}")
+    public List<Clasificacion> obtenerClasificacion(@PathVariable Integer ligaId, @PathVariable Integer temporadaId) {
         clasificacionService.actualizarPuestosYObtenerClasificacion(ligaId, temporadaId);
         return clasificacionService.obtenerClasificacion(ligaId, temporadaId);
     }
