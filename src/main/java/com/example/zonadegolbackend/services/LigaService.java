@@ -32,6 +32,33 @@ public class LigaService {
 //        return ligaRepository.save(liga);
 //    }
 
+    public Liga crearLiga(Liga liga){
+
+        Liga nuevaLiga = new Liga();
+
+        nuevaLiga.setNombre(liga.getNombre());
+        nuevaLiga.setNumEquipos(liga.getNumEquipos());
+        nuevaLiga.setDescripcion(liga.getDescripcion());
+        nuevaLiga.setFecha_fundacion(liga.getFecha_fundacion());
+
+        return ligaRepository.save(nuevaLiga);
+    }
+
+    public Liga editarLiga(Integer id, Liga liga){
+        Liga ligaExistente = ligaRepository.findById(id).orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+        ligaExistente.setNombre(liga.getNombre());
+        ligaExistente.setNumEquipos(liga.getNumEquipos());
+        ligaExistente.setDescripcion(liga.getDescripcion());
+        ligaExistente.setFecha_fundacion(liga.getFecha_fundacion());
+
+        return ligaRepository.save(ligaExistente);
+    }
+
+    public void eliminarLiga(Integer id){
+        Liga ligaExistente = ligaRepository.findById(id).orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+
+        ligaRepository.delete(ligaExistente);
+    }
 
 
 }
