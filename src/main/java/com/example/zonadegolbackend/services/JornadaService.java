@@ -121,5 +121,17 @@ public class JornadaService {
         return jornadas;
     }
 
+//    public void actualizarPuntos (Jornada jornada) {
+//
+//        Equipo equipoLocal = jornada.getEquipoLocal();
+//        Equipo equipoVisitante = jornada.getEquipoVisitante();
+//
+//        int golesLocal = jornada.getGolLocal();
+//        int golesVisitante = jornada.getGolVisitante();
+//
+//        if(golesLocal > golesVisitante) {
+//            equipoLocal.setPuntos
+//        }
+//    }
 
 }
