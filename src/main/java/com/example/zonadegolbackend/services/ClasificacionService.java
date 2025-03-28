@@ -1,6 +1,8 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.entity.Clasificacion;
+import com.example.zonadegolbackend.entity.Equipo;
+import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.repository.ClasificacionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,47 @@ public class ClasificacionService {
         }
 
         clasificacionRepository.saveAll(clasificaciones);
+    }
+
+    public Clasificacion crearClasificacion(Equipo equipo, Temporada temporada) {
+        Clasificacion nuevaClasificacion = new Clasificacion();
+
+        nuevaClasificacion.setPuesto(0);
+        nuevaClasificacion.setVictorias(0);
+        nuevaClasificacion.setEmpates(0);
+        nuevaClasificacion.setDerrotas(0);
+        nuevaClasificacion.setGolAFavor(0);
+        nuevaClasificacion.setGolEnContra(0);
+        nuevaClasificacion.setGolDiferencia(0);
+        nuevaClasificacion.setPuntos(0);
+        nuevaClasificacion.setPartidosJugados(0);
+
+        nuevaClasificacion.setEquipo(equipo);
+        nuevaClasificacion.setTemporada(temporada);
+
+        clasificacionRepository.save(nuevaClasificacion);
+        return nuevaClasificacion;
+    }
+
+    public Clasificacion editarClasificacion(Integer id, Clasificacion clasificacionActualizada) {
+        Clasificacion clasificacionExistente = clasificacionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Clasificacion not found"));
+
+        clasificacionExistente.setPuesto(clasificacionActualizada.getPuesto());
+        clasificacionExistente.setVictorias(clasificacionActualizada.getVictorias());
+        clasificacionExistente.setEmpates(clasificacionActualizada.getEmpates());
+        clasificacionExistente.setDerrotas(clasificacionActualizada.getDerrotas());
+        clasificacionExistente.setGolAFavor(clasificacionActualizada.getGolAFavor());
+        clasificacionExistente.setGolEnContra(clasificacionActualizada.getGolEnContra());
+        clasificacionExistente.setGolDiferencia(clasificacionActualizada.getGolDiferencia());
+        clasificacionExistente.setPuntos(clasificacionActualizada.getPuntos());
+        clasificacionExistente.setPartidosJugados(clasificacionActualizada.getPartidosJugados());
+
+        clasificacionExistente.setEquipo(clasificacionActualizada.getEquipo());
+        clasificacionExistente.setTemporada(clasificacionActualizada.getTemporada());
+
+        clasificacionRepository.save(clasificacionExistente);
+        return clasificacionExistente;
     }
 //
 //
