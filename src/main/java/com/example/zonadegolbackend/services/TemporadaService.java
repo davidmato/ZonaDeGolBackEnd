@@ -21,16 +21,16 @@ public class TemporadaService {
         return temporadaRepository.findAll();
     }
 
-    public Temporada crearTemporada(Temporada temporada) {
-
-        Temporada nuevaTemporada = new Temporada();
-
-        nuevaTemporada.setFechaInicio(temporada.getFechaInicio());
-        nuevaTemporada.setFechaFin(temporada.getFechaFin());
-        nuevaTemporada.setLiga(temporada.getLiga());
-
-        return temporadaRepository.save(nuevaTemporada);
-    }
+//    public Temporada crearTemporada(Temporada temporada) {
+//
+//        Temporada nuevaTemporada = new Temporada();
+//
+//        nuevaTemporada.setFechaInicio(temporada.getFechaInicio());
+//        nuevaTemporada.setFechaFin(temporada.getFechaFin());
+//        nuevaTemporada.setLiga(temporada.getLiga());
+//
+//        return temporadaRepository.save(nuevaTemporada);
+//    }
 
     public Temporada buscarTemporadaPorAnioActual() {
         int currentYear = LocalDate.now().getYear();

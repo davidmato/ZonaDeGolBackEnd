@@ -20,8 +20,8 @@ public class TemporadaController {
         return temporadaService.findAll();
     }
 
-    @PostMapping("/crear")
-    public Temporada crearTemporada(@RequestBody Temporada temporada) {
-        return temporadaService.crearTemporada(temporada);
-    }
+//    @PostMapping("/crear")
+//    public Temporada crearTemporada(@RequestBody Temporada temporada) {
+//        return temporadaService.crearTemporada(temporada);
+//    }
 }
