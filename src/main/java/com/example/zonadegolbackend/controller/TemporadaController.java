@@ -24,4 +24,14 @@ public class TemporadaController {
     public Temporada crearTemporada(@RequestBody Temporada temporada) {
         return temporadaService.crearTemporada(temporada);
     }
+
+    @PutMapping("/editar/{id}")
+    public Temporada editarTemporada(@PathVariable Integer id, @RequestBody Temporada temporada) {
+        return temporadaService.editarTemporada(id, temporada);
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public void eliminarTemporada(@PathVariable Integer id) {
+        temporadaService.eliminarTemporada(id);
+    }
 }

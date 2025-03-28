@@ -40,6 +40,20 @@ public class TemporadaService {
         return nuevaTemporada;
     }
 
+    public Temporada editarTemporada(Integer id, Temporada temporada) {
+        Temporada temporadaExistente = temporadaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
+
+        temporadaExistente.setFechaInicio(temporada.getFechaInicio());
+        temporadaExistente.setFechaFin(temporada.getFechaFin());
+
+        return temporadaRepository.save(temporadaExistente);
+    }
+
+    public void eliminarTemporada(Integer id) {
+        temporadaRepository.deleteById(id);
+    }
+
     public Temporada buscarTemporadaPorAnioActual() {
         int currentYear = LocalDate.now().getYear();
         return temporadaRepository.findByYear(currentYear);
