@@ -25,9 +25,21 @@ public class LigaController {
         return ligaService.findAll();
     }
 
-//    @PostMapping("/crear")
-//    public ResponseEntity<Liga> crearLiga(@RequestBody Liga liga) {
-//        Liga savedLiga = ligaService.crearLiga(liga);
-//        return ResponseEntity.ok(savedLiga);
-//    }
+    @PostMapping("/crear")
+    public ResponseEntity<Liga> crearLiga(@RequestBody Liga liga) {
+        Liga savedLiga = ligaService.crearLiga(liga);
+        return ResponseEntity.ok(savedLiga);
+    }
+
+    @PutMapping("/editar/{id}")
+    public ResponseEntity<Liga> editarLiga(@PathVariable Integer id, @RequestBody Liga liga) {
+        Liga ligaEditada = ligaService.editarLiga(id, liga);
+        return ResponseEntity.ok(ligaEditada);
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<Liga> eliminarLiga(@PathVariable Integer id) {
+        ligaService.eliminarLiga(id);
+        return ResponseEntity.noContent().build();
+    }
 }
