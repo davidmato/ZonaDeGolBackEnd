@@ -19,6 +19,8 @@ public class TemporadaService {
     private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
     private final EstadisticasRepository estadisticasRepository;
+    private final LigaRepository ligaRepository;
+    private final TemporadaLigaRepository temporadaLigaRepository;
 
     public List<Temporada> findAll() {
         return temporadaRepository.findAll();
@@ -30,10 +32,10 @@ public class TemporadaService {
 
         nuevaTemporada.setFechaInicio(temporada.getFechaInicio());
         nuevaTemporada.setFechaFin(temporada.getFechaFin());
-        nuevaTemporada.setLiga(temporada.getLiga());
         temporadaRepository.save(nuevaTemporada);
         crearClasificacionesEquipo(nuevaTemporada);
         crearEstadisticasJugador(nuevaTemporada);
+        crearTemporadaLiga(nuevaTemporada);
 
         return nuevaTemporada;
     }
@@ -78,6 +80,16 @@ public class TemporadaService {
             estadisticas.setTemporada(temporada);
             estadisticas.setJugador(jugador);
             estadisticasRepository.save(estadisticas);
+        }
+    }
+
+    public void crearTemporadaLiga(Temporada temporada) {
+        List<Liga> ligas = ligaRepository.findAll();
+        for (Liga liga : ligas) {
+            TemporadaLiga temporadaLiga = new TemporadaLiga();
+            temporadaLiga.setTemporada(temporada);
+            temporadaLiga.setLiga(liga);
+            temporadaLigaRepository.save(temporadaLiga);
         }
     }
 }
