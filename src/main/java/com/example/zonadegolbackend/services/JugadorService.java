@@ -47,6 +47,7 @@ public class JugadorService {
         nuevoJugador.setPosicion(jugador.getPosicion());
         nuevoJugador.setDni(jugador.getDni());
         nuevoJugador.setUsuario(jugador.getUsuario());
+        jugadorRepository.save(nuevoJugador);
 
         Estadisticas estadisticas = new Estadisticas();
         estadisticas.setGoles(0);
@@ -57,8 +58,9 @@ public class JugadorService {
         estadisticas.setPorteriaCero(0);
         estadisticas.setTemporada(temporadaService.buscarTemporadaPorAnioActual());
         estadisticas.setJugador(nuevoJugador);
+        estadisticasRepository.save(estadisticas);
 
-        return jugadorRepository.save(nuevoJugador);
+        return nuevoJugador;
     }
 
 //
