@@ -31,7 +31,4 @@ public class Temporada {
     @Column(name="fecha_fin", nullable = false)
     private LocalDate fechaFin;
 
-    @ManyToOne
-    @JoinColumn(name = "id_liga", referencedColumnName = "id")
-    private Liga liga;
 }
