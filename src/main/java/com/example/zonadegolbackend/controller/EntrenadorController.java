@@ -49,8 +49,9 @@ public class EntrenadorController {
 
 
     @PostMapping("crear/jugador")
-    public ResponseEntity<Jugador> createJugador(@RequestBody CrearJugador crearJugador) {
-        Jugador jugador = entrenadorService.createJugador(crearJugador);
-        return ResponseEntity.ok(jugador);
+    public Jugador createJugador(@RequestBody CrearJugador crearJugador) {
+        return entrenadorService.createJugador(crearJugador);
     }
+
+
 }

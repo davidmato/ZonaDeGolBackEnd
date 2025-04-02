@@ -170,6 +170,7 @@ public class EntrenadorService {
         jugador.setDni(crearJugador.getDni());
         jugador.setUsuario(usuarioJugador);
         jugador.setEquipo(equipo);
+
         jugador = jugadorRepository.save(jugador);
 
 
