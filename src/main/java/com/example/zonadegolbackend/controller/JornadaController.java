@@ -4,6 +4,7 @@ import com.example.zonadegolbackend.dtos.GenerarJornadaDTO;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
+import com.example.zonadegolbackend.repository.JornadaRepository;
 import com.example.zonadegolbackend.services.JornadaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.List;
 public class JornadaController {
 
     private final JornadaService jornadaService;
+    private final JornadaRepository jornadaRepository;
 
     @GetMapping("/listar")
     public List<Jornada> findAll() {
@@ -49,4 +51,12 @@ public class JornadaController {
         jornadaService.actualizarPuntos(jornada);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/equipo/{equipoId}")
+    public ResponseEntity<List<Jornada>> obtenerJornadasPorEquipo(@PathVariable Integer equipoId) {
+        List<Jornada> jornadas = jornadaRepository.findByEquipoLocal_IdOrEquipoVisitante_Id(equipoId, equipoId);
+        return ResponseEntity.ok(jornadas);
+    }
+
+
 }
