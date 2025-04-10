@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.JugadorDTO;
 import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.services.JugadorService;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,11 @@ public class JugadorController {
     public Jugador crearJugador(@RequestBody Jugador jugador) {
        return jugadorService.crearJugador(jugador);
     }
-//
-//    @PostMapping("/{idEquipo}/jugadores")
-//    public void associatePlayersWithTeam(@PathVariable Integer idEquipo, @RequestBody List<Integer> idJugadores) {
-//        jugadorService.associatePlayersWithTeam(idEquipo, idJugadores);
-//    }
 
+
+    @GetMapping("/buscar/{id}")
+    public JugadorDTO buscarPorId(@PathVariable Integer id) {
+        return jugadorService.findByIdDTO(id);
+    }
 
 }
