@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.services;
 
+import com.example.zonadegolbackend.dtos.JugadorDTO;
 import com.example.zonadegolbackend.entity.Equipo;
 //import com.example.zonadegolbackend.entity.EquipoJugador;
 import com.example.zonadegolbackend.entity.Estadisticas;
@@ -34,6 +35,27 @@ public class JugadorService {
         return jugadorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
     }
+
+
+
+    public JugadorDTO findByIdDTO(Integer id) {
+        Jugador jugador = jugadorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+
+        JugadorDTO jugadorDTO = new JugadorDTO();
+        jugadorDTO.setNombre(jugador.getNombre());
+        jugadorDTO.setApellido(jugador.getApellido());
+        jugadorDTO.setPosicion(jugador.getPosicion());
+        jugadorDTO.setDorsal(jugador.getDorsal());
+        jugadorDTO.setImagen(jugador.getImagen());
+        jugadorDTO.setDni(jugador.getDni());
+        jugadorDTO.setFechaNacimiento(jugador.getFechaNacimiento());
+        jugadorDTO.setCorreo(jugador.getUsuario().getCorreo());
+        jugadorDTO.setEquipo(jugador.getEquipo().getNombre());
+        return jugadorDTO;
+    }
+
+
 
     public Jugador crearJugador(Jugador jugador) {
 

@@ -48,7 +48,7 @@ public class EntrenadorController {
     }
 
 
-    @PostMapping("crear/jugador")
+    @PostMapping("/crear/jugador")
     public Jugador createJugador(@RequestBody CrearJugador crearJugador) {
         return entrenadorService.createJugador(crearJugador);
     }
