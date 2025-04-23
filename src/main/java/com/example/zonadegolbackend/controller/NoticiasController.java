@@ -5,6 +5,7 @@ import com.example.zonadegolbackend.entity.Noticias;
 import com.example.zonadegolbackend.entity.Usuario;
 import com.example.zonadegolbackend.services.NoticiasService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +25,15 @@ public class NoticiasController {
 
     @PostMapping("/crear")
     public Noticias crearNoticia(@RequestBody Noticias noticia) { return noticiasService.crearNoticia(noticia);
+    }
+
+    @PutMapping("/editar/{id}")
+    public Noticias editarNoticia(@PathVariable Integer id, @RequestBody Noticias noticia) {
+        return noticiasService.editarNoticia(id, noticia);
+    }
+
+    @DeleteMapping("/eliminar/{id}")
+    public void eliminarNoticia(@PathVariable Integer id) {
+        noticiasService.eliminarNoticia(id);
     }
 }
