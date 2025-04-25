@@ -1,9 +1,8 @@
 package com.example.zonadegolbackend.controller;
 
 
-import com.example.zonadegolbackend.entity.Liga;
-import com.example.zonadegolbackend.entity.Temporada;
-import com.example.zonadegolbackend.entity.Trofeo;
+import com.example.zonadegolbackend.dtos.JugadorDTO;
+import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.repository.LigaRepository;
 import com.example.zonadegolbackend.services.LigaService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,12 @@ public class LigaController {
         return ligaService.findAll();
     }
 
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<Liga> buscarById(@PathVariable Integer id) {
+        Liga liga = ligaService.findById(id);
+        return ResponseEntity.ok(liga);
+    }
+
     @PostMapping("/crear")
     public ResponseEntity<Liga> crearLiga(@RequestBody Liga liga) {
         Liga savedLiga = ligaService.crearLiga(liga);
@@ -41,5 +46,15 @@ public class LigaController {
     public ResponseEntity<Liga> eliminarLiga(@PathVariable Integer id) {
         ligaService.eliminarLiga(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/equipos/{ligaId}")
+    public List<Equipo> getEquiposByLigaId(@PathVariable Integer ligaId) {
+        return ligaService.findByLigaId(ligaId);
+    }
+
+    @GetMapping("/clasificacion/{ligaId}")
+    public List<Clasificacion> obtenerClasificacionLigaTemporadaReciente(@PathVariable Integer ligaId) {
+        return ligaService.obtenerClasificacionLigaTemporadaReciente(ligaId);
     }
 }

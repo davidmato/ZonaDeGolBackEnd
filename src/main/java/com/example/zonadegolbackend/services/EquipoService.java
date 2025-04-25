@@ -24,6 +24,8 @@ public class EquipoService {
     private final LigaRepository ligaRepository;
     private final TemporadaRepository temporadaRepository;
     private final JugadorRepository jugadorRepository;
+    private final TemporadaService temporadaService;
+    private final ClasificacionRepository clasificacionRepository;
 
     public List<Equipo> findAll() {
         return equipoRepository.findAll();
@@ -58,8 +60,22 @@ public class EquipoService {
         equipo.setImagen(crearEquipo.getImagen());
         equipo.setEntrenador(entrenador);
         equipo.setLiga(liga);
+        equipoRepository.save(equipo);
 
-        return equipoRepository.save(equipo);
+        Clasificacion clasificacion = new Clasificacion();
+        clasificacion.setPuesto(0);
+        clasificacion.setPuntos(0);
+        clasificacion.setGolDiferencia(0);
+        clasificacion.setGolAFavor(0);
+        clasificacion.setGolEnContra(0);
+        clasificacion.setVictorias(0);
+        clasificacion.setEmpates(0);
+        clasificacion.setDerrotas(0);
+        clasificacion.setEquipo(equipo);
+        clasificacion.setTemporada(temporadaService.buscarTemporadaMasReciente());
+        clasificacionRepository.save(clasificacion);
+
+        return equipo;
     }
 
     public Equipo update(Integer idEquipo, CrearEquipo crearEquipo) {

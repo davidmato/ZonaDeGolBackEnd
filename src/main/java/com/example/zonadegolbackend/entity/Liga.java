@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -38,5 +37,4 @@ public class Liga {
 
     @Column(name="fecha_fundacion", nullable = false)
     private LocalDate fecha_fundacion;
-
 }

@@ -1,10 +1,8 @@
 package com.example.zonadegolbackend.services;
 
 
-import com.example.zonadegolbackend.entity.Liga;
-import com.example.zonadegolbackend.entity.Trofeo;
-import com.example.zonadegolbackend.repository.LigaRepository;
-import com.example.zonadegolbackend.repository.TrofeoRepository;
+import com.example.zonadegolbackend.entity.*;
+import com.example.zonadegolbackend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,9 +15,22 @@ public class LigaService {
 
     private final LigaRepository ligaRepository;
     private final TrofeoRepository trofeoRepository;
+    private final EquipoRepository equipoRepository;
+    private final TemporadaRepository temporadaRepository;
+    private final ClasificacionRepository clasificacionRepository;
+    private final ClasificacionService clasificacionService;
 
     public List<Liga> findAll() {
         return ligaRepository.findAll();
+    }
+
+    public Liga findById(Integer id) {
+        return ligaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+    }
+
+    public List<Equipo> findByLigaId(Integer ligaId) {
+        return equipoRepository.findByLigaId(ligaId);
     }
 
 //    @Transactional
@@ -59,4 +70,11 @@ public class LigaService {
 
         ligaRepository.delete(ligaExistente);
     }
+
+    public List<Clasificacion> obtenerClasificacionLigaTemporadaReciente(Integer ligaId) {
+        Temporada temporadaReciente = temporadaRepository.findLatest().getFirst();
+        clasificacionService.actualizarPuestosYObtenerClasificacion(ligaId, temporadaReciente.getId());
+        return clasificacionRepository.findByEquipo_Liga_IdAndTemporada_Id(ligaId, temporadaReciente.getId());
+    }
+
 }
