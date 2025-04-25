@@ -28,4 +28,22 @@ public class NoticiasService {
 
         return noticiasRepository.save(noticiaNueva);
     }
+
+    public Noticias editarNoticia(Integer id, Noticias noticia) {
+        Noticias noticiaExistente = noticiasRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Noticia no encontrada"));
+
+        noticiaExistente.setImagen(noticia.getImagen());
+        noticiaExistente.setTitulo(noticia.getTitulo());
+        noticiaExistente.setDescripcion(noticia.getDescripcion());
+
+        return noticiasRepository.save(noticiaExistente);
+    }
+
+    public void eliminarNoticia(Integer id) {
+        if (!noticiasRepository.existsById(id)) {
+            throw new RuntimeException("Noticia no encontrada");
+        }
+        noticiasRepository.deleteById(id);
+    }
 }

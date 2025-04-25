@@ -1,16 +1,14 @@
 package com.example.zonadegolbackend.services;
 
-import com.example.zonadegolbackend.dtos.CrearEquipo;
-import com.example.zonadegolbackend.entity.Entrenador;
-import com.example.zonadegolbackend.entity.Equipo;
+import com.example.zonadegolbackend.dtos.EstadisticasDTO;
+import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
-import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.repository.EstadisticasRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -20,6 +18,29 @@ public class EstadisticasService {
 
     public List<Estadisticas> findAll() {
         return estadisticasRepository.findAll();
+    }
+
+    public List<EstadisticasDTO> findAllDTO() {
+        List<Estadisticas> estadisticasList = estadisticasRepository.findAll();
+        List<EstadisticasDTO> dtoList = new ArrayList<>();
+
+        for (Estadisticas estadisticas : estadisticasList) {
+            EstadisticasDTO dto = new EstadisticasDTO();
+            dto.setPartidosJugados(estadisticas.getPartidosJugados());
+            dto.setGoles(estadisticas.getGoles());
+            dto.setAsistencias(estadisticas.getAsistencias());
+            dto.setTarjetasAmarillas(estadisticas.getTarjetasAmarillas());
+            dto.setTarjetasRojas(estadisticas.getTarjetasRojas());
+            dto.setPorteriaCero(estadisticas.getPorteriaCero());
+            dto.setNombreJugador(estadisticas.getJugador().getNombre());
+            dto.setApellidoJugador(estadisticas.getJugador().getApellido());
+            dto.setNombreLiga(estadisticas.getJugador().getEquipo().getLiga().getNombre());
+            dto.setNombreTemporada(estadisticas.getTemporada().getFechaInicio() + " - " + estadisticas.getTemporada().getFechaFin());
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
     }
 
     public List<Estadisticas> findByJugadorId(Integer jugadorId) {
@@ -75,6 +96,38 @@ public class EstadisticasService {
         estadisticasExistente.setPorteriaCero(estadisticas.getPorteriaCero());
 
         return estadisticasRepository.save(estadisticasExistente);
+    }
+    public List<Estadisticas> findByTemporadaAndLiga(Integer temporadaId, Integer ligaId) {
+        return estadisticasRepository.findByTemporadaAndLiga(temporadaId, ligaId);
+    }
+
+    // Hecho por DTO
+    public List<EstadisticasLigaTemporadaDTO> findEstadisticasDTOByTemporadaAndLiga(Integer temporadaId, Integer ligaId) {
+        return estadisticasRepository.findByTemporadaAndLigaDTO(temporadaId, ligaId);
+    }
+
+    public List<EstadisticasDTO> findEstadisticasByJugadorId(Integer jugadorId) {
+        List<Estadisticas> estadisticasList = estadisticasRepository.findByJugadorId(jugadorId);
+        List<EstadisticasDTO> dtoList = new ArrayList<>();
+
+        for (Estadisticas estadisticas : estadisticasList) {
+            EstadisticasDTO dto = new EstadisticasDTO();
+            dto.setPartidosJugados(estadisticas.getPartidosJugados());
+            dto.setGoles(estadisticas.getGoles());
+            dto.setAsistencias(estadisticas.getAsistencias());
+            dto.setTarjetasAmarillas(estadisticas.getTarjetasAmarillas());
+            dto.setTarjetasRojas(estadisticas.getTarjetasRojas());
+            dto.setPorteriaCero(estadisticas.getPorteriaCero());
+            dto.setNombreJugador(estadisticas.getJugador().getNombre());
+            dto.setApellidoJugador(estadisticas.getJugador().getApellido());
+            dto.setNombreLiga(estadisticas.getJugador().getEquipo().getLiga().getNombre());
+            dto.setNombreTemporada(estadisticas.getTemporada().getFechaInicio() + " / " + estadisticas.getTemporada().getFechaFin());
+            dto.setNombreEquipo(estadisticas.getJugador().getEquipo().getNombre());
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
     }
 
 

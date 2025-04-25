@@ -1,7 +1,6 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.JugadorDTO;
-import com.example.zonadegolbackend.entity.Equipo;
 //import com.example.zonadegolbackend.entity.EquipoJugador;
 import com.example.zonadegolbackend.entity.Estadisticas;
 import com.example.zonadegolbackend.entity.Jugador;
@@ -12,7 +11,6 @@ import com.example.zonadegolbackend.repository.EstadisticasRepository;
 import com.example.zonadegolbackend.repository.JugadorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -51,7 +49,10 @@ public class JugadorService {
         jugadorDTO.setDni(jugador.getDni());
         jugadorDTO.setFechaNacimiento(jugador.getFechaNacimiento());
         jugadorDTO.setCorreo(jugador.getUsuario().getCorreo());
-        jugadorDTO.setEquipo(jugador.getEquipo().getNombre());
+        jugadorDTO.setEquipoNombre(jugador.getEquipo().getNombre());
+        jugadorDTO.setLigaNombre(jugador.getEquipo().getLiga().getNombre());
+        jugadorDTO.setEquipoFoto(jugador.getEquipo().getImagen());
+        jugadorDTO.setEquipoId(jugador.getEquipo().getId());
         return jugadorDTO;
     }
 

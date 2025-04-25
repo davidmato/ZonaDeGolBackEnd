@@ -15,5 +15,8 @@ public class JugadorDTO {
     private String dni;
     private LocalDate fechaNacimiento;
     private String correo;
-    private String equipo;
+    private String equipoNombre;
+    private String ligaNombre;
+    private String equipoFoto;
+    private Integer equipoId;
 }

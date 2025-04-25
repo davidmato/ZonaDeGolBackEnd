@@ -1,5 +1,8 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.EntrenadorDTO;
+import com.example.zonadegolbackend.dtos.EstadisticasDTO;
+import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
 import com.example.zonadegolbackend.services.EstadisticasService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,11 @@ public class EstadisticasController {
     @GetMapping("/listar")
     public List<Estadisticas> findAll() {
         return estadisticasService.findAll();
+    }
+
+    @GetMapping("/listar/dto")
+    public List<EstadisticasDTO> findAllDTO() {
+        return estadisticasService.findAllDTO();
     }
 
     @GetMapping("/jugador/listar/{jugadorId}")
@@ -43,4 +51,27 @@ public class EstadisticasController {
     public void eliminarEstadisticas(@PathVariable Integer id) {
         estadisticasService.eliminarEstadisticas(id);
     }
+
+
+    @GetMapping("/temporada/{temporadaId}/liga/{ligaId}")
+    public List<Estadisticas> getEstadisticasByTemporadaAndLiga(
+            @PathVariable Integer temporadaId,
+            @PathVariable Integer ligaId) {
+        return estadisticasService.findByTemporadaAndLiga(temporadaId, ligaId);
+    }
+
+
+
+    @GetMapping("/temporada/{temporadaId}/{ligaId}")
+    public List<EstadisticasLigaTemporadaDTO> getEstadisticasByTemporadaAndLigaDTO(
+            @PathVariable Integer temporadaId,
+            @PathVariable Integer ligaId) {
+        return estadisticasService.findEstadisticasDTOByTemporadaAndLiga(temporadaId, ligaId);
+    }
+
+    @GetMapping("/jugador/{id}")
+    public List<EstadisticasDTO> getEstadisticasByJugadorId(@PathVariable Integer id) {
+       return estadisticasService.findEstadisticasByJugadorId(id);
+    }
+
 }
