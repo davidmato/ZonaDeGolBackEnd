@@ -80,59 +80,7 @@ public class ClasificacionService {
         clasificacionRepository.save(clasificacionExistente);
         return clasificacionExistente;
     }
-//
-//
-//    public Clasificacion crearClasificacion(Clasificacion clasificacion) {
-//
-//        Clasificacion nuevoClasificacion = new Clasificacion();
-//
-//        nuevoClasificacion.setVictorias(clasificacion.getVictorias());
-//        nuevoClasificacion.setEmpates(clasificacion.getEmpates());
-//        nuevoClasificacion.setDerrotas(clasificacion.getDerrotas());
-//        nuevoClasificacion.setGolAFavor(clasificacion.getGolAFavor());
-//        nuevoClasificacion.setGolEnContra(clasificacion.getGolEnContra());
-//
-//        int golDiferencia = clasificacion.getGolAFavor() - clasificacion.getGolEnContra();
-//        nuevoClasificacion.setGolDiferencia(golDiferencia);
-//
-//        int puntos = (clasificacion.getVictorias() * 3) + (clasificacion.getEmpates());
-//        nuevoClasificacion.setPuntos(puntos);
-//
-//        nuevoClasificacion.setEquipoLiga(clasificacion.getEquipoLiga());
-//
-//        nuevoClasificacion.setPuesto(0);
-//
-//        clasificacionRepository.save(nuevoClasificacion);
-//
-//        actualizarPuestos();
-//
-//        return nuevoClasificacion;
-//    }
-//
-//    public Clasificacion editarClasificacion(Integer id, Clasificacion clasificacionActualizada) {
-//        Clasificacion clasificacionExistente = clasificacionRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Clasificacion not found"));
-//
-//        clasificacionExistente.setVictorias(clasificacionActualizada.getVictorias());
-//        clasificacionExistente.setEmpates(clasificacionActualizada.getEmpates());
-//        clasificacionExistente.setDerrotas(clasificacionActualizada.getDerrotas());
-//        clasificacionExistente.setGolAFavor(clasificacionActualizada.getGolAFavor());
-//        clasificacionExistente.setGolEnContra(clasificacionActualizada.getGolEnContra());
-//
-//        int golDiferencia = clasificacionActualizada.getGolAFavor() - clasificacionActualizada.getGolEnContra();
-//        clasificacionExistente.setGolDiferencia(golDiferencia);
-//
-//        int puntos = (clasificacionActualizada.getVictorias() * 3) + (clasificacionActualizada.getEmpates());
-//        clasificacionExistente.setPuntos(puntos);
-//
-//        clasificacionExistente.setEquipoLiga(clasificacionActualizada.getEquipoLiga());
-//
-//        clasificacionRepository.save(clasificacionExistente);
-//
-//        actualizarPuestos();
-//
-//        return clasificacionExistente;
-//    }
+
 
     public void eliminarClasificacion(Integer id) {
         Clasificacion clasificacionExistente = clasificacionRepository.findById(id)
@@ -163,22 +111,5 @@ public class ClasificacionService {
 
         clasificacionRepository.saveAll(clasificaciones);
     }
-
-
-//    public List<Map<String, Object>> obtenerClasificacionPorLiga(int idLiga) {
-//        List<Object[]> resultados = clasificacionRepository.obtenerClasificacion(idLiga);
-//
-//        return resultados.stream().map(obj -> Map.of(
-//                "equipoNombre", obj[0],
-//                "puesto", obj[1],
-//                "victorias", obj[2],
-//                "empates", obj[3],
-//                "derrotas", obj[4],
-//                "golesAFavor", obj[5],
-//                "golesEnContra", obj[6],
-//                "golesDiferencia", obj[7],
-//                "puntos", obj[8]
-//        )).collect(Collectors.toList());
-//    }
 
 }
