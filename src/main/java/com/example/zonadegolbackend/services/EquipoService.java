@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.CrearEquipo;
+import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -115,5 +117,23 @@ public class EquipoService {
         }
 
         return jugadorRepository.findByEquipo(equipo);
+    }
+
+
+    public EquipoInfoDTO findByIdEquipoDTO(Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        EquipoInfoDTO dto = new EquipoInfoDTO();
+        dto.setId(equipo.getId());
+        dto.setNombre(equipo.getNombre());
+        dto.setDescripcion(equipo.getDescripcion());
+        dto.setFechaFundacion(equipo.getFechaFundacion());
+        dto.setImagen(equipo.getImagen());
+        dto.setEntrenadorNombre(equipo.getEntrenador().getNombre() + " " + equipo.getEntrenador().getApellido());
+        dto.setLigaNombre(equipo.getLiga().getNombre());
+        dto.setEntrenadorImagen(equipo.getEntrenador().getImagen());
+
+        return dto;
     }
 }
