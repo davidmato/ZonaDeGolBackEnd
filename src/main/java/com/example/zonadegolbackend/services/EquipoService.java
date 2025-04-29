@@ -155,21 +155,18 @@ public class EquipoService {
     }
 
     public List<Jornada> obtenerJornadasDelEquipoLogueado() {
-        // Obtener el nombre de usuario (que es el entrenador o jugador logueado)
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // Buscar el usuario por nombre
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Si el usuario es un entrenador o jugador, obtenemos su equipo
         Equipo equipo = equipoRepository.findByEntrenador_Usuario(usuario);
         if (equipo == null) {
             throw new RuntimeException("El usuario no está asociado a un equipo");
         }
 
-        // Obtener las jornadas en las que el equipo está involucrado (como equipo local o visitante)
         return jornadaRepository.findByEquipoLocalOrEquipoVisitante(equipo, equipo);
     }
 

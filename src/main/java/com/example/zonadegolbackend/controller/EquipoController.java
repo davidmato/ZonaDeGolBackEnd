@@ -71,7 +71,6 @@ public class EquipoController {
 
     @GetMapping("/jornadas")
     public ResponseEntity<List<Jornada>> obtenerJornadasEquipoLogueado() {
-        // Obtener las jornadas del equipo del usuario logueado (ya sea entrenador o jugador)
         List<Jornada> jornadas = equipoService.obtenerJornadasDelEquipoLogueado();
 
         if (jornadas != null && !jornadas.isEmpty()) {
