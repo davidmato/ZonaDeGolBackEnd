@@ -69,11 +69,26 @@ public class EquipoController {
     }
 
 
-    @GetMapping("/jornadas/{idEquipo}")
-    public List<Jornada> obtenerJornadasPorEquipo(@PathVariable Integer idEquipo) {
-        return equipoService.obtenerJornadasPorEquipo(idEquipo);
+    @GetMapping("/jornadas")
+    public ResponseEntity<List<Jornada>> obtenerJornadasEquipoLogueado() {
+        // Obtener las jornadas del equipo del usuario logueado (ya sea entrenador o jugador)
+        List<Jornada> jornadas = equipoService.obtenerJornadasDelEquipoLogueado();
+
+        if (jornadas != null && !jornadas.isEmpty()) {
+            return ResponseEntity.ok(jornadas);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-
+//    @GetMapping("/jugadores")
+//    public ResponseEntity<List<Jugador>> obtenerJugadoresDelEquipo() {
+//        try {
+//            List<Jugador> jugadores = equipoService.getEquipoJugadores();
+//            return ResponseEntity.ok(jugadores);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(null);
+//        }
+//    }
 
 }

@@ -154,10 +154,41 @@ public class EquipoService {
         return dto;
     }
 
-    public List<Jornada> obtenerJornadasPorEquipo (Integer idEquipo) {
+    public List<Jornada> obtenerJornadasDelEquipoLogueado() {
+        // Obtener el nombre de usuario (que es el entrenador o jugador logueado)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        Equipo equipo = equipoRepository.findById(idEquipo).orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+        // Buscar el usuario por nombre
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        // Si el usuario es un entrenador o jugador, obtenemos su equipo
+        Equipo equipo = equipoRepository.findByEntrenador_Usuario(usuario);
+        if (equipo == null) {
+            throw new RuntimeException("El usuario no está asociado a un equipo");
+        }
+
+        // Obtener las jornadas en las que el equipo está involucrado (como equipo local o visitante)
         return jornadaRepository.findByEquipoLocalOrEquipoVisitante(equipo, equipo);
     }
+
+
+//    public List<Jugador> getEquipoJugadores() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//
+//        Usuario usuario = usuarioRepository.findByUsername(username)
+//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+//
+//        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+//                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+//
+//        Equipo equipo = equipoRepository.findByEntrenador(entrenador);
+//        if (equipo == null) {
+//            throw new RuntimeException("El entrenador no tiene un equipo");
+//        }
+//
+//        return jugadorRepository.findByEquipo(equipo);
+//    }
 }
