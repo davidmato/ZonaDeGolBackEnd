@@ -23,6 +23,7 @@ public class EquipoService {
 //    private final EquipoTemporadaRepository equipoTemporadaRepository;
     private final TemporadaService temporadaService;
     private final ClasificacionRepository clasificacionRepository;
+    private final JornadaRepository jornadaRepository;
 
     public List<Equipo> findAll() {
         return equipoRepository.findAll();
@@ -143,4 +144,11 @@ public class EquipoService {
 //            equipoTemporadaRepository.save(equipoTemporada);
 //        }
 //    }
+
+    public List<Jornada> obtenerJornadasPorEquipo (Integer idEquipo) {
+
+        Equipo equipo = equipoRepository.findById(idEquipo).orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        return jornadaRepository.findByEquipoLocalOrEquipoVisitante(equipo, equipo);
+    }
 }
