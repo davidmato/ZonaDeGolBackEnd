@@ -68,6 +68,7 @@ public class TemporadaService {
         for (Equipo equipo : equipos) {
             Clasificacion clasificacion = new Clasificacion();
             clasificacion.setPuesto(0);
+            clasificacion.setPartidosJugados(0);
             clasificacion.setVictorias(0);
             clasificacion.setEmpates(0);
             clasificacion.setDerrotas(0);
