@@ -165,20 +165,4 @@ public class ClasificacionService {
     }
 
 
-//    public List<Map<String, Object>> obtenerClasificacionPorLiga(int idLiga) {
-//        List<Object[]> resultados = clasificacionRepository.obtenerClasificacion(idLiga);
-//
-//        return resultados.stream().map(obj -> Map.of(
-//                "equipoNombre", obj[0],
-//                "puesto", obj[1],
-//                "victorias", obj[2],
-//                "empates", obj[3],
-//                "derrotas", obj[4],
-//                "golesAFavor", obj[5],
-//                "golesEnContra", obj[6],
-//                "golesDiferencia", obj[7],
-//                "puntos", obj[8]
-//        )).collect(Collectors.toList());
-//    }
-
 }
