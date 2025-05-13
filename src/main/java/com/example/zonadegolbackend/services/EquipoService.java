@@ -2,6 +2,7 @@ package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
+import com.example.zonadegolbackend.dtos.TemporadaDTO;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
@@ -151,5 +152,34 @@ public class EquipoService {
         dto.setEntrenadorImagen(equipo.getEntrenador().getImagen());
 
         return dto;
+    }
+
+
+    public Integer obtenerLigaPorEquipo(Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        return equipo.getLiga().getId();
+    }
+
+    public List<TemporadaDTO> obtenerTemporadasPorEquipoDTO(Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        List<Clasificacion> clasificaciones = clasificacionRepository.findByEquipoId(equipo.getId());
+        List<TemporadaDTO> temporadasDTO = new ArrayList<>();
+
+        for (Clasificacion clasificacion : clasificaciones) {
+            Temporada temporada = clasificacion.getTemporada();
+            TemporadaDTO temporadaDTO = new TemporadaDTO();
+            temporadaDTO.setId(temporada.getId());
+            temporadaDTO.setNombre(temporada.getFechaInicio().getYear() + " - " + temporada.getFechaFin().getYear());
+
+            if (!temporadasDTO.contains(temporadaDTO)) {
+                temporadasDTO.add(temporadaDTO);
+            }
+        }
+
+        return temporadasDTO;
     }
 }

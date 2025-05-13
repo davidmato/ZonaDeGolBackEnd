@@ -3,8 +3,10 @@ package com.example.zonadegolbackend.controller;
 import com.example.zonadegolbackend.dtos.AsociarEquiposLigaDTO;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
+import com.example.zonadegolbackend.dtos.TemporadaDTO;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
+import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +57,12 @@ public class EquipoController {
         return equipoService.findByEntrenador(idEntrenador);
     }
 
+
+    @GetMapping("/buscar/liga/{idEquipo}")
+    public Integer obtenerLigaPorEquipo(@PathVariable Integer idEquipo) {
+        return equipoService.obtenerLigaPorEquipo(idEquipo);
+    }
+
     @GetMapping("/listar/jugadores")
     public List<Jugador> getJugadoresDelEquipo() {
         return equipoService.getJugadoresDelEquipo();
@@ -64,5 +72,11 @@ public class EquipoController {
     public EquipoInfoDTO buscarPorId(@PathVariable Integer idEquipo) {
         return equipoService.findByIdEquipoDTO(idEquipo);
     }
+
+    @GetMapping("/buscar/temporada/{idEquipo}")
+    public List<TemporadaDTO> obtenerTemporadasPorEquipo(@PathVariable Integer idEquipo) {
+        return equipoService.obtenerTemporadasPorEquipoDTO(idEquipo);
+    }
+
 
 }
