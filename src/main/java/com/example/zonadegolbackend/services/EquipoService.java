@@ -36,21 +36,18 @@ public class EquipoService {
 
 
     public Equipo create(CrearEquipo crearEquipo) {
-        Usuario usuario = new Usuario();
-        usuario.setUsername(crearEquipo.getUsername());
-        usuario.setCorreo(crearEquipo.getCorreo());
-        usuario.setPassword(crearEquipo.getPassword());
-        usuario.setRol(Rol.ENTRENADOR);
-        usuarioRepository.save(usuario);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        Entrenador entrenador = new Entrenador();
-        entrenador.setNombre(crearEquipo.getNombreEntrenador());
-        entrenador.setApellido(crearEquipo.getApellido());
-        entrenador.setFechaNacimiento(crearEquipo.getFechaNacimiento());
-        entrenador.setImagen(crearEquipo.getImagenEntrenador());
-        entrenador.setDni(crearEquipo.getDni());
-        entrenador.setUsuario(usuario);
-        entrenadorRepository.save(entrenador);
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuario.getRol() != Rol.ENTRENADOR) {
+            throw new RuntimeException("Solo un entrenador puede crear un equipo");
+        }
+
+        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
         Liga liga = ligaRepository.findById(crearEquipo.getIdLiga())
                 .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
@@ -67,6 +64,7 @@ public class EquipoService {
         Clasificacion clasificacion = new Clasificacion();
         clasificacion.setPuesto(0);
         clasificacion.setPuntos(0);
+        clasificacion.setPartidosJugados(0);
         clasificacion.setGolDiferencia(0);
         clasificacion.setGolAFavor(0);
         clasificacion.setGolEnContra(0);
