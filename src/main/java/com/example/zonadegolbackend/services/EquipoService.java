@@ -49,6 +49,11 @@ public class EquipoService {
         Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
+
+        if (equipoRepository.findByEntrenador(entrenador) != null) {
+            throw new RuntimeException("El entrenador ya tiene un equipo asociado");
+        }
+
         Liga liga = ligaRepository.findById(crearEquipo.getIdLiga())
                 .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
 
@@ -59,6 +64,9 @@ public class EquipoService {
         equipo.setImagen(crearEquipo.getImagen());
         equipo.setEntrenador(entrenador);
         equipo.setLiga(liga);
+
+        System.out.println("Usuario asociado al entrenador: " + entrenador.getUsuario().getCorreo());
+
         equipoRepository.save(equipo);
 
         Clasificacion clasificacion = new Clasificacion();
