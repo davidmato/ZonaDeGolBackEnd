@@ -31,7 +31,6 @@ public class UsuarioController {
     }
 
 
-
     @PostMapping("/crear")
     public void crearUsuario(@RequestBody Usuario usuario) {
         usuarioService.crearUsuario(usuario);
@@ -41,4 +40,27 @@ public class UsuarioController {
     public Usuario buscarUsuario(@PathVariable Integer id) {
         return usuarioService.getUsuarioById(id);
     }
+
+
+
+    @GetMapping("/admin/arbitros")
+    public Usuario obtenerTodosLosArbitros() {
+        return usuarioService.FindAllArbitros();
+    }
+
+    @PostMapping("/admin/crear/arbitro")
+    public Usuario crearArbitro(@RequestBody Usuario usuario) {
+        return usuarioService.CrearArbitro(usuario);
+    }
+
+    @PutMapping("/admin/editar/arbitro/{id}")
+    public Usuario editarArbitro(@PathVariable Integer id, @RequestBody Usuario usuario) {
+        return usuarioService.editarArbitro(id, usuario);
+    }
+
+    @DeleteMapping("/admin/eliminar/usuario/{id}")
+    public void eliminarUsuario(@PathVariable Integer id) {
+        usuarioService.eliminarUsuario(id);
+    }
+
 }

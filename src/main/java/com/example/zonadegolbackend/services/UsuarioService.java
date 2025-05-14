@@ -11,6 +11,8 @@ import com.example.zonadegolbackend.repository.EntrenadorRepository;
 import com.example.zonadegolbackend.repository.UsuarioRepository;
 import com.example.zonadegolbackend.security.JwtService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -114,6 +116,85 @@ public class UsuarioService implements UserDetailsService {
 
         usuarioRepository.save(usuarioNuevo);
     }
+
+
+
+    public Usuario FindAllArbitros() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede ver los árbitros");
+        }
+
+        return usuarioRepository.findAllByRol(Rol.ARBITRO);
+    }
+
+
+    public Usuario CrearArbitro(Usuario usuario) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede crear árbitros");
+        }
+
+        Usuario usuarioNuevo = new Usuario();
+
+        usuarioNuevo.setUsername(usuario.getUsername());
+        usuarioNuevo.setCorreo(usuario.getCorreo());
+        usuarioNuevo.setPassword(usuario.getPassword());
+        usuarioNuevo.setRol(Rol.ARBITRO);
+
+        return usuarioRepository.save(usuarioNuevo);
+    }
+
+    public Usuario editarArbitro(Integer id, Usuario usuario) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede editar árbitros");
+        }
+
+        Usuario usuarioExistente = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuarioExistente.setUsername(usuario.getUsername());
+        usuarioExistente.setCorreo(usuario.getCorreo());
+        usuarioExistente.setPassword(usuario.getPassword());
+
+        return usuarioRepository.save(usuarioExistente);
+    }
+
+
+
+
+
+    public void eliminarUsuario(Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede eliminar usuarios");
+        }
+
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuarioRepository.delete(usuario);
+    }
+
+
 
 
 }
