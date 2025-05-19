@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.ClasificacionDTO;
 import com.example.zonadegolbackend.dtos.CrearClasificacionDTO;
 import com.example.zonadegolbackend.entity.Clasificacion;
 import com.example.zonadegolbackend.services.ClasificacionService;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-//BUG
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/clasificacion")
@@ -26,21 +27,18 @@ public class ClasificacionController {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Clasificacion> crearClasificacion(@RequestBody CrearClasificacionDTO request) {
-        Clasificacion nuevaClasificacion = clasificacionService.crearClasificacion(request.getEquipo(), request.getTemporada());
-        return ResponseEntity.ok(nuevaClasificacion);
+    public Clasificacion crearClasificacion(@RequestBody CrearClasificacionDTO request) {
+        return clasificacionService.crearClasificacion(request.getEquipo(), request.getTemporada());
     }
 
     @PutMapping("/editar/{id}")
-    public ResponseEntity<Clasificacion> editarClasificacion(@PathVariable Integer id, @RequestBody Clasificacion clasificacionActualizada) {
-        Clasificacion clasificacionEditada = clasificacionService.editarClasificacion(id, clasificacionActualizada);
-        return ResponseEntity.ok(clasificacionEditada);
+    public Clasificacion editarClasificacion(@PathVariable Integer id, @RequestBody Clasificacion clasificacionActualizada) {
+        return clasificacionService.editarClasificacion(id, clasificacionActualizada);
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Void> eliminarClasificacion(@PathVariable Integer id) {
+    public void eliminarClasificacion(@PathVariable Integer id) {
         clasificacionService.eliminarClasificacion(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/buscar/liga/temporada/{ligaId}/{temporadaId}")
@@ -53,4 +51,10 @@ public class ClasificacionController {
 //    public List<Map<String, Object>> obtenerClasificacion(@PathVariable int idLiga) {
 //        return clasificacionService.obtenerClasificacionPorLiga(idLiga);
 //    }
+
+    @GetMapping("/ultimosCinco")
+    public List<ClasificacionDTO> obtenerClasificacionDTO(@RequestParam Integer ligaId, @RequestParam Integer temporadaId) {
+        return clasificacionService.obtenerClasificacionConForma(ligaId, temporadaId);
+    }
+
 }

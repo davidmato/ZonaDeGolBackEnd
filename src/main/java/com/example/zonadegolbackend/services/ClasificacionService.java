@@ -1,11 +1,15 @@
 package com.example.zonadegolbackend.services;
 
+import com.example.zonadegolbackend.dtos.ClasificacionDTO;
 import com.example.zonadegolbackend.entity.Clasificacion;
 import com.example.zonadegolbackend.entity.Equipo;
+import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.repository.ClasificacionRepository;
+import com.example.zonadegolbackend.repository.JornadaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -18,6 +22,7 @@ import java.util.stream.Collectors;
 public class ClasificacionService {
 
     private final ClasificacionRepository clasificacionRepository;
+    private final JornadaRepository jornadaRepository;
 
     public List<Clasificacion> findAll() {
         return clasificacionRepository.findAll();
@@ -111,5 +116,52 @@ public class ClasificacionService {
 
         clasificacionRepository.saveAll(clasificaciones);
     }
+
+    public List<ClasificacionDTO> obtenerClasificacionConForma(Integer ligaId, Integer temporadaId) {
+        List<Clasificacion> clasificaciones = clasificacionRepository.findByEquipo_Liga_IdAndTemporada_Id(ligaId, temporadaId)
+                .stream()
+                .sorted(Comparator.comparingInt(Clasificacion::getPuesto))
+                .collect(Collectors.toList());
+
+        return clasificaciones.stream().map(c -> {
+            ClasificacionDTO dto = new ClasificacionDTO();
+            dto.setPuesto(c.getPuesto());
+            dto.setNombre(c.getEquipo().getNombre());
+            dto.setPartidosJugados(c.getPartidosJugados());
+            dto.setVictorias(c.getVictorias());
+            dto.setEmpates(c.getEmpates());
+            dto.setDerrotas(c.getDerrotas());
+            dto.setGolAFavor(c.getGolAFavor());
+            dto.setGolEnContra(c.getGolEnContra());
+            dto.setGolDiferencia(c.getGolDiferencia());
+            dto.setPuntos(c.getPuntos());
+
+
+            List<Jornada> ultimos5 = jornadaRepository.findLast5ByEquipoAndTemporada(
+                    c.getEquipo(), c.getTemporada(), PageRequest.of(0, 5));
+
+            List<String> forma = ultimos5.stream().map(j -> {
+                int golesEquipo, golesRival;
+                boolean esLocal = j.getEquipoLocal().getId().equals(c.getEquipo().getId());
+
+                if (esLocal) {
+                    golesEquipo = j.getGolLocal();
+                    golesRival = j.getGolVisitante();
+                } else {
+                    golesEquipo = j.getGolVisitante();
+                    golesRival = j.getGolLocal();
+                }
+
+                if (golesEquipo > golesRival) return "✅";
+                else if (golesEquipo == golesRival) return "➖";
+                else return "❌";
+            }).toList();
+
+            dto.setForma(forma);
+
+            return dto;
+        }).toList();
+    }
+
 
 }
