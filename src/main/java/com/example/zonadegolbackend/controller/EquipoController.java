@@ -3,11 +3,16 @@ package com.example.zonadegolbackend.controller;
 import com.example.zonadegolbackend.dtos.AsociarEquiposLigaDTO;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
+import com.example.zonadegolbackend.dtos.TemporadaDTO;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
+import com.example.zonadegolbackend.entity.Temporada;
+import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,6 +60,12 @@ public class EquipoController {
         return equipoService.findByEntrenador(idEntrenador);
     }
 
+
+    @GetMapping("/buscar/liga/{idEquipo}")
+    public Integer obtenerLigaPorEquipo(@PathVariable Integer idEquipo) {
+        return equipoService.obtenerLigaPorEquipo(idEquipo);
+    }
+
     @GetMapping("/listar/jugadores")
     public List<Jugador> getJugadoresDelEquipo() {
         return equipoService.getJugadoresDelEquipo();
@@ -64,5 +75,33 @@ public class EquipoController {
     public EquipoInfoDTO buscarPorId(@PathVariable Integer idEquipo) {
         return equipoService.findByIdEquipoDTO(idEquipo);
     }
+
+    @GetMapping("/buscar/temporada/{idEquipo}")
+    public List<TemporadaDTO> obtenerTemporadasPorEquipo(@PathVariable Integer idEquipo) {
+        return equipoService.obtenerTemporadasPorEquipoDTO(idEquipo);
+    }
+
+
+
+    @GetMapping("/jornadas")
+    public ResponseEntity<List<Jornada>> obtenerJornadasEquipoLogueado() {
+        List<Jornada> jornadas = equipoService.obtenerJornadasDelEquipoLogueado();
+
+        if (jornadas != null && !jornadas.isEmpty()) {
+            return ResponseEntity.ok(jornadas);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+//    @GetMapping("/jugadores")
+//    public ResponseEntity<List<Jugador>> obtenerJugadoresDelEquipo() {
+//        try {
+//            List<Jugador> jugadores = equipoService.getEquipoJugadores();
+//            return ResponseEntity.ok(jugadores);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.badRequest().body(null);
+//        }
+//    }
 
 }

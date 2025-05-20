@@ -86,6 +86,14 @@ public class JugadorService {
         return nuevoJugador;
     }
 
+    public String obtenerLigaPorJugador(Integer idJugador) {
+        Jugador jugador = jugadorRepository.findById(idJugador)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+
+        return jugador.getEquipo().getLiga().getNombre();
+    }
+
+
 //
 //    @Transactional
 //    public void associatePlayersWithTeam(Integer idEquipo, List<Integer> idJugadores) {

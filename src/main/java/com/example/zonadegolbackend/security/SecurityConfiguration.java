@@ -40,10 +40,11 @@ public class SecurityConfiguration {
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/**").permitAll();
-                    auth.requestMatchers("/swagger-ui/**",  // Permite acceso a Swagger UI
-                            "/v3/api-docs/**", // Permite acceso a la documentación OpenAPI
-                            "/swagger-resources/**",
-                            "/webjars/**").permitAll();
+//                    auth.requestMatchers("/api/liga/buscar/**").permitAll();
+//                    auth.requestMatchers("/swagger-ui/**",  // Permite acceso a Swagger UI
+//                            "/v3/api-docs/**", // Permite acceso a la documentación OpenAPI
+//                            "/swagger-resources/**",
+//                            "/webjars/**").permitAll();
 
                     auth.anyRequest().authenticated();
                 })

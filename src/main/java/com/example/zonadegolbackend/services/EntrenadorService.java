@@ -68,6 +68,16 @@ public class EntrenadorService {
 
 
     public Entrenador update(Integer idEntrenador, EntrenadorDTO entrenadorDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede editar entrenadores");
+        }
+
         Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
@@ -176,6 +186,34 @@ public class EntrenadorService {
 
         return jugador;
     }
+
+    public Equipo updateEquipo(CrearEquipo crearEquipo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuario.getRol() != Rol.ENTRENADOR) {
+            throw new RuntimeException("Solo un entrenador puede editar un equipo");
+        }
+
+        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+
+        Equipo equipo = equipoRepository.findByEntrenador(entrenador);
+        if (equipo == null) {
+            throw new RuntimeException("El entrenador no tiene un equipo asignado");
+        }
+
+        equipo.setNombre(crearEquipo.getNombre());
+        equipo.setDescripcion(crearEquipo.getDescripcion());
+        equipo.setFechaFundacion(crearEquipo.getFechaFundacion());
+        equipo.setImagen(crearEquipo.getImagen());
+
+        return equipoRepository.save(equipo);
+    }
+
 
 
 

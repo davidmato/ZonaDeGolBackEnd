@@ -2,6 +2,7 @@ package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
+import com.example.zonadegolbackend.dtos.TemporadaDTO;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
@@ -26,6 +27,7 @@ public class EquipoService {
     private final JugadorRepository jugadorRepository;
     private final TemporadaService temporadaService;
     private final ClasificacionRepository clasificacionRepository;
+    private final JornadaRepository jornadaRepository;
 
     public List<Equipo> findAll() {
         return equipoRepository.findAll();
@@ -34,21 +36,18 @@ public class EquipoService {
 
 
     public Equipo create(CrearEquipo crearEquipo) {
-        Usuario usuario = new Usuario();
-        usuario.setUsername(crearEquipo.getUsername());
-        usuario.setCorreo(crearEquipo.getCorreo());
-        usuario.setPassword(crearEquipo.getPassword());
-        usuario.setRol(Rol.ENTRENADOR);
-        usuarioRepository.save(usuario);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        Entrenador entrenador = new Entrenador();
-        entrenador.setNombre(crearEquipo.getNombreEntrenador());
-        entrenador.setApellido(crearEquipo.getApellido());
-        entrenador.setFechaNacimiento(crearEquipo.getFechaNacimiento());
-        entrenador.setImagen(crearEquipo.getImagenEntrenador());
-        entrenador.setDni(crearEquipo.getDni());
-        entrenador.setUsuario(usuario);
-        entrenadorRepository.save(entrenador);
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuario.getRol() != Rol.ENTRENADOR) {
+            throw new RuntimeException("Solo un entrenador puede crear un equipo");
+        }
+
+        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
         Liga liga = ligaRepository.findById(crearEquipo.getIdLiga())
                 .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
@@ -65,6 +64,7 @@ public class EquipoService {
         Clasificacion clasificacion = new Clasificacion();
         clasificacion.setPuesto(0);
         clasificacion.setPuntos(0);
+        clasificacion.setPartidosJugados(0);
         clasificacion.setGolDiferencia(0);
         clasificacion.setGolAFavor(0);
         clasificacion.setGolEnContra(0);
@@ -152,4 +152,68 @@ public class EquipoService {
 
         return dto;
     }
+
+
+    public Integer obtenerLigaPorEquipo(Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        return equipo.getLiga().getId();
+    }
+
+    public List<TemporadaDTO> obtenerTemporadasPorEquipoDTO(Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        List<Clasificacion> clasificaciones = clasificacionRepository.findByEquipoId(equipo.getId());
+        List<TemporadaDTO> temporadasDTO = new ArrayList<>();
+
+        for (Clasificacion clasificacion : clasificaciones) {
+            Temporada temporada = clasificacion.getTemporada();
+            TemporadaDTO temporadaDTO = new TemporadaDTO();
+            temporadaDTO.setId(temporada.getId());
+            temporadaDTO.setNombre(temporada.getFechaInicio().getYear() + " - " + temporada.getFechaFin().getYear());
+
+            if (!temporadasDTO.contains(temporadaDTO)) {
+                temporadasDTO.add(temporadaDTO);
+            }
+        }
+
+        return temporadasDTO;
+    }
+
+    public List<Jornada> obtenerJornadasDelEquipoLogueado() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Equipo equipo = equipoRepository.findByEntrenador_Usuario(usuario);
+        if (equipo == null) {
+            throw new RuntimeException("El usuario no está asociado a un equipo");
+        }
+
+        return jornadaRepository.findByEquipoLocalOrEquipoVisitante(equipo, equipo);
+    }
+
+
+//    public List<Jugador> getEquipoJugadores() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//
+//        Usuario usuario = usuarioRepository.findByUsername(username)
+//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+//
+//        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+//                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+//
+//        Equipo equipo = equipoRepository.findByEntrenador(entrenador);
+//        if (equipo == null) {
+//            throw new RuntimeException("El entrenador no tiene un equipo");
+//        }
+//
+//        return jugadorRepository.findByEquipo(equipo);
+//    }
 }

@@ -25,27 +25,23 @@ public class LigaController {
     }
 
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<Liga> buscarById(@PathVariable Integer id) {
-        Liga liga = ligaService.findById(id);
-        return ResponseEntity.ok(liga);
+    public Liga buscarById(@PathVariable Integer id) {
+       return ligaService.findById(id);
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<Liga> crearLiga(@RequestBody Liga liga) {
-        Liga savedLiga = ligaService.crearLiga(liga);
-        return ResponseEntity.ok(savedLiga);
+    public Liga crearLiga(@RequestBody Liga liga) {
+        return ligaService.crearLiga(liga);
     }
 
     @PutMapping("/editar/{id}")
-    public ResponseEntity<Liga> editarLiga(@PathVariable Integer id, @RequestBody Liga liga) {
-        Liga ligaEditada = ligaService.editarLiga(id, liga);
-        return ResponseEntity.ok(ligaEditada);
+    public Liga editarLiga(@PathVariable Integer id, @RequestBody Liga liga) {
+        return ligaService.editarLiga(id, liga);
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Liga> eliminarLiga(@PathVariable Integer id) {
+    public void eliminarLiga(@PathVariable Integer id) {
         ligaService.eliminarLiga(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/equipos/{ligaId}")

@@ -54,4 +54,9 @@ public class EntrenadorController {
     }
 
 
+    @PutMapping("/editar/equipo")
+    public Equipo editarEquipo(@RequestBody CrearEquipo equipo) {
+        return entrenadorService.updateEquipo(equipo);
+    }
+
 }
