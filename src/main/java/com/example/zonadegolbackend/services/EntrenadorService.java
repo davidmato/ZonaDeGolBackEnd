@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class EntrenadorService {
     private final JugadorRepository jugadorRepository;
     private final LigaRepository ligaRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EstadisticasRepository estadisticasRepository;
+    private final TemporadaService temporadaService;
 
 
     public List<EntrenadorDTO> listarEntrenador() {
@@ -51,6 +54,8 @@ public class EntrenadorService {
         usuario.setUsername(entrenadorDTO.getUsername());
         usuario.setPassword(entrenadorDTO.getPassword());
         usuario.setCorreo(entrenadorDTO.getCorreo());
+        usuario.setPagado(true);
+        usuario.setFechaRegistro(LocalDateTime.now());
         usuario.setRol(Rol.ENTRENADOR);
 
         usuarioRepository.save(usuario);
@@ -162,10 +167,17 @@ public class EntrenadorService {
             throw new RuntimeException("El entrenador no tiene un equipo");
         }
 
+        int cantidadJugadores = jugadorRepository.countByEquipoAndActivoTrue(equipo);
+        if (cantidadJugadores >= 12) {
+            throw new RuntimeException("No se pueden crear más de 12 jugadores por equipo");
+        }
+
         Usuario usuarioJugador = new Usuario();
         usuarioJugador.setUsername(crearJugador.getNombre()+crearJugador.getApellido()+crearJugador.getDorsal());
         usuarioJugador.setPassword(passwordEncoder.encode(crearJugador.getDni()));
         usuarioJugador.setCorreo(crearJugador.getCorreo());
+        usuarioJugador.setPagado(true);
+        usuarioJugador.setFechaRegistro(LocalDateTime.now());
         usuarioJugador.setRol(Rol.JUGADOR);
 
         usuarioRepository.save(usuarioJugador);
@@ -178,10 +190,23 @@ public class EntrenadorService {
         jugador.setFechaNacimiento(crearJugador.getFechaNacimiento());
         jugador.setImagen(crearJugador.getImagen());
         jugador.setDni(crearJugador.getDni());
+        jugador.setExpulsado(false);
+        jugador.setActivo(true);
         jugador.setUsuario(usuarioJugador);
         jugador.setEquipo(equipo);
 
         jugador = jugadorRepository.save(jugador);
+
+        Estadisticas estadisticas = new Estadisticas();
+        estadisticas.setGoles(0);
+        estadisticas.setAsistencias(0);
+        estadisticas.setTarjetasAmarillas(0);
+        estadisticas.setTarjetasRojas(0);
+        estadisticas.setPartidosJugados(0);
+        estadisticas.setPorteriaCero(0);
+        estadisticas.setTemporada(temporadaService.buscarTemporadaPorAnioActual());
+        estadisticas.setJugador(jugador);
+        estadisticasRepository.save(estadisticas);
 
 
         return jugador;
@@ -213,6 +238,71 @@ public class EntrenadorService {
 
         return equipoRepository.save(equipo);
     }
+
+    public Jugador updateJugador(CrearJugador crearJugador) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuario.getRol() != Rol.ENTRENADOR) {
+            throw new RuntimeException("Solo un entrenador puede editar un jugador");
+        }
+
+        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+
+        Equipo equipo = equipoRepository.findByEntrenador(entrenador);
+        if (equipo == null) {
+            throw new RuntimeException("El entrenador no tiene un equipo asignado");
+        }
+
+        Jugador jugador = jugadorRepository.findById(crearJugador.getId())
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+
+        jugador.setNombre(crearJugador.getNombre());
+        jugador.setApellido(crearJugador.getApellido());
+        jugador.setPosicion(crearJugador.getPosicion());
+        jugador.setDorsal(crearJugador.getDorsal());
+        jugador.setFechaNacimiento(crearJugador.getFechaNacimiento());
+        jugador.setImagen(crearJugador.getImagen());
+        jugador.setDni(crearJugador.getDni());
+
+        return jugadorRepository.save(jugador);
+    }
+
+    public Jugador cambiarEstadoActivoJugador(Integer idJugador) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuario.getRol() != Rol.ENTRENADOR) {
+            throw new RuntimeException("Solo un entrenador puede cambiar el estado de un jugador");
+        }
+
+        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+
+        Equipo equipo = equipoRepository.findByEntrenador(entrenador);
+        if (equipo == null) {
+            throw new RuntimeException("El entrenador no tiene un equipo asignado");
+        }
+
+        Jugador jugador = jugadorRepository.findById(idJugador)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+
+        if (!jugador.getEquipo().getId().equals(equipo.getId())) {
+            throw new RuntimeException("El jugador no pertenece a tu equipo");
+        }
+
+        jugador.setActivo(!jugador.isActivo());
+        return jugadorRepository.save(jugador);
+    }
+
+
 
 
 
