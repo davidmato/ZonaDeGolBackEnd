@@ -47,6 +47,8 @@ public class JugadorService {
         jugadorDTO.setDorsal(jugador.getDorsal());
         jugadorDTO.setImagen(jugador.getImagen());
         jugadorDTO.setDni(jugador.getDni());
+        jugadorDTO.setActivo(jugador.getActivo());
+        jugadorDTO.setExpulsado(jugador.getExpulsado());
         jugadorDTO.setFechaNacimiento(jugador.getFechaNacimiento());
         jugadorDTO.setCorreo(jugador.getUsuario().getCorreo());
         jugadorDTO.setEquipoNombre(jugador.getEquipo().getNombre());
