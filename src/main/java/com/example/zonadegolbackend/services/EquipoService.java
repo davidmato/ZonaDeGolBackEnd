@@ -7,6 +7,9 @@ import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class EquipoService {
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     private final EquipoRepository equipoRepository;
     private final UsuarioRepository usuarioRepository;
@@ -46,9 +52,15 @@ public class EquipoService {
             throw new RuntimeException("Solo un entrenador puede crear un equipo");
         }
 
+
+
         Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
+
+        if (equipoRepository.existsByEntrenador(entrenador)) {
+            throw new RuntimeException("El entrenador ya tiene un equipo");
+        }
         Liga liga = ligaRepository.findById(crearEquipo.getIdLiga())
                 .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
 
@@ -74,6 +86,15 @@ public class EquipoService {
         clasificacion.setEquipo(equipo);
         clasificacion.setTemporada(temporadaService.buscarTemporadaMasReciente());
         clasificacionRepository.save(clasificacion);
+
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(usuario.getCorreo());
+        message.setSubject("Creacion de equipo realizada correctamente");
+        message.setText("¡Gracias, " + usuario.getUsername() + ", su equipo ha sido creado correctamente! " +
+                "Ahora puede gestionar su equipo y jugadores desde la aplicación.");
+        mailSender.send(message);
+
 
         return equipo;
     }
