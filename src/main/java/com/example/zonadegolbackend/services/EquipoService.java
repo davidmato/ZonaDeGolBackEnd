@@ -71,6 +71,9 @@ public class EquipoService {
         equipo.setImagen(crearEquipo.getImagen());
         equipo.setEntrenador(entrenador);
         equipo.setLiga(liga);
+
+        System.out.println("Usuario asociado al entrenador: " + entrenador.getUsuario().getCorreo());
+
         equipoRepository.save(equipo);
 
         Clasificacion clasificacion = new Clasificacion();
