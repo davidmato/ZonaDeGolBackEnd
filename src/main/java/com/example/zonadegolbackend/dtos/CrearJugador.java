@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CrearJugador {
+    private Integer id;
     private String nombre;
     private String apellido;
     private Posicion posicion;
