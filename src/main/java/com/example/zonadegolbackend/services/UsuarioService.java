@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.services;
 
 
+import com.example.zonadegolbackend.dtos.ArbitroDTO;
 import com.example.zonadegolbackend.dtos.AuthenticationDTO;
 import com.example.zonadegolbackend.dtos.UsuarioDto;
 import com.example.zonadegolbackend.entity.Entrenador;
@@ -11,6 +12,10 @@ import com.example.zonadegolbackend.repository.EntrenadorRepository;
 import com.example.zonadegolbackend.repository.UsuarioRepository;
 import com.example.zonadegolbackend.security.JwtService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,11 +24,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class UsuarioService implements UserDetailsService {
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     private final UsuarioRepository usuarioRepository;
     private final EntrenadorRepository entrenadorRepository;
@@ -48,6 +61,8 @@ public class UsuarioService implements UserDetailsService {
         usuario.setCorreo(userDTO.getCorreo());
         usuario.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         usuario.setRol(Rol.ENTRENADOR);
+        usuario.setFechaRegistro(LocalDateTime.now());
+        usuario.setPagado(false);
         usuarioRepository.save(usuario);
         Entrenador entrenador = new Entrenador();
         entrenador.setUsuario(usuario);
@@ -58,8 +73,15 @@ public class UsuarioService implements UserDetailsService {
         entrenador.setImagen(userDTO.getImagenEntrenador());
         entrenadorRepository.save(entrenador);
 
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(usuario.getCorreo());
+        message.setSubject("Bienvenido a Zona de Gol");
+        message.setText("¡Bienvenido, " + usuario.getUsername() + "! Tu registro ha sido exitoso.");
+        mailSender.send(message);
+
         var jwtToken = jwtService.generateToken(usuario, usuario.getId(), usuario.getRol().name());
         return AuthenticationDTO.builder().token(jwtToken).build();
+
     }
 
     public AuthenticationDTO login(UsuarioDto usuarioDTO) {
@@ -105,6 +127,56 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
+    public void solicitarRestablecimientoPassword(String correo) {
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ese correo"));
+
+        String token = java.util.UUID.randomUUID().toString();
+        usuario.setTokenRestablecimiento(token);
+        usuario.setTokenExpiracion(LocalDateTime.now().plusHours(1));
+        usuarioRepository.save(usuario);
+
+        String enlace = "http://localhost:4200/restablecer?token=" + token;
+
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(usuario.getCorreo());
+            helper.setSubject("Restablecimiento de contraseña");
+            String html = "<div style=\"max-width:400px;margin:40px auto;padding:24px;background:#f9f9f9;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-family:Arial,sans-serif;\">" +
+                    "<div style='text-align:center; margin-bottom:16px;'>" +
+                    "<img src='https://res.cloudinary.com/dyfoaulb5/image/upload/fl_preserve_transparency/v1747739581/logo_ohmfq7.jpg' alt='Logo' style='max-width:120px;'>" +
+                    "</div>" +
+                    "<h2 style=\"color:#333;text-align:center;\">Restablecimiento de contraseña</h2>" +
+                    "<p style=\"text-align:center;\">Para restablecer tu contraseña, haz clic en el siguiente botón:</p>" +
+                    "<div style=\"text-align:center;margin:24px 0;\">" +
+                    "<a href='" + enlace + "' style=\"display:inline-block;padding:12px 28px;background:#344353;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px;box-shadow:0 1px 4px rgba(0,0,0,0.10);transition:background 0.2s;\">Restablecer contraseña</a>" +
+                    "</div>" +
+                    "<p style=\"margin-top:20px;color:#888;font-size:12px;text-align:center;\">Si no solicitaste este cambio, puedes ignorar este correo.</p>" +
+                    "<div style=\"display:none;max-width:0;overflow:hidden;\">&nbsp;</div>" +
+                    "</div>";
+            helper.setText(html, true);
+            mailSender.send(mimeMessage);
+        } catch (jakarta.mail.MessagingException e) {
+            throw new RuntimeException("Error al enviar el correo de restablecimiento", e);
+        }
+    }
+
+    public void restablecerPassword(String token, String newPassword) {
+        Usuario usuario = usuarioRepository.findByTokenRestablecimiento(token)
+                .orElseThrow(() -> new RuntimeException("Token inválido"));
+
+        if (usuario.getTokenExpiracion().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("El token ha expirado");
+        }
+
+        usuario.setPassword(passwordEncoder.encode(newPassword));
+        usuario.setTokenRestablecimiento(null);
+        usuario.setTokenExpiracion(null);
+        usuarioRepository.save(usuario);
+    }
+
+
     public void crearUsuario(Usuario usuario) {
 
         Usuario usuarioNuevo = new Usuario();
@@ -112,6 +184,7 @@ public class UsuarioService implements UserDetailsService {
         usuarioNuevo.setUsername(usuario.getUsername());
         usuarioNuevo.setCorreo(usuario.getCorreo());
         usuarioNuevo.setPassword(usuario.getPassword());
+        usuarioNuevo.setFechaRegistro(LocalDateTime.now());
         usuarioNuevo.setRol(Rol.JUGADOR);
 
         usuarioRepository.save(usuarioNuevo);
@@ -119,7 +192,7 @@ public class UsuarioService implements UserDetailsService {
 
 
 
-    public Usuario FindAllArbitros() {
+    public List<Usuario> FindAllArbitros() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -134,7 +207,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
-    public Usuario CrearArbitro(Usuario usuario) {
+    public Usuario CrearArbitro(ArbitroDTO usuario) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -147,10 +220,12 @@ public class UsuarioService implements UserDetailsService {
 
         Usuario usuarioNuevo = new Usuario();
 
-        usuarioNuevo.setUsername(usuario.getUsername());
+        usuarioNuevo.setUsername(usuario.getNombreArbitro() +"_" + usuario.getApellido());
         usuarioNuevo.setCorreo(usuario.getCorreo());
-        usuarioNuevo.setPassword(usuario.getPassword());
+        usuarioNuevo.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuarioNuevo.setRol(Rol.ARBITRO);
+        usuarioNuevo.setFechaRegistro(LocalDateTime.now());
+        usuarioNuevo.setPagado(true);
 
         return usuarioRepository.save(usuarioNuevo);
     }
@@ -171,8 +246,9 @@ public class UsuarioService implements UserDetailsService {
 
         usuarioExistente.setUsername(usuario.getUsername());
         usuarioExistente.setCorreo(usuario.getCorreo());
-        usuarioExistente.setPassword(usuario.getPassword());
-
+        if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
+            usuarioExistente.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        }
         return usuarioRepository.save(usuarioExistente);
     }
 
@@ -194,7 +270,17 @@ public class UsuarioService implements UserDetailsService {
         usuarioRepository.delete(usuario);
     }
 
+    public boolean usuarioHaPagado(Integer usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        return usuario != null && Boolean.TRUE.equals(usuario.getPagado());
+    }
 
 
-
+    @Scheduled(cron = "0 0 3 * * ?") // Todos los días a las 3:00 AM
+    @Transactional
+    public void eliminarUsuariosNoPagadosAntiguos() {
+        LocalDateTime haceUnMes = LocalDateTime.now().minusMonths(1);
+        List<Usuario> usuarios = usuarioRepository.findByPagadoFalseAndFechaRegistroBefore(haceUnMes);
+        usuarioRepository.deleteAll(usuarios);
+    }
 }

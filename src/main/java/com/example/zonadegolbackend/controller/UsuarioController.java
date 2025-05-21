@@ -1,13 +1,14 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.AuthenticationDTO;
-import com.example.zonadegolbackend.dtos.UsuarioDto;
+import com.example.zonadegolbackend.dtos.*;
 import com.example.zonadegolbackend.entity.Usuario;
 import com.example.zonadegolbackend.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,12 +45,12 @@ public class UsuarioController {
 
 
     @GetMapping("/admin/arbitros")
-    public Usuario obtenerTodosLosArbitros() {
+    public List<Usuario> obtenerTodosLosArbitros() {
         return usuarioService.FindAllArbitros();
     }
 
     @PostMapping("/admin/crear/arbitro")
-    public Usuario crearArbitro(@RequestBody Usuario usuario) {
+    public Usuario crearArbitro(@RequestBody ArbitroDTO usuario) {
         return usuarioService.CrearArbitro(usuario);
     }
 
@@ -63,4 +64,27 @@ public class UsuarioController {
         usuarioService.eliminarUsuario(id);
     }
 
+
+    @PostMapping("/solicitar-restablecimiento")
+    public void solicitarRestablecimientoPassword(@RequestBody CorreoDTO correo) {
+        usuarioService.solicitarRestablecimientoPassword(correo.getCorreo());
+    }
+
+    @PostMapping("/restablecer")
+    public void restablecerPassword(@RequestBody RestablecerContraseniaDTO request) {
+        usuarioService.restablecerPassword(request.getToken(), request.getNewPassword());
+    }
+
+
+    @GetMapping("/pagado/{id}")
+    public boolean usuarioHaPagado(@PathVariable Integer id) {
+        return usuarioService.usuarioHaPagado(id);
+    }
+
+    //
+    //    @GetMapping("/restablecer")
+    //    public String mostrarFormularioRestablecer(@RequestParam String token) {
+    //        // Aquí puedes devolver una vista, un mensaje o simplemente validar el token
+    //        return "Token recibido: " + token;
+    //    }
 }
