@@ -43,7 +43,7 @@ public class Entrenador {
     private String imagen;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 }

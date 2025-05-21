@@ -9,6 +9,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,11 +30,11 @@ public class Usuario implements UserDetails {
     private Integer id;
 
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
 
-    @Column(name = "correo", nullable = false)
+    @Column(name = "correo", nullable = false, unique = true)
     private String correo;
 
     @Column(name = "password", nullable = false)
@@ -42,14 +43,47 @@ public class Usuario implements UserDetails {
     @Column(name = "rol", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private Rol rol;
+
+    @Column(name= "pagado", nullable = true)
+    private Boolean pagado;
 //
 //    @JsonBackReference
 //    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
 //    private Jugador jugador;
 
+    @Column(name = "token_restablecimiento", nullable = true)
+    private String tokenRestablecimiento;
+
+    @Column(name = "token_expiracion", nullable = true)
+    private LocalDateTime tokenExpiracion;
+
+    @Column(name = "fecha_registro")
+    private LocalDateTime fechaRegistro;
+
+//    public String getTokenRestablecimiento() {
+//        return tokenRestablecimiento;
+//    }
+//
+//    public void setTokenRestablecimiento(String tokenRestablecimiento) {
+//        this.tokenRestablecimiento = tokenRestablecimiento;
+//    }
+//
+//    public LocalDateTime getTokenExpiracion() {
+//        return tokenExpiracion;
+//    }
+//
+//    public void setTokenExpiracion(LocalDateTime tokenExpiracion) {
+//        this.tokenExpiracion = tokenExpiracion;
+//    }
+    
+    
+    public boolean isPagado() {
+        return pagado;
+    }
+
 
     @JsonIgnore
-    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private TokenAcceso token;
 
     @Override
