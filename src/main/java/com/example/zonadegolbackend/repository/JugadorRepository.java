@@ -14,4 +14,8 @@ public interface JugadorRepository extends JpaRepository<Jugador,Integer> {
     Jugador findByUsuario(Usuario usuario);
 
     List<Jugador> findByEquipo(Equipo equipo);
+
+    int countByEquipo(Equipo equipo);
+
+    int countByEquipoAndActivoTrue(Equipo equipo);
 }
