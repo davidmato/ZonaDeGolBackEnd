@@ -11,6 +11,7 @@ import com.example.zonadegolbackend.repository.JornadaRepository;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
 import com.example.zonadegolbackend.repository.TemporadaRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -169,5 +170,6 @@ public class JornadaService {
 
         clasificacionService.actualizarPuestos();
     }
+
 
 }

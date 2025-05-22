@@ -19,7 +19,12 @@ id SERIAL PRIMARY KEY,
 username VARCHAR(250) NOT NULL,
 password VARCHAR (800) NOT NULL,
 correo VARCHAR (200) NOT NULL,
-rol INT NOT NULL
+rol INT NOT NULL,
+pagado BOOLEAN NOT NULL,*
+activo BOOLEAN NOT NULL,*
+token_restablecimiento VARCHAR(500) NOT NULL,
+token_expiracion TIMESTAMP NOT NULL,
+fecha_registro TIMESTAMP NOT NULL,
 );
 
 
@@ -86,6 +91,8 @@ imagen VARCHAR(800),
 fecha_nacimiento TIMESTAMP NOT NULL,
 posicion INT NOT NULL,
 dni CHAR(9) NOT NULL,
+expulsado BOOLEAN NOT NULL,*
+activo BOOLEAN NOT NULL,*
 id_usuario INT NOT NULL,
 CONSTRAINT fk_jugador_usuario FOREIGN KEY(id_usuario) REFERENCES usuario(id),
 id_equipo INT NOT NULL,

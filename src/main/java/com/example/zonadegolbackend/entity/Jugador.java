@@ -36,7 +36,7 @@ public class Jugador {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate fechaNacimiento;
 
-    @Column(name = "posicion", nullable = true)
+    @Column(name = "posicion", nullable = false)
     private Posicion posicion;
 
     @Column(name = "dorsal", nullable = false)
@@ -48,12 +48,25 @@ public class Jugador {
     @Column(name = "imagen", nullable = true)
     private String imagen;
 
+    @Column(name = "activo", nullable = false)
+    private Boolean activo;
+
+    @Column(name = "expulsado", nullable = false)
+    private Boolean expulsado;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_equipo", nullable = false)
     private Equipo equipo;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
+
+
+    public boolean isActivo() {
+        return activo;
+    }
+
 }
+
