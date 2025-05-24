@@ -43,5 +43,12 @@ public class Jornada {
     @JoinColumn(name = "id_temporada", nullable = false)
     private Temporada temporada;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_arbitro", nullable = true)
+    private Arbitro arbitro;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_estadio")
+    private Estadio estadio;
 
 }
