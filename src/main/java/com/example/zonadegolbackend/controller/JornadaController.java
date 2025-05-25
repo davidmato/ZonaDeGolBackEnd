@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.controller;
 
 import com.example.zonadegolbackend.dtos.GenerarJornadaDTO;
+import com.example.zonadegolbackend.dtos.JornadaDTO;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
@@ -41,21 +42,18 @@ public class JornadaController {
     }
 
     @PostMapping("/generar")
-    public ResponseEntity<List<Jornada>> generarJornadas(@RequestBody GenerarJornadaDTO request) {
-        List<Jornada> jornadas = jornadaService.generarJornadas(request.getEquipos(), request.getTemporada());
-        return ResponseEntity.ok(jornadas);
+    public List<JornadaDTO> generarJornadas(@RequestBody GenerarJornadaDTO request) {
+        return jornadaService.generarJornadas(request.getEquipos(), request.getTemporada());
     }
 
     @PutMapping("/actualizar-puntos")
-    public ResponseEntity<Void> actualizarPuntos(@RequestBody Jornada jornada) {
+    public void actualizarPuntos(@RequestBody Jornada jornada) {
         jornadaService.actualizarPuntos(jornada);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/equipo/{equipoId}")
-    public ResponseEntity<List<Jornada>> obtenerJornadasPorEquipo(@PathVariable Integer equipoId) {
-        List<Jornada> jornadas = jornadaRepository.findByEquipoLocal_IdOrEquipoVisitante_Id(equipoId, equipoId);
-        return ResponseEntity.ok(jornadas);
+    public List<Jornada> obtenerJornadasPorEquipo(@PathVariable Integer equipoId) {
+        return jornadaRepository.findByEquipoLocal_IdOrEquipoVisitante_Id(equipoId, equipoId);
     }
 
 

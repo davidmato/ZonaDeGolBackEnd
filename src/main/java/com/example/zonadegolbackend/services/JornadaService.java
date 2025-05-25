@@ -5,12 +5,13 @@ import com.example.zonadegolbackend.entity.Equipo;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
-import com.example.zonadegolbackend.repository.ClasificacionRepository;
-import com.example.zonadegolbackend.repository.EquipoRepository;
-import com.example.zonadegolbackend.repository.JornadaRepository;
+import com.example.zonadegolbackend.entity.Arbitro;
+import com.example.zonadegolbackend.entity.Estadio;
+import com.example.zonadegolbackend.dtos.JornadaDTO;
+import com.example.zonadegolbackend.repository.*;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
-import com.example.zonadegolbackend.repository.TemporadaRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class JornadaService {
     private final TemporadaRepository temporadaRepository;
     private final ClasificacionRepository clasificacionRepository;
     private final ClasificacionService clasificacionService;
+    private final ArbitroRepository arbitroRepository;
+    private final EstadioRepository estadioRepository;
+
 //    private final LigaEquipoRepository ligaEquipoRepository;
 
     public List<Jornada> findAll() {
@@ -70,11 +74,27 @@ public class JornadaService {
 //        return generarJornadas(equipos, temporada);
 //    }
 
-    public List<Jornada> generarJornadas(List<Integer> equipoIds, Integer temporadaId) {
+    private JornadaDTO mapToDTO(Jornada jornada) {
+        return new JornadaDTO(
+                jornada.getId(),
+                jornada.getFecha(),
+                jornada.getGolLocal(),
+                jornada.getGolVisitante(),
+                jornada.getEquipoLocal().getNombre(),
+                jornada.getEquipoVisitante().getNombre(),
+                jornada.getArbitro() != null ? jornada.getArbitro().getNombre() + " " + jornada.getArbitro().getApellidos() : null,
+                jornada.getEstadio() != null ? jornada.getEstadio().getNombre() : null
+        );
+    }
+
+
+    public List<JornadaDTO> generarJornadas(List<Integer> equipoIds, Integer temporadaId) {
         List<Equipo> equipos = equipoRepository.findAllById(equipoIds);
         Temporada temporada = temporadaRepository.findById(temporadaId)
                 .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
 
+        List<Arbitro> arbitros = arbitroRepository.findAll();
+        List<Estadio> estadios = estadioRepository.findAll();
         List<Jornada> jornadas = new ArrayList<>();
         Random random = new Random();
 
@@ -96,35 +116,36 @@ public class JornadaService {
             Equipo equipoLocal = par.get(0);
             Equipo equipoVisitante = par.get(1);
 
-            String claveEnfrentamiento = equipoLocal.getId() + "-" + equipoVisitante.getId();
-            enfrentamientos.putIfAbsent(claveEnfrentamiento, 0);
+            String clave = equipoLocal.getId() + "-" + equipoVisitante.getId();
+            enfrentamientos.putIfAbsent(clave, 0);
 
-            if (enfrentamientos.get(claveEnfrentamiento) < 2) {
-                Jornada jornadaIda = new Jornada();
-                jornadaIda.setFecha(LocalDateTime.now().plusDays(jornadas.size()));
-                jornadaIda.setEquipoLocal(equipoLocal);
-                jornadaIda.setEquipoVisitante(equipoVisitante);
-                jornadaIda.setTemporada(temporada);
-                jornadaIda.setGolLocal(0);
-                jornadaIda.setGolVisitante(0);
-                jornadas.add(jornadaIda);
-                enfrentamientos.put(claveEnfrentamiento, enfrentamientos.get(claveEnfrentamiento) + 1);
+            if (enfrentamientos.get(clave) < 2) {
+                for (int i = 0; i < 2; i++) {
+                    Jornada jornada = new Jornada();
+                    jornada.setFecha(LocalDateTime.now().plusDays(jornadas.size()));
+                    jornada.setEquipoLocal(i == 0 ? equipoLocal : equipoVisitante);
+                    jornada.setEquipoVisitante(i == 0 ? equipoVisitante : equipoLocal);
+                    jornada.setTemporada(temporada);
+                    jornada.setGolLocal(0);
+                    jornada.setGolVisitante(0);
 
-                Jornada jornadaVuelta = new Jornada();
-                jornadaVuelta.setFecha(LocalDateTime.now().plusDays(jornadas.size()));
-                jornadaVuelta.setEquipoLocal(equipoVisitante);
-                jornadaVuelta.setEquipoVisitante(equipoLocal);
-                jornadaVuelta.setTemporada(temporada);
-                jornadaVuelta.setGolLocal(0);
-                jornadaVuelta.setGolVisitante(0);
-                jornadas.add(jornadaVuelta);
-                enfrentamientos.put(claveEnfrentamiento, enfrentamientos.get(claveEnfrentamiento) + 1);
+                    jornada.setArbitro(arbitros.get(random.nextInt(arbitros.size())));
+                    jornada.setEstadio(estadios.get(random.nextInt(estadios.size())));
+
+                    jornadas.add(jornada);
+                    enfrentamientos.put(clave, enfrentamientos.get(clave) + 1);
+                }
             }
         }
 
         jornadaRepository.saveAll(jornadas);
-        return jornadas;
+
+        return jornadas.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
+
+
 
     public void actualizarPuntos (Jornada jornada) {
 

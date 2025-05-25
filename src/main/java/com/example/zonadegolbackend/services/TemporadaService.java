@@ -77,6 +77,7 @@ public class TemporadaService {
             clasificacion.setGolEnContra(0);
             clasificacion.setGolDiferencia(0);
             clasificacion.setPuntos(0);
+            clasificacion.setPartidosJugados(0);
             clasificacion.setEquipo(equipo);
             clasificacion.setTemporada(temporada);
             clasificacionRepository.save(clasificacion);
@@ -93,6 +94,7 @@ public class TemporadaService {
             estadisticas.setTarjetasRojas(0);
             estadisticas.setPartidosJugados(0);
             estadisticas.setPorteriaCero(0);
+            estadisticas.setPartidosJugados(0);
             estadisticas.setTemporada(temporada);
             estadisticas.setJugador(jugador);
             estadisticasRepository.save(estadisticas);
