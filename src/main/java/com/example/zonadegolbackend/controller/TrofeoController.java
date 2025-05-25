@@ -24,4 +24,9 @@ public class TrofeoController {
     public Trofeo crearTrofeo(@RequestBody Trofeo trofeo) {
         return trofeoService.crearTrofeo(trofeo);
     }
+
+    @GetMapping("/buscarPorTemporadaLiga/{temporadaLigaId}")
+    public Trofeo buscarTrofeoPorTemporadaLiga(@PathVariable Integer temporadaLigaId) {
+        return trofeoService.buscarTrofeoPorTemporadaLiga(temporadaLigaId);
+    }
 }

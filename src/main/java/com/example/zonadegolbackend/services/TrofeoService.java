@@ -27,4 +27,8 @@ public class TrofeoService {
 
         return trofeoRepository.save(nuevoTrofeo);
     }
+
+    public Trofeo buscarTrofeoPorTemporadaLiga(Integer temporadaLigaId) {
+        return trofeoRepository.findByTemporadaLigaId(temporadaLigaId);
+    }
 }
