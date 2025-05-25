@@ -18,7 +18,9 @@ public class LigaService {
     private final EquipoRepository equipoRepository;
     private final TemporadaRepository temporadaRepository;
     private final ClasificacionRepository clasificacionRepository;
+    private final TemporadaLigaRepository temporadaLigaRepository;
     private final ClasificacionService clasificacionService;
+    private final TemporadaService temporadaService;
 
     public List<Liga> findAll() {
         return ligaRepository.findAll();
@@ -51,8 +53,22 @@ public class LigaService {
         nuevaLiga.setNumEquipos(liga.getNumEquipos());
         nuevaLiga.setDescripcion(liga.getDescripcion());
         nuevaLiga.setFecha_fundacion(liga.getFecha_fundacion());
+        ligaRepository.save(nuevaLiga);
 
-        return ligaRepository.save(nuevaLiga);
+        Temporada temporadaActual = temporadaService.buscarTemporadaMasReciente();
+
+        TemporadaLiga temporadaLiga = new TemporadaLiga();
+        temporadaLiga.setLiga(nuevaLiga);
+        temporadaLiga.setTemporada(temporadaActual);
+        temporadaLigaRepository.save(temporadaLiga);
+
+        Trofeo trofeo = new Trofeo();
+        trofeo.setNombre("Trofeo de " + nuevaLiga.getNombre() + " " + temporadaActual.getFechaInicio().getYear());
+        trofeo.setImagen("default-trophy.png"); // Puedes cambiar esto por una imagen real
+        trofeo.setTemporadaLiga(temporadaLiga);
+        trofeoRepository.save(trofeo);
+
+        return nuevaLiga;
     }
 
     public Liga editarLiga(Integer id, Liga liga){
