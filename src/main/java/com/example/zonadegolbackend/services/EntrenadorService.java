@@ -48,6 +48,10 @@ public class EntrenadorService {
         return entrenadorDTOS;
     }
 
+    public List<Entrenador> findAll() {
+        return entrenadorRepository.findAll();
+    }
+
 
     public Entrenador create(EntrenadorDTO entrenadorDTO) {
         Usuario usuario = new Usuario();

@@ -35,7 +35,7 @@ public class EquipoController {
     }
 
     @PutMapping("/editar/{idEquipo}")
-    public Equipo editarEquipo(@PathVariable Integer idEquipo, @RequestBody CrearEquipo equipo) {
+    public Equipo editarEquipo(@PathVariable Integer idEquipo, @RequestBody Equipo equipo) {
         return equipoService.update(idEquipo, equipo);
     }
 

@@ -102,7 +102,17 @@ public class EquipoService {
         return equipo;
     }
 
-    public Equipo update(Integer idEquipo, CrearEquipo crearEquipo) {
+    public Equipo update(Integer idEquipo, Equipo crearEquipo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuario.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un entrenador o un administrador puede editar un equipo");
+        }
+
         Equipo equipo = equipoRepository.findById(idEquipo)
                 .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
 
@@ -111,13 +121,21 @@ public class EquipoService {
         equipo.setFechaFundacion(crearEquipo.getFechaFundacion());
         equipo.setImagen(crearEquipo.getImagen());
 
-        Entrenador entrenador = equipo.getEntrenador();
-        entrenador.setNombre(crearEquipo.getNombreEntrenador());
-        entrenador.setApellido(crearEquipo.getApellido());
-        entrenador.setFechaNacimiento(crearEquipo.getFechaNacimiento());
-        entrenador.setImagen(crearEquipo.getImagenEntrenador());
-        entrenador.setDni(crearEquipo.getDni());
-        entrenadorRepository.save(entrenador);
+        if (crearEquipo.getLiga() != null && crearEquipo.getLiga().getId() != null) {
+            Liga liga = ligaRepository.findById(crearEquipo.getLiga().getId())
+                    .orElseThrow(() -> new RuntimeException("Liga no encontrada"));
+            equipo.setLiga(liga);
+        } else {
+            equipo.setLiga(null);
+        }
+
+        if (crearEquipo.getEntrenador() != null && crearEquipo.getEntrenador().getId() != null) {
+            Entrenador entrenador = entrenadorRepository.findById(crearEquipo.getEntrenador().getId())
+                    .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+            equipo.setEntrenador(entrenador);
+        } else {
+            equipo.setEntrenador(null);
+        }
 
         return equipoRepository.save(equipo);
     }
@@ -144,7 +162,7 @@ public class EquipoService {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (usuario.getRol() != Rol.ENTRENADOR) {
+        if (usuario.getRol() != Rol.ADMIN) {
             throw new RuntimeException("Solo un entrenador puede ver los jugadores de su equipo");
         }
 
