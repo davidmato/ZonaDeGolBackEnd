@@ -54,7 +54,8 @@ CREATE TABLE IF NOT EXISTS liga(
                                    nombre VARCHAR(200) NOT NULL,
     num_equipos INT NOT NULL,
     descripcion VARCHAR(700) NOT NULL,
-    fecha_fundacion TIMESTAMP NOT NULL
+    fecha_fundacion TIMESTAMP NOT NULL,
+    imagen VARCHAR(800) NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS equipo(
