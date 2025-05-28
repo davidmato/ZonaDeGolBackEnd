@@ -12,6 +12,5 @@ import java.util.List;
 public class GenerarJornadaDTO {
 
     private List<Integer> equipos;
-    private Integer temporada;
 
 }
