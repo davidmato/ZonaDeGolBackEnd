@@ -1,8 +1,10 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.EstadioDTO;
 import com.example.zonadegolbackend.dtos.GenerarJornadaDTO;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
 import com.example.zonadegolbackend.entity.Equipo;
+import com.example.zonadegolbackend.entity.Estadio;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.repository.JornadaRepository;
@@ -22,17 +24,20 @@ public class JornadaController {
     private final JornadaRepository jornadaRepository;
 
     @GetMapping("/listar")
-    public List<Jornada> findAll() {
+    public List<JornadaDTO> findAll() {
         return jornadaService.findAll();
     }
 
+    @GetMapping("/estadios")
+    public List<EstadioDTO> findAllEstadios() {return jornadaService.findAllEstadios();}
+
     @PostMapping("/crear")
-    public Jornada crearJornada(@RequestBody Jornada jornada) {
+    public Jornada crearJornada(@RequestBody JornadaDTO jornada) {
         return jornadaService.crearJornada(jornada);
     }
 
     @PutMapping("/editar/{id}")
-    public Jornada editarJornada(@PathVariable Integer id, @RequestBody Jornada jornada) {
+    public Jornada editarJornada(@PathVariable Integer id, @RequestBody JornadaDTO jornada) {
         return jornadaService.editarJornada(id, jornada);
     }
 
@@ -43,7 +48,7 @@ public class JornadaController {
 
     @PostMapping("/generar")
     public List<JornadaDTO> generarJornadas(@RequestBody GenerarJornadaDTO request) {
-        return jornadaService.generarJornadas(request.getEquipos(), request.getTemporada());
+        return jornadaService.generarJornadas(request.getEquipos());
     }
 
     @PutMapping("/actualizar-puntos")
