@@ -60,21 +60,6 @@ public class Usuario implements UserDetails {
     @Column(name = "fecha_registro")
     private LocalDateTime fechaRegistro;
 
-//    public String getTokenRestablecimiento() {
-//        return tokenRestablecimiento;
-//    }
-//
-//    public void setTokenRestablecimiento(String tokenRestablecimiento) {
-//        this.tokenRestablecimiento = tokenRestablecimiento;
-//    }
-//
-//    public LocalDateTime getTokenExpiracion() {
-//        return tokenExpiracion;
-//    }
-//
-//    public void setTokenExpiracion(LocalDateTime tokenExpiracion) {
-//        this.tokenExpiracion = tokenExpiracion;
-//    }
     
     
     public boolean isPagado() {
