@@ -6,4 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArbitroRepository extends JpaRepository<Arbitro, Integer> {
+
+    Arbitro findByUsuario_Username(String username);
+
+
+    Arbitro findByUsuario_Id(Integer usuarioId);
 }
