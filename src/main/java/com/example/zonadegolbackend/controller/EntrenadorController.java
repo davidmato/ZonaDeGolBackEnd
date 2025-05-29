@@ -52,9 +52,9 @@ public class EntrenadorController {
     public Jugador createJugador(@RequestBody CrearJugador crearJugador) {
         return entrenadorService.createJugador(crearJugador);
     }
-    @PutMapping("/editar/jugador")
-    public Jugador updateJugador(@RequestBody CrearJugador crearJugador) {
-        return entrenadorService.updateJugador(crearJugador);
+    @PutMapping("/editar/jugador/{idJugador}")
+    public Jugador updateJugador(@RequestBody CrearJugador crearJugador, @PathVariable Integer idJugador) {
+        return entrenadorService.updateJugador(crearJugador, idJugador);
 
     }
 

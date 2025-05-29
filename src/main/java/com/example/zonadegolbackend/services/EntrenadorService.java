@@ -167,9 +167,18 @@ public class EntrenadorService {
             throw new RuntimeException("El entrenador no tiene un equipo");
         }
 
-        int cantidadJugadores = jugadorRepository.countByEquipoAndActivoTrue(equipo);
-        if (cantidadJugadores >= 12) {
-            throw new RuntimeException("No se pueden crear más de 12 jugadores por equipo");
+        if (crearJugador.getDorsal() > 99) {
+            throw new RuntimeException("El dorsal no puede ser mayor que 99");
+        }
+
+        int cantidadJugadoresActivos = jugadorRepository.countByEquipoAndActivoTrue(equipo);
+        if (cantidadJugadoresActivos >= 12) {
+            throw new RuntimeException("No se pueden crear más de 12 activos jugadores por equipo");
+        }
+
+        int cantidadJugadores = jugadorRepository.countByEquipo(equipo);
+        if (cantidadJugadores >= 21) {
+            throw new RuntimeException("No se pueden crear más de 21 jugadores por equipo");
         }
 
         Usuario usuarioJugador = new Usuario();
@@ -239,7 +248,7 @@ public class EntrenadorService {
         return equipoRepository.save(equipo);
     }
 
-    public Jugador updateJugador(CrearJugador crearJugador) {
+    public Jugador updateJugador(CrearJugador crearJugador, Integer idJugador) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -253,12 +262,13 @@ public class EntrenadorService {
         Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
+
         Equipo equipo = equipoRepository.findByEntrenador(entrenador);
         if (equipo == null) {
             throw new RuntimeException("El entrenador no tiene un equipo asignado");
         }
 
-        Jugador jugador = jugadorRepository.findById(crearJugador.getId())
+        Jugador jugador = jugadorRepository.findById(idJugador)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
 
         jugador.setNombre(crearJugador.getNombre());
@@ -296,6 +306,13 @@ public class EntrenadorService {
 
         if (!jugador.getEquipo().getId().equals(equipo.getId())) {
             throw new RuntimeException("El jugador no pertenece a tu equipo");
+        }
+
+        if (!jugador.isActivo()) {
+            int activos = jugadorRepository.countByEquipoAndActivoTrue(equipo);
+            if (activos >= 11) {
+                throw new RuntimeException("No puede haber más de 11 jugadores activos en el equipo");
+            }
         }
 
         jugador.setActivo(!jugador.isActivo());
