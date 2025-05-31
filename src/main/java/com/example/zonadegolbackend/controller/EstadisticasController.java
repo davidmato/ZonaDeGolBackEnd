@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.controller;
 
 import com.example.zonadegolbackend.dtos.EntrenadorDTO;
+import com.example.zonadegolbackend.dtos.EstadisticaTopDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
@@ -93,6 +94,22 @@ public class EstadisticasController {
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
 
         return estadisticasService.calcularPartidosExpulsion(jugador);
+    }
+
+    @GetMapping("/top-goleadores")
+    public List<EstadisticaTopDTO> getTopScorers() {
+        return estadisticasService.getTopScorers();
+    }
+
+    @GetMapping("/top-asistentes")
+    public List<EstadisticaTopDTO> getTopAssistants() {
+        return estadisticasService.getTopAssistants();
+    }
+
+
+    @GetMapping("/top-porteros")
+    public List<EstadisticaTopDTO> getTop5GoalkeepersWithMostCleanSheets() {
+        return estadisticasService.findTop5GoalkeepersWithMostCleanSheets();
     }
 
 }

@@ -3,6 +3,8 @@ package com.example.zonadegolbackend.repository;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
 import com.example.zonadegolbackend.entity.Jugador;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,23 @@ public interface EstadisticasRepository extends JpaRepository<Estadisticas,Integ
 
     List<Estadisticas> findByJugador(Jugador jugador);
 
+    @Query("""
+    SELECT e FROM Estadisticas e
+    ORDER BY e.goles DESC
+""")
+    Page<Estadisticas> findTopScorers(Pageable pageable);
+
+    @Query("""
+    SELECT e FROM Estadisticas e
+    ORDER BY e.asistencias DESC
+""")
+    Page<Estadisticas> findTopAssistants(Pageable pageable);
+
+
+    @Query("""
+    SELECT e FROM Estadisticas e
+    WHERE e.jugador.posicion = com.example.zonadegolbackend.enums.Posicion.PORTERO
+    ORDER BY e.porteriaCero DESC
+    """)
+    Page<Estadisticas> findTop5GoalkeepersWithMostCleanSheets(Pageable pageable);
 }

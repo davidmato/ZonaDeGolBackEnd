@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.services;
 
+import com.example.zonadegolbackend.dtos.EstadisticaTopDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
@@ -7,6 +8,9 @@ import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.repository.EstadisticasRepository;
 import com.example.zonadegolbackend.repository.JugadorRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -164,6 +168,50 @@ public class EstadisticasService {
         int amarillas = estadisticas.stream().mapToInt(Estadisticas::getTarjetasAmarillas).sum();
         int rojas = estadisticas.stream().mapToInt(Estadisticas::getTarjetasRojas).sum();
         return (amarillas / 5) + rojas;
+    }
+
+    public List<EstadisticaTopDTO> getTopScorers() {
+        Pageable topFive = PageRequest.of(0, 5);
+        Page<Estadisticas> topScorers = estadisticasRepository.findTopScorers(topFive);
+        return topScorers.stream()
+                .map(e -> toDTO(e, e.getGoles()))
+                .toList();
+    }
+
+    public List<EstadisticaTopDTO> getTopAssistants() {
+        Pageable topFive = PageRequest.of(0, 5);
+        Page<Estadisticas> topAssistants = estadisticasRepository.findTopAssistants(topFive);
+        return topAssistants.stream()
+                .map(e -> toDTO(e, e.getAsistencias()))
+                .toList();
+    }
+
+
+    private EstadisticaTopDTO toDTO(Estadisticas e, int valor) {
+        String nombre = e.getJugador().getNombre() + " " + e.getJugador().getApellido();
+        String equipo = e.getJugador().getEquipo().getNombre();
+        String posicion = e.getJugador().getPosicion().name();
+        String imagen = e.getJugador().getImagen();
+        return new EstadisticaTopDTO(nombre, equipo, posicion, imagen, valor);
+    }
+
+    public List<EstadisticaTopDTO> findTop5GoalkeepersWithMostCleanSheets() {
+        Page<Estadisticas> estadisticasPage = estadisticasRepository.findTop5GoalkeepersWithMostCleanSheets(PageRequest.of(0, 5));
+        List<Estadisticas> estadisticasList = estadisticasPage.getContent();
+
+        List<EstadisticaTopDTO> dtoList = new ArrayList<>();
+        for (Estadisticas estadisticas : estadisticasList) {
+            String nombreCompleto = estadisticas.getJugador().getNombre() + " " + estadisticas.getJugador().getApellido();
+            String equipo = estadisticas.getJugador().getEquipo().getNombre();
+            String posicion = estadisticas.getJugador().getPosicion().name();
+            String imagen = estadisticas.getJugador().getImagen();
+            int valor = estadisticas.getPorteriaCero();
+
+            EstadisticaTopDTO dto = new EstadisticaTopDTO(nombreCompleto, equipo, posicion, imagen, valor);
+            dtoList.add(dto);
+        }
+
+        return dtoList;
     }
 
 }
