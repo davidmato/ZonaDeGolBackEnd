@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.CorreoAdminDTO;
 import com.example.zonadegolbackend.dtos.EntrenadorDTO;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.CrearJugador;
@@ -68,6 +69,12 @@ public class EntrenadorController {
     @PutMapping("/editar/equipo")
     public Equipo editarEquipo(@RequestBody CrearEquipo equipo) {
         return entrenadorService.updateEquipo(equipo);
+    }
+
+
+    @PostMapping("/enviar-correo-admin")
+    public void enviarCorreoAdmin(@RequestBody CorreoAdminDTO request) {
+        entrenadorService.enviarCorreoAdmin(request.getAsunto(), request.getContenido());
     }
 
 }
