@@ -1,12 +1,7 @@
 package com.example.zonadegolbackend.services;
 
-import com.example.zonadegolbackend.entity.Clasificacion;
-import com.example.zonadegolbackend.entity.Equipo;
+import com.example.zonadegolbackend.entity.*;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
-import com.example.zonadegolbackend.entity.Jornada;
-import com.example.zonadegolbackend.entity.Temporada;
-import com.example.zonadegolbackend.entity.Arbitro;
-import com.example.zonadegolbackend.entity.Estadio;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
 import com.example.zonadegolbackend.repository.*;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
@@ -30,6 +25,7 @@ public class JornadaService {
     private final ClasificacionService clasificacionService;
     private final ArbitroRepository arbitroRepository;
     private final EstadioRepository estadioRepository;
+    private final JugadorRepository jugadorRepository;
 
 //    private final LigaEquipoRepository ligaEquipoRepository;
 
@@ -190,6 +186,20 @@ public class JornadaService {
         clasificacionRepository.save(clasificacionVisitante);
 
         clasificacionService.actualizarPuestos();
+
+        limpiarExpulsionesDelEquipo(equipoLocal);
+        limpiarExpulsionesDelEquipo(equipoVisitante);
+
+    }
+
+    public void limpiarExpulsionesDelEquipo(Equipo equipo) {
+        List<Jugador> jugadoresExpulsados = jugadorRepository.findByEquipoAndExpulsadoTrue(equipo);
+
+        for (Jugador jugador : jugadoresExpulsados) {
+            jugador.setExpulsado(false);
+        }
+
+        jugadorRepository.saveAll(jugadoresExpulsados);
     }
 
 

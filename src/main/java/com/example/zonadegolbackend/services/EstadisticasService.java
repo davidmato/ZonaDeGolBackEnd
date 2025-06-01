@@ -3,7 +3,9 @@ package com.example.zonadegolbackend.services;
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
+import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.repository.EstadisticasRepository;
+import com.example.zonadegolbackend.repository.JugadorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class EstadisticasService {
 
     private final EstadisticasRepository estadisticasRepository;
+    private final JugadorRepository jugadorRepository;
 
     public List<Estadisticas> findAll() {
         return estadisticasRepository.findAll();
@@ -135,4 +138,32 @@ public class EstadisticasService {
     public void eliminarEstadisticas(Integer id) {
         estadisticasRepository.deleteById(id);
     }
+
+
+    public void evaluarExpulsion(Jugador jugador) {
+        List<Estadisticas> estadisticasList = estadisticasRepository.findByJugador(jugador);
+
+        int totalAmarillas = estadisticasList.stream()
+                .mapToInt(Estadisticas::getTarjetasAmarillas)
+                .sum();
+
+        int totalRojas = estadisticasList.stream()
+                .mapToInt(Estadisticas::getTarjetasRojas)
+                .sum();
+
+        int cantidadExpulsiones = (totalAmarillas / 5) + totalRojas;
+
+        boolean estaExpulsado = cantidadExpulsiones > 0;
+
+        jugador.setExpulsado(estaExpulsado);
+        jugadorRepository.save(jugador);
+    }
+
+    public int calcularPartidosExpulsion(Jugador jugador) {
+        List<Estadisticas> estadisticas = estadisticasRepository.findByJugador(jugador);
+        int amarillas = estadisticas.stream().mapToInt(Estadisticas::getTarjetasAmarillas).sum();
+        int rojas = estadisticas.stream().mapToInt(Estadisticas::getTarjetasRojas).sum();
+        return (amarillas / 5) + rojas;
+    }
+
 }

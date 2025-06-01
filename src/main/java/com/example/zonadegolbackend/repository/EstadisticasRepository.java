@@ -2,6 +2,7 @@ package com.example.zonadegolbackend.repository;
 
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
+import com.example.zonadegolbackend.entity.Jugador;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,5 +26,7 @@ public interface EstadisticasRepository extends JpaRepository<Estadisticas,Integ
     @Query("SELECT new com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO(e.partidosJugados, e.goles, e.asistencias, e.tarjetasAmarillas, e.tarjetasRojas, e.porteriaCero, e.jugador.nombre, e.jugador.apellido) " +
             "FROM Estadisticas e WHERE e.temporada.id = :temporadaId AND e.jugador.equipo.liga.id = :ligaId")
     List<EstadisticasLigaTemporadaDTO> findByTemporadaAndLigaDTO(@Param("temporadaId") Integer temporadaId, @Param("ligaId") Integer ligaId);
+
+    List<Estadisticas> findByJugador(Jugador jugador);
 
 }

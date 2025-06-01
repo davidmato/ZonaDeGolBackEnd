@@ -18,4 +18,7 @@ public interface JugadorRepository extends JpaRepository<Jugador,Integer> {
     int countByEquipo(Equipo equipo);
 
     int countByEquipoAndActivoTrue(Equipo equipo);
+
+    List<Jugador> findByEquipoAndExpulsadoTrue(Equipo equipo);
+
 }

@@ -84,13 +84,13 @@ public class EquipoController {
 
 
     @GetMapping("/jornadas")
-    public ResponseEntity<List<Jornada>> obtenerJornadasEquipoLogueado() {
+    public List<Jornada> obtenerJornadasEquipoLogueado() {
         List<Jornada> jornadas = equipoService.obtenerJornadasDelEquipoLogueado();
 
         if (jornadas != null && !jornadas.isEmpty()) {
-            return ResponseEntity.ok(jornadas);
+            return jornadas;
         } else {
-            return ResponseEntity.notFound().build();
+            throw new RuntimeException("No se encontraron jornadas para el equipo logueado");
         }
     }
 
