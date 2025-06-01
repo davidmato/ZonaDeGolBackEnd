@@ -20,4 +20,7 @@ public interface ClasificacionRepository extends JpaRepository<Clasificacion, In
 
     @Query("SELECT c FROM Clasificacion c WHERE c.equipo.id = :idEquipo")
     List<Clasificacion> findByEquipoId(@Param("idEquipo") Integer idEquipo);
+
+    List<Clasificacion> findByTemporadaIdOrderByPuestoAsc(Integer temporadaId);
+
 }
