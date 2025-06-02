@@ -2,6 +2,7 @@ package com.example.zonadegolbackend.controller;
 
 import com.example.zonadegolbackend.dtos.EstadioDTO;
 import com.example.zonadegolbackend.dtos.GenerarJornadaDTO;
+import com.example.zonadegolbackend.dtos.JornadaArbitroDTO;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Estadio;
@@ -61,5 +62,14 @@ public class JornadaController {
         return jornadaRepository.findByEquipoLocal_IdOrEquipoVisitante_Id(equipoId, equipoId);
     }
 
+    @PutMapping("/arbitro/editar/{id}")
+    public Jornada arbitroEditarJornada(@PathVariable Integer id, @RequestBody JornadaArbitroDTO jornada) {
+        return jornadaService.editarJornadaArbitro(id, jornada);
+    }
+
+    @GetMapping("/arbitro/listar")
+    public List<JornadaDTO> obtenerJornadasPorUsername() {
+        return jornadaService.obtenerJornadasSegunArbitro();
+    }
 
 }

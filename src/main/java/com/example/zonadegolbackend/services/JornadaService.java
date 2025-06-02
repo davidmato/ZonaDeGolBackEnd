@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.EstadioDTO;
+import com.example.zonadegolbackend.dtos.JornadaArbitroDTO;
 import com.example.zonadegolbackend.entity.Clasificacion;
 import com.example.zonadegolbackend.entity.Equipo;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
@@ -14,7 +15,9 @@ import com.example.zonadegolbackend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -233,5 +236,30 @@ public class JornadaService {
         clasificacionService.actualizarPuestos();
     }
 
+    public Jornada editarJornadaArbitro(Integer idJornada, JornadaArbitroDTO jornadaArbitroDTO) {
+        Jornada jornadaExistente = jornadaRepository.findById(idJornada)
+                .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
+
+        jornadaExistente.setGolLocal(jornadaArbitroDTO.getGolLocal());
+        jornadaExistente.setGolVisitante(jornadaArbitroDTO.getGolVisitante());
+
+        return jornadaRepository.save(jornadaExistente);
+    }
+
+    public List<JornadaDTO> obtenerJornadasSegunArbitro() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Arbitro arbitro = arbitroRepository.findByUsuarioUsername(username)
+                .orElseThrow(() -> new RuntimeException("Árbitro no encontrado para el usuario logueado"));
+
+        LocalDateTime fechaActual = LocalDateTime.now();
+
+        return jornadaRepository.findByArbitro_Id(arbitro.getId())
+                .stream()
+                .filter(jornada -> jornada.getFecha().isAfter(fechaActual))
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
 }
