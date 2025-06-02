@@ -305,9 +305,6 @@ public class UsuarioService implements UserDetailsService {
         return respuesta;
     }
 
-
-
-
     public void eliminarUsuario(Integer id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -321,7 +318,7 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // Eliminar árbitro si existe
-        Arbitro arbitro = arbitroRepository.findByUsuario_Username(usuario.getUsername());
+        Arbitro arbitro = arbitroRepository.findByUsuarioUsername(usuario.getUsername()).orElse(null);
         if (arbitro != null) {
             arbitroRepository.delete(arbitro);
         }
