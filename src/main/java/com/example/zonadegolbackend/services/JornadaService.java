@@ -255,7 +255,11 @@ public class JornadaService {
         jornadaExistente.setGolLocal(jornadaArbitroDTO.getGolLocal());
         jornadaExistente.setGolVisitante(jornadaArbitroDTO.getGolVisitante());
 
-        return jornadaRepository.save(jornadaExistente);
+        jornadaRepository.save(jornadaExistente);
+
+        actualizarPuntos(jornadaExistente);
+
+        return jornadaExistente;
     }
 
     public List<JornadaDTO> obtenerJornadasSegunArbitro() {
@@ -265,11 +269,8 @@ public class JornadaService {
         Arbitro arbitro = arbitroRepository.findByUsuarioUsername(username)
                 .orElseThrow(() -> new RuntimeException("Árbitro no encontrado para el usuario logueado"));
 
-        LocalDateTime fechaActual = LocalDateTime.now();
-
         return jornadaRepository.findByArbitro_Id(arbitro.getId())
                 .stream()
-                .filter(jornada -> jornada.getFecha().isAfter(fechaActual))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }

@@ -70,14 +70,12 @@ public class EstadisticasService {
         Estadisticas estadisticasExistente = estadisticasRepository.findById(idEstadisticas)
                 .orElseThrow(() -> new RuntimeException("Estadisticas no encontradas"));
 
-        estadisticasExistente.setPartidosJugados(estadisticas.getPartidosJugados());
-        estadisticasExistente.setGoles(estadisticas.getGoles());
-        estadisticasExistente.setAsistencias(estadisticas.getAsistencias());
-        estadisticasExistente.setTarjetasAmarillas(estadisticas.getTarjetasAmarillas());
-        estadisticasExistente.setTarjetasRojas(estadisticas.getTarjetasRojas());
-        estadisticasExistente.setPorteriaCero(estadisticas.getPorteriaCero());
-        estadisticasExistente.setTemporada(estadisticas.getTemporada());
-        estadisticasExistente.setJugador(estadisticas.getJugador());
+        estadisticasExistente.setPartidosJugados(estadisticasExistente.getPartidosJugados() + estadisticas.getPartidosJugados());
+        estadisticasExistente.setGoles(estadisticasExistente.getGoles() + estadisticas.getGoles());
+        estadisticasExistente.setAsistencias(estadisticasExistente.getAsistencias() + estadisticas.getAsistencias());
+        estadisticasExistente.setTarjetasAmarillas(estadisticasExistente.getTarjetasAmarillas() + estadisticas.getTarjetasAmarillas());
+        estadisticasExistente.setTarjetasRojas(estadisticasExistente.getTarjetasRojas() + estadisticas.getTarjetasRojas());
+        estadisticasExistente.setPorteriaCero(estadisticasExistente.getPorteriaCero() + estadisticas.getPorteriaCero());
 
         return estadisticasRepository.save(estadisticasExistente);
     }
@@ -165,5 +163,6 @@ public class EstadisticasService {
         int rojas = estadisticas.stream().mapToInt(Estadisticas::getTarjetasRojas).sum();
         return (amarillas / 5) + rojas;
     }
+
 
 }
