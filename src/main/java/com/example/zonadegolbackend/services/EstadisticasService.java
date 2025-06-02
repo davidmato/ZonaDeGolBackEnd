@@ -2,10 +2,14 @@ package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
+import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Estadisticas;
 import com.example.zonadegolbackend.entity.Jugador;
+import com.example.zonadegolbackend.entity.Temporada;
+import com.example.zonadegolbackend.repository.EquipoRepository;
 import com.example.zonadegolbackend.repository.EstadisticasRepository;
 import com.example.zonadegolbackend.repository.JugadorRepository;
+import com.example.zonadegolbackend.repository.TemporadaRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,8 @@ public class EstadisticasService {
 
     private final EstadisticasRepository estadisticasRepository;
     private final JugadorRepository jugadorRepository;
+    private final EquipoRepository equipoRepository;
+    private final TemporadaRepository temporadaRepository;
 
     public List<Estadisticas> findAll() {
         return estadisticasRepository.findAll();
@@ -164,5 +170,37 @@ public class EstadisticasService {
         return (amarillas / 5) + rojas;
     }
 
+    public List<Estadisticas> cargarEstadisticasPorEquipo(String nombreEquipo) {
+        // Obtener el equipo por su nombre
+        Equipo equipo = equipoRepository.findByNombre(nombreEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        // Obtener la última temporada creada
+        Temporada ultimaTemporada = temporadaRepository.findLatest().getFirst();
+
+        // Obtener los jugadores del equipo
+        List<Jugador> jugadores = jugadorRepository.findByEquipo(equipo);
+
+        // Cargar las estadísticas de los jugadores en la última temporada
+        List<Estadisticas> estadisticasDTOs = new ArrayList<>();
+        for (Jugador jugador : jugadores) {
+            Estadisticas estadisticas = estadisticasRepository.findLatestByJugadorId(jugador.getId()).getFirst();
+            if (estadisticas != null) {
+                Estadisticas stats = new Estadisticas();
+                stats.setId(estadisticas.getId());
+                stats.setPartidosJugados(estadisticas.getPartidosJugados());
+                stats.setGoles(estadisticas.getGoles());
+                stats.setAsistencias(estadisticas.getAsistencias());
+                stats.setTarjetasAmarillas(estadisticas.getTarjetasAmarillas());
+                stats.setTarjetasRojas(estadisticas.getTarjetasRojas());
+                stats.setPorteriaCero(estadisticas.getPorteriaCero());
+                stats.setJugador(jugador);
+                stats.setTemporada(ultimaTemporada);
+                estadisticasDTOs.add(stats);
+            }
+        }
+
+        return estadisticasDTOs;
+    }
 
 }
