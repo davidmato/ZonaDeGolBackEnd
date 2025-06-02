@@ -6,7 +6,12 @@ import com.example.zonadegolbackend.dtos.CrearJugador;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +33,8 @@ public class EntrenadorService {
     private final PasswordEncoder passwordEncoder;
     private final EstadisticasRepository estadisticasRepository;
     private final TemporadaService temporadaService;
+    private final JavaMailSender mailSender;
+
 
 
     public List<EntrenadorDTO> listarEntrenador() {
@@ -171,9 +178,18 @@ public class EntrenadorService {
             throw new RuntimeException("El entrenador no tiene un equipo");
         }
 
-        int cantidadJugadores = jugadorRepository.countByEquipoAndActivoTrue(equipo);
-        if (cantidadJugadores >= 12) {
-            throw new RuntimeException("No se pueden crear más de 12 jugadores por equipo");
+        if (crearJugador.getDorsal() > 99) {
+            throw new RuntimeException("El dorsal no puede ser mayor que 99");
+        }
+
+        int cantidadJugadoresActivos = jugadorRepository.countByEquipoAndActivoTrue(equipo);
+        if (cantidadJugadoresActivos >= 12) {
+            throw new RuntimeException("No se pueden crear más de 12 activos jugadores por equipo");
+        }
+
+        int cantidadJugadores = jugadorRepository.countByEquipo(equipo);
+        if (cantidadJugadores >= 21) {
+            throw new RuntimeException("No se pueden crear más de 21 jugadores por equipo");
         }
 
         Usuario usuarioJugador = new Usuario();
@@ -243,7 +259,7 @@ public class EntrenadorService {
         return equipoRepository.save(equipo);
     }
 
-    public Jugador updateJugador(CrearJugador crearJugador) {
+    public Jugador updateJugador(CrearJugador crearJugador, Integer idJugador) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -257,12 +273,13 @@ public class EntrenadorService {
         Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
 
+
         Equipo equipo = equipoRepository.findByEntrenador(entrenador);
         if (equipo == null) {
             throw new RuntimeException("El entrenador no tiene un equipo asignado");
         }
 
-        Jugador jugador = jugadorRepository.findById(crearJugador.getId())
+        Jugador jugador = jugadorRepository.findById(idJugador)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
 
         jugador.setNombre(crearJugador.getNombre());
@@ -302,14 +319,64 @@ public class EntrenadorService {
             throw new RuntimeException("El jugador no pertenece a tu equipo");
         }
 
+        if (!jugador.isActivo()) {
+            int activos = jugadorRepository.countByEquipoAndActivoTrue(equipo);
+            if (activos >= 11) {
+                throw new RuntimeException("No puede haber más de 11 jugadores activos en el equipo");
+            }
+        }
+
         jugador.setActivo(!jugador.isActivo());
         return jugadorRepository.save(jugador);
     }
 
 
+    private void enviarCorreoHtml(String para, String asunto, String html, String remitenteCorreo) {
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(para);
+            helper.setSubject(asunto);
+            helper.setText(html, true);
+            helper.setFrom(remitenteCorreo);
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error al enviar el correo", e);
+        }
+    }
 
+    public void enviarCorreoAdmin(String asunto, String contenido) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario remitente = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        if (remitente.getRol() != Rol.ENTRENADOR && remitente.getRol() != Rol.JUGADOR && remitente.getRol() != Rol.ARBITRO) {
+            throw new RuntimeException("Solo un entrenador, jugador o árbitro puede enviar correos al administrador");
+        }
+        String correoAdmin = "soportezonadegol@gmail.com";
+        String cuerpoHtml = "<div style=\"max-width:400px;margin:40px auto;padding:24px;background:#f9f9f9;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-family:Arial,sans-serif;\">" +
+                "<div style='text-align:center; margin-bottom:16px;'>" +
+                "<img src='https://res.cloudinary.com/dyfoaulb5/image/upload/fl_preserve_transparency/v1747739581/logo_ohmfq7.jpg' alt='Logo' style='max-width:120px;'>" +
+                "</div>" +
+                "<h2 style=\"color:#333;text-align:center;\">Nuevo mensaje de entrenador</h2>" +
+                "<p style=\"text-align:center;\"><b>Usuario:</b> " + remitente.getUsername() + "</p>" +
+                "<p style=\"text-align:center;\">" + contenido + "</p>" +
+                "</div>";
 
+        enviarCorreoHtml(correoAdmin, asunto, cuerpoHtml, remitente.getCorreo());
+
+        String asuntoConfirmacion = "Confirmación de envío de correo al administrador";
+        String cuerpoConfirmacionHtml = "<div style=\"max-width:400px;margin:40px auto;padding:24px;background:#f9f9f9;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-family:Arial,sans-serif;\">" +
+                "<div style='text-align:center; margin-bottom:16px;'>" +
+                "<img src='https://res.cloudinary.com/dyfoaulb5/image/upload/fl_preserve_transparency/v1747739581/logo_ohmfq7.jpg' alt='Logo' style='max-width:120px;'>" +
+                "</div>" +
+                "<h2 style=\"color:#333;text-align:center;\">Correo enviado correctamente</h2>" +
+                "<p style=\"text-align:center;\">Tu mensaje con asunto '<b>" + asunto + "</b>' ha sido enviado correctamente al administrador.</p>" +
+                "</div>";
+
+        enviarCorreoHtml(remitente.getCorreo(), asuntoConfirmacion, cuerpoConfirmacionHtml, correoAdmin);
+    }
 
 
 

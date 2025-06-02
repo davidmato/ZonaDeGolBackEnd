@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface ArbitroRepository extends JpaRepository<Arbitro, Integer> {
     @Query("SELECT a FROM Arbitro a WHERE a.usuario.username = :username")
     Optional<Arbitro> findByUsuarioUsername(@Param("username") String username);
+
+    Arbitro findByUsuario_Id(Integer usuarioId);
 }

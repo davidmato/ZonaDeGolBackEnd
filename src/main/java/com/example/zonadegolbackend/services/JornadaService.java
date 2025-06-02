@@ -4,11 +4,8 @@ import com.example.zonadegolbackend.dtos.EstadioDTO;
 import com.example.zonadegolbackend.dtos.JornadaArbitroDTO;
 import com.example.zonadegolbackend.entity.Clasificacion;
 import com.example.zonadegolbackend.entity.Equipo;
+import com.example.zonadegolbackend.entity.*;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
-import com.example.zonadegolbackend.entity.Jornada;
-import com.example.zonadegolbackend.entity.Temporada;
-import com.example.zonadegolbackend.entity.Arbitro;
-import com.example.zonadegolbackend.entity.Estadio;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
 import com.example.zonadegolbackend.repository.*;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
@@ -35,6 +32,7 @@ public class JornadaService {
     private final ArbitroRepository arbitroRepository;
     private final EstadioRepository estadioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final JugadorRepository jugadorRepository;
 
 //    private final LigaEquipoRepository ligaEquipoRepository;
 
@@ -234,6 +232,20 @@ public class JornadaService {
         clasificacionRepository.save(clasificacionVisitante);
 
         clasificacionService.actualizarPuestos();
+
+        limpiarExpulsionesDelEquipo(equipoLocal);
+        limpiarExpulsionesDelEquipo(equipoVisitante);
+
+    }
+
+    public void limpiarExpulsionesDelEquipo(Equipo equipo) {
+        List<Jugador> jugadoresExpulsados = jugadorRepository.findByEquipoAndExpulsadoTrue(equipo);
+
+        for (Jugador jugador : jugadoresExpulsados) {
+            jugador.setExpulsado(false);
+        }
+
+        jugadorRepository.saveAll(jugadoresExpulsados);
     }
 
     public Jornada editarJornadaArbitro(Integer idJornada, JornadaArbitroDTO jornadaArbitroDTO) {

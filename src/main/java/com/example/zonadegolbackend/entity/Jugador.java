@@ -54,7 +54,7 @@ public class Jugador {
     @Column(name = "expulsado", nullable = false)
     private Boolean expulsado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_equipo", nullable = false)
     private Equipo equipo;
 

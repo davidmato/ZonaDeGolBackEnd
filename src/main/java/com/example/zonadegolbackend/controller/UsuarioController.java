@@ -45,17 +45,17 @@ public class UsuarioController {
 
 
     @GetMapping("/admin/arbitros")
-    public List<Usuario> obtenerTodosLosArbitros() {
-        return usuarioService.FindAllArbitros();
+    public List<ArbitroDTO> obtenerTodosLosArbitros() {
+        return usuarioService.findAllArbitros();
     }
 
     @PostMapping("/admin/crear/arbitro")
-    public Usuario crearArbitro(@RequestBody ArbitroDTO usuario) {
+    public ArbitroDTO crearArbitro(@RequestBody ArbitroDTO usuario) {
         return usuarioService.CrearArbitro(usuario);
     }
 
     @PutMapping("/admin/editar/arbitro/{id}")
-    public Usuario editarArbitro(@PathVariable Integer id, @RequestBody Usuario usuario) {
+    public ArbitroDTO editarArbitro(@PathVariable Integer id, @RequestBody ArbitroDTO usuario) {
         return usuarioService.editarArbitro(id, usuario);
     }
 

@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +17,7 @@ import com.example.zonadegolbackend.entity.Jornada;
 @NoArgsConstructor
 @EqualsAndHashCode
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Arbitro {
 
 
@@ -40,6 +42,6 @@ public class Arbitro {
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "arbitro")
+    @OneToMany(mappedBy = "arbitro", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Jornada> jornadasDirigidas;
 }

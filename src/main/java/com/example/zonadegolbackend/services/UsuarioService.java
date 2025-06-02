@@ -4,10 +4,12 @@ package com.example.zonadegolbackend.services;
 import com.example.zonadegolbackend.dtos.ArbitroDTO;
 import com.example.zonadegolbackend.dtos.AuthenticationDTO;
 import com.example.zonadegolbackend.dtos.UsuarioDto;
+import com.example.zonadegolbackend.entity.Arbitro;
 import com.example.zonadegolbackend.entity.Entrenador;
 import com.example.zonadegolbackend.entity.TokenAcceso;
 import com.example.zonadegolbackend.entity.Usuario;
 import com.example.zonadegolbackend.enums.Rol;
+import com.example.zonadegolbackend.repository.ArbitroRepository;
 import com.example.zonadegolbackend.repository.EntrenadorRepository;
 import com.example.zonadegolbackend.repository.UsuarioRepository;
 import com.example.zonadegolbackend.security.JwtService;
@@ -43,6 +45,7 @@ public class UsuarioService implements UserDetailsService {
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final ArbitroRepository arbitroRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -102,11 +105,11 @@ public class UsuarioService implements UserDetailsService {
         } else {
             if (usuario.getToken() == null || jwtService.isTokenExpired(usuario.getToken().getToken())) {
                 apiKey = jwtService.generateToken(usuario, usuario.getId(), usuario.getRol().name());
-                TokenAcceso token = usuario.getToken() == null ? new TokenAcceso() : usuario.getToken();
-                token.setUsuario(usuario);
-                token.setToken(apiKey);
-                token.setFechaExpiracion(LocalDateTime.now().plusDays(1));
-                tokenService.save(token);
+//                TokenAcceso token = usuario.getToken() == null ? new TokenAcceso() : usuario.getToken();
+//                token.setUsuario(usuario);
+//                token.setToken(apiKey);
+//                token.setFechaExpiracion(LocalDateTime.now().plusDays(1));
+//                tokenService.save(token);
             } else {
                 apiKey = usuario.getToken().getToken();
             }
@@ -192,7 +195,7 @@ public class UsuarioService implements UserDetailsService {
 
 
 
-    public List<Usuario> FindAllArbitros() {
+    public List<ArbitroDTO> findAllArbitros() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -203,11 +206,23 @@ public class UsuarioService implements UserDetailsService {
             throw new RuntimeException("Solo un administrador puede ver los árbitros");
         }
 
-        return usuarioRepository.findAllByRol(Rol.ARBITRO);
+        List<Arbitro> arbitros = arbitroRepository.findAll();
+        return arbitros.stream().map(arbitro -> {
+            Usuario usuario = arbitro.getUsuario();
+            ArbitroDTO dto = new ArbitroDTO();
+            dto.setId(usuario.getId());
+            dto.setUsername(usuario.getUsername());
+            dto.setCorreo(usuario.getCorreo());
+            dto.setNombreArbitro(arbitro.getNombre());
+            dto.setApellido(arbitro.getApellidos());
+            dto.setNumColegiado(arbitro.getNumColegiado());
+            dto.setDni(arbitro.getDni());
+            return dto;
+        }).toList();
     }
 
 
-    public Usuario CrearArbitro(ArbitroDTO usuario) {
+    public ArbitroDTO CrearArbitro(ArbitroDTO usuario) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -218,19 +233,38 @@ public class UsuarioService implements UserDetailsService {
             throw new RuntimeException("Solo un administrador puede crear árbitros");
         }
 
-        Usuario usuarioNuevo = new Usuario();
 
-        usuarioNuevo.setUsername(usuario.getNombreArbitro() +"_" + usuario.getApellido());
+        Usuario usuarioNuevo = new Usuario();
+        usuarioNuevo.setUsername(usuario.getNombreArbitro() + "_" + usuario.getApellido());
         usuarioNuevo.setCorreo(usuario.getCorreo());
         usuarioNuevo.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuarioNuevo.setRol(Rol.ARBITRO);
         usuarioNuevo.setFechaRegistro(LocalDateTime.now());
         usuarioNuevo.setPagado(true);
+        usuarioRepository.save(usuarioNuevo);
 
-        return usuarioRepository.save(usuarioNuevo);
+        Arbitro arbitro = new Arbitro();
+        arbitro.setUsuario(usuarioNuevo);
+        arbitro.setNumColegiado(usuario.getNumColegiado());
+        arbitro.setDni(usuario.getDni());
+        arbitro.setNombre(usuario.getNombreArbitro());
+        arbitro.setApellidos(usuario.getApellido());
+        arbitroRepository.save(arbitro);
+
+        ArbitroDTO arbitroDTO = new ArbitroDTO();
+        arbitroDTO.setUsername(usuarioNuevo.getUsername());
+        arbitroDTO.setCorreo(usuarioNuevo.getCorreo());
+        arbitroDTO.setNombreArbitro(usuario.getNombreArbitro());
+        arbitroDTO.setApellido(usuario.getApellido());
+        arbitroDTO.setNumColegiado(usuario.getNumColegiado());
+        arbitroDTO.setDni(usuario.getDni());
+
+
+        return arbitroDTO;
+
     }
 
-    public Usuario editarArbitro(Integer id, Usuario usuario) {
+    public ArbitroDTO editarArbitro(Integer id, ArbitroDTO arbitroDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -241,17 +275,35 @@ public class UsuarioService implements UserDetailsService {
             throw new RuntimeException("Solo un administrador puede editar árbitros");
         }
 
-        Usuario usuarioExistente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        usuarioExistente.setUsername(usuario.getUsername());
-        usuarioExistente.setCorreo(usuario.getCorreo());
-        if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
-            usuarioExistente.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        Arbitro arbitro = arbitroRepository.findByUsuario_Id(id);
+        if (arbitro == null) {
+            throw new RuntimeException("Árbitro no encontrado");
         }
-        return usuarioRepository.save(usuarioExistente);
-    }
+        Usuario usuario = arbitro.getUsuario();
 
+        usuario.setUsername(arbitroDTO.getNombreArbitro() + "_" + arbitroDTO.getApellido());
+        usuario.setCorreo(arbitroDTO.getCorreo());
+        if (arbitroDTO.getPassword() != null && !arbitroDTO.getPassword().isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(arbitroDTO.getPassword()));
+        }
+        usuarioRepository.save(usuario);
+
+        arbitro.setNombre(arbitroDTO.getNombreArbitro());
+        arbitro.setApellidos(arbitroDTO.getApellido());
+        arbitro.setNumColegiado(arbitroDTO.getNumColegiado());
+        arbitro.setDni(arbitroDTO.getDni());
+        arbitroRepository.save(arbitro);
+
+        ArbitroDTO respuesta = new ArbitroDTO();
+        respuesta.setUsername(usuario.getUsername());
+        respuesta.setCorreo(usuario.getCorreo());
+        respuesta.setNombreArbitro(arbitro.getNombre());
+        respuesta.setApellido(arbitro.getApellidos());
+        respuesta.setNumColegiado(arbitro.getNumColegiado());
+        respuesta.setDni(arbitro.getDni());
+
+        return respuesta;
+    }
 
 
 
@@ -267,9 +319,14 @@ public class UsuarioService implements UserDetailsService {
 
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Eliminar árbitro si existe
+        Arbitro arbitro = arbitroRepository.findByUsuario_Username(usuario.getUsername());
+        if (arbitro != null) {
+            arbitroRepository.delete(arbitro);
+        }
         usuarioRepository.delete(usuario);
     }
-
     public boolean usuarioHaPagado(Integer usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
         return usuario != null && Boolean.TRUE.equals(usuario.getPagado());
@@ -283,4 +340,7 @@ public class UsuarioService implements UserDetailsService {
         List<Usuario> usuarios = usuarioRepository.findByPagadoFalseAndFechaRegistroBefore(haceUnMes);
         usuarioRepository.deleteAll(usuarios);
     }
+
+
+
 }
