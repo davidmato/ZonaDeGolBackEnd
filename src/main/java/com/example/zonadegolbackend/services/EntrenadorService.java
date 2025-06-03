@@ -55,6 +55,12 @@ public class EntrenadorService {
         return entrenadorDTOS;
     }
 
+    public void validarPago(Usuario usuario) {
+        if (usuario.getPagado() == null || !usuario.getPagado()) {
+            throw new RuntimeException("Debes haber pagado para realizar esta acción");
+        }
+    }
+
 
     public Entrenador create(EntrenadorDTO entrenadorDTO) {
         Usuario usuario = new Usuario();
@@ -130,9 +136,12 @@ public class EntrenadorService {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        validarPago(usuario);
+
         if (usuario.getRol() != Rol.ENTRENADOR) {
             throw new RuntimeException("Solo un entrenador puede crear un equipo");
         }
+
 
         Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
@@ -161,6 +170,7 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
             throw new RuntimeException("Solo un entrenador puede crear un jugador");
@@ -234,6 +244,7 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
             throw new RuntimeException("Solo un entrenador puede editar un equipo");
@@ -261,6 +272,7 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
             throw new RuntimeException("Solo un entrenador puede editar un jugador");
@@ -295,6 +307,7 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
             throw new RuntimeException("Solo un entrenador puede cambiar el estado de un jugador");
