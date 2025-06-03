@@ -22,6 +22,11 @@ public class EntrenadorController {
 
     private final EntrenadorService entrenadorService;
 
+    @GetMapping("/all")
+    public List<Entrenador> findAll() {
+        return entrenadorService.findAll();
+    }
+
     @GetMapping("/listar")
     public List<EntrenadorDTO> listarEntrenador() {
         return entrenadorService.listarEntrenador();

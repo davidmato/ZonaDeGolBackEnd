@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TrofeoRepository extends JpaRepository<Trofeo, Integer> {
+    Trofeo findByTemporadaLigaId(Integer temporadaLigaId);
 }

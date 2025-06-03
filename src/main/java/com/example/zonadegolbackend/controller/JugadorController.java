@@ -33,4 +33,9 @@ public class JugadorController {
         return jugadorService.findByIdDTO(id);
     }
 
+    @PutMapping("/editar/{id}")
+    public Jugador editarJugador(@PathVariable Integer id, @RequestBody Jugador jugadorActualizado) {
+        return jugadorService.editarJugador(id, jugadorActualizado);
+    }
+
 }

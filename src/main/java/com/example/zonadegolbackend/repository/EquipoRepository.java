@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EquipoRepository extends JpaRepository<Equipo, Integer> {
@@ -19,6 +20,9 @@ public interface EquipoRepository extends JpaRepository<Equipo, Integer> {
 
     @Query("SELECT e FROM Equipo e WHERE e.liga.id = :ligaId")
     List<Equipo> findByLigaId(@Param("ligaId") Integer ligaId);
+
+    @Query("SELECT e FROM Equipo e WHERE e.nombre = :nombre")
+    Optional<Equipo> findByNombre(@Param("nombre") String nombre);
 
     Equipo findByEntrenador_Usuario(Usuario usuario);
 }

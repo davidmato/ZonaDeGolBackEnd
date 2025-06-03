@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TemporadaLigaRepository extends JpaRepository<TemporadaLiga,Integer> {
+    TemporadaLiga findByTemporadaIdAndLigaId(Integer temporadaId, Integer ligaId);
 }

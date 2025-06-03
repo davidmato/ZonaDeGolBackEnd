@@ -1,5 +1,9 @@
 package com.example.zonadegolbackend.services;
 
+import com.example.zonadegolbackend.dtos.EstadioDTO;
+import com.example.zonadegolbackend.dtos.JornadaArbitroDTO;
+import com.example.zonadegolbackend.entity.Clasificacion;
+import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.*;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
@@ -8,7 +12,9 @@ import com.example.zonadegolbackend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -25,36 +31,77 @@ public class JornadaService {
     private final ClasificacionService clasificacionService;
     private final ArbitroRepository arbitroRepository;
     private final EstadioRepository estadioRepository;
+    private final UsuarioRepository usuarioRepository;
     private final JugadorRepository jugadorRepository;
 
 //    private final LigaEquipoRepository ligaEquipoRepository;
 
-    public List<Jornada> findAll() {
-        return jornadaRepository.findAll();
+    public List<JornadaDTO> findAll() {
+        return jornadaRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Jornada crearJornada(Jornada jornada) {
+    public List<EstadioDTO> findAllEstadios() {
+        return estadioRepository.findAll()
+                .stream()
+                .map(estadio -> new EstadioDTO(
+                        estadio.getId(),
+                        estadio.getNombre(),
+                        estadio.getDireccion(),
+                        estadio.getAforo()
+                ))
+                .collect(Collectors.toList());
+    }
 
+    public Jornada crearJornada(JornadaDTO jornadaDTO) {
         Jornada nuevaJornada = new Jornada();
 
-        nuevaJornada.setFecha(jornada.getFecha());
-        nuevaJornada.setEquipoLocal(jornada.getEquipoLocal());
-        nuevaJornada.setEquipoVisitante(jornada.getEquipoVisitante());
-        nuevaJornada.setTemporada(jornada.getTemporada());
+        nuevaJornada.setGolLocal(jornadaDTO.getGolLocal());
+        nuevaJornada.setGolVisitante(jornadaDTO.getGolVisitante());
+        nuevaJornada.setFecha(jornadaDTO.getFecha());
 
-        return jornadaRepository.save(jornada);
+        // Buscar entidades relacionadas por sus nombres o IDs
+        nuevaJornada.setEquipoLocal(equipoRepository.findByNombre(jornadaDTO.getEquipoLocalNombre())
+                .orElseThrow(() -> new RuntimeException("Equipo local no encontrado")));
+        nuevaJornada.setEquipoVisitante(equipoRepository.findByNombre(jornadaDTO.getEquipoVisitanteNombre())
+                .orElseThrow(() -> new RuntimeException("Equipo visitante no encontrado")));
+        nuevaJornada.setArbitro(arbitroRepository.findByUsuarioUsername(jornadaDTO.getArbitroNombre())
+                .orElseThrow(() -> new RuntimeException("Árbitro no encontrado")));
+        nuevaJornada.setEstadio(estadioRepository.findByNombre(jornadaDTO.getEstadioNombre())
+                .orElseThrow(() -> new RuntimeException("Estadio no encontrado")));
+
+        // Asignar la temporada más reciente
+        nuevaJornada.setTemporada(temporadaRepository.findLatest().getFirst());
+
+        return jornadaRepository.save(nuevaJornada);
     }
 
-    public Jornada editarJornada(Integer idJornada, Jornada jornada) {
+    public Jornada editarJornada(Integer idJornada, JornadaDTO jornadaDTO) {
         Jornada jornadaExistente = jornadaRepository.findById(idJornada)
                 .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
 
-        jornadaExistente.setFecha(jornada.getFecha());
-        jornadaExistente.setEquipoLocal(jornada.getEquipoLocal());
-        jornadaExistente.setEquipoVisitante(jornada.getEquipoVisitante());
-        jornadaExistente.setTemporada(jornada.getTemporada());
+        jornadaExistente.setGolLocal(jornadaDTO.getGolLocal());
+        jornadaExistente.setGolVisitante(jornadaDTO.getGolVisitante());
+        jornadaExistente.setFecha(jornadaDTO.getFecha());
 
-        return jornadaRepository.save(jornadaExistente);
+        jornadaExistente.setEquipoLocal(equipoRepository.findByNombre(jornadaDTO.getEquipoLocalNombre())
+                .orElseThrow(() -> new RuntimeException("Equipo local no encontrado")));
+        jornadaExistente.setEquipoVisitante(equipoRepository.findByNombre(jornadaDTO.getEquipoVisitanteNombre())
+                .orElseThrow(() -> new RuntimeException("Equipo visitante no encontrado")));
+        jornadaExistente.setArbitro(arbitroRepository.findByUsuarioUsername(jornadaDTO.getArbitroNombre())
+                .orElseThrow(() -> new RuntimeException("Árbitro no encontrado")));
+        jornadaExistente.setEstadio(estadioRepository.findByNombre(jornadaDTO.getEstadioNombre())
+                .orElseThrow(() -> new RuntimeException("Estadio no encontrado")));
+
+        jornadaExistente.setTemporada(temporadaRepository.findLatest().getFirst());
+
+        jornadaRepository.save(jornadaExistente);
+
+        actualizarPuntos(jornadaExistente);
+
+        return jornadaExistente;
     }
 
     public void eliminarJornada(Integer id) {
@@ -84,10 +131,9 @@ public class JornadaService {
     }
 
 
-    public List<JornadaDTO> generarJornadas(List<Integer> equipoIds, Integer temporadaId) {
+    public List<JornadaDTO> generarJornadas(List<Integer> equipoIds) {
         List<Equipo> equipos = equipoRepository.findAllById(equipoIds);
-        Temporada temporada = temporadaRepository.findById(temporadaId)
-                .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
+        Temporada temporada = temporadaRepository.findLatest().getFirst();
 
         List<Arbitro> arbitros = arbitroRepository.findAll();
         List<Estadio> estadios = estadioRepository.findAll();
@@ -202,5 +248,31 @@ public class JornadaService {
         jugadorRepository.saveAll(jugadoresExpulsados);
     }
 
+    public Jornada editarJornadaArbitro(Integer idJornada, JornadaArbitroDTO jornadaArbitroDTO) {
+        Jornada jornadaExistente = jornadaRepository.findById(idJornada)
+                .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
+
+        jornadaExistente.setGolLocal(jornadaArbitroDTO.getGolLocal());
+        jornadaExistente.setGolVisitante(jornadaArbitroDTO.getGolVisitante());
+
+        jornadaRepository.save(jornadaExistente);
+
+        actualizarPuntos(jornadaExistente);
+
+        return jornadaExistente;
+    }
+
+    public List<JornadaDTO> obtenerJornadasSegunArbitro() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Arbitro arbitro = arbitroRepository.findByUsuarioUsername(username)
+                .orElseThrow(() -> new RuntimeException("Árbitro no encontrado para el usuario logueado"));
+
+        return jornadaRepository.findByArbitro_Id(arbitro.getId())
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
 }

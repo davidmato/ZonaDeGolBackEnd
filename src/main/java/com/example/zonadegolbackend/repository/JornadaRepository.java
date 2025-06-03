@@ -27,4 +27,5 @@ public interface JornadaRepository extends JpaRepository<Jornada, Integer> {
     """)
     List<Jornada> findLast5ByEquipoAndTemporada(@Param("equipo") Equipo equipo, @Param("temporada") Temporada temporada, Pageable pageable);
 
+    List<Jornada> findByArbitro_Id(Integer arbitroId);
 }

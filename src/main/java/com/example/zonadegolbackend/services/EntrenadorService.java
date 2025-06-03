@@ -55,6 +55,10 @@ public class EntrenadorService {
         return entrenadorDTOS;
     }
 
+    public List<Entrenador> findAll() {
+        return entrenadorRepository.findAll();
+    }
+
     public void validarPago(Usuario usuario) {
         if (usuario.getPagado() == null || !usuario.getPagado()) {
             throw new RuntimeException("Debes haber pagado para realizar esta acción");
@@ -141,7 +145,6 @@ public class EntrenadorService {
         if (usuario.getRol() != Rol.ENTRENADOR) {
             throw new RuntimeException("Solo un entrenador puede crear un equipo");
         }
-
 
         Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
