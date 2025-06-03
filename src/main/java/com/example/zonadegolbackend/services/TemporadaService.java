@@ -21,6 +21,7 @@ public class TemporadaService {
     private final EstadisticasRepository estadisticasRepository;
     private final LigaRepository ligaRepository;
     private final TemporadaLigaRepository temporadaLigaRepository;
+    private final TrofeoRepository trofeoRepository;
 
     public List<Temporada> findAll() {
         return temporadaRepository.findAll();
@@ -68,14 +69,15 @@ public class TemporadaService {
         for (Equipo equipo : equipos) {
             Clasificacion clasificacion = new Clasificacion();
             clasificacion.setPuesto(0);
+            clasificacion.setPartidosJugados(0);
             clasificacion.setVictorias(0);
             clasificacion.setEmpates(0);
             clasificacion.setDerrotas(0);
             clasificacion.setGolAFavor(0);
             clasificacion.setGolEnContra(0);
             clasificacion.setGolDiferencia(0);
-            clasificacion.setPuntos(0);
             clasificacion.setPartidosJugados(0);
+            clasificacion.setPuntos(0);
             clasificacion.setEquipo(equipo);
             clasificacion.setTemporada(temporada);
             clasificacionRepository.save(clasificacion);
@@ -106,6 +108,15 @@ public class TemporadaService {
             temporadaLiga.setTemporada(temporada);
             temporadaLiga.setLiga(liga);
             temporadaLigaRepository.save(temporadaLiga);
+            Trofeo trofeo = new Trofeo();
+            trofeo.setNombre("Trofeo de " + liga.getNombre() + " " + temporada.getFechaInicio().getYear());
+            trofeo.setImagen("default-trophy.png"); // Puedes cambiar esto por una imagen real si la tienes
+            trofeo.setTemporadaLiga(temporadaLiga);
+            trofeoRepository.save(trofeo);
         }
+    }
+
+    public TemporadaLiga buscarTemporadaLiga(Integer temporadaId, Integer ligaId) {
+        return temporadaLigaRepository.findByTemporadaIdAndLigaId(temporadaId, ligaId);
     }
 }

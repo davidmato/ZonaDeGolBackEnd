@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -94,6 +95,12 @@ public class EstadisticasController {
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
 
         return estadisticasService.calcularPartidosExpulsion(jugador);
+    }
+
+    @PostMapping("/equipo/listar")
+    public List<Estadisticas> cargarEstadisticasPorEquipo(@RequestBody Map<String, String> request) {
+        String nombreEquipo = request.get("nombreEquipo");
+        return estadisticasService.cargarEstadisticasPorEquipo(nombreEquipo);
     }
 
     @GetMapping("/top-goleadores")

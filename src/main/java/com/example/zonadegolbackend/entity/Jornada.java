@@ -43,7 +43,7 @@ public class Jornada {
     @JoinColumn(name = "id_temporada", nullable = false)
     private Temporada temporada;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_arbitro", nullable = true)
     private Arbitro arbitro;
 

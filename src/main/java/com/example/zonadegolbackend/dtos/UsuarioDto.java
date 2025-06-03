@@ -20,4 +20,5 @@ public class UsuarioDto {
     private LocalDate fechaNacimiento;
     private String dni;
     private String imagenEntrenador;
+    private Boolean pagado;
 }

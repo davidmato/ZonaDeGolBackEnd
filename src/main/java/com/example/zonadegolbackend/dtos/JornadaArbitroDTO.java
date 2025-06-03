@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenerarJornadaDTO {
-
-    private List<Integer> equipos;
-
+public class JornadaArbitroDTO {
+    private Integer id;
+    private int golLocal;
+    private int golVisitante;
 }

@@ -95,6 +95,23 @@ public class JugadorService {
         return jugador.getEquipo().getLiga().getNombre();
     }
 
+    public Jugador editarJugador(Integer id, Jugador jugadorActualizado) {
+        Jugador jugadorExistente = jugadorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+
+        jugadorExistente.setNombre(jugadorActualizado.getNombre());
+        jugadorExistente.setApellido(jugadorActualizado.getApellido());
+        jugadorExistente.setDorsal(jugadorActualizado.getDorsal());
+        jugadorExistente.setImagen(jugadorActualizado.getImagen());
+        jugadorExistente.setFechaNacimiento(jugadorActualizado.getFechaNacimiento());
+        jugadorExistente.setPosicion(jugadorActualizado.getPosicion());
+        jugadorExistente.setDni(jugadorActualizado.getDni());
+        jugadorExistente.setActivo(jugadorActualizado.getActivo());
+        jugadorExistente.setExpulsado(jugadorActualizado.getExpulsado());
+
+        return jugadorRepository.save(jugadorExistente);
+    }
+
 
 //
 //    @Transactional
