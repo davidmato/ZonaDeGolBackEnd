@@ -34,6 +34,7 @@ public class EquipoService {
     private final TemporadaService temporadaService;
     private final ClasificacionRepository clasificacionRepository;
     private final JornadaRepository jornadaRepository;
+    private final EntrenadorService entrenadorService;
 
     public List<Equipo> findAll() {
         return equipoRepository.findAll();
@@ -47,6 +48,8 @@ public class EquipoService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        entrenadorService.validarPago(usuario);
+
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
             throw new RuntimeException("Solo un entrenador puede crear un equipo");
@@ -161,6 +164,7 @@ public class EquipoService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        entrenadorService.validarPago(usuario);
 
         if (usuario.getRol() != Rol.ADMIN) {
             throw new RuntimeException("Solo un entrenador puede ver los jugadores de su equipo");
@@ -231,6 +235,7 @@ public class EquipoService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        entrenadorService.validarPago(usuario);
 
         Equipo equipo = equipoRepository.findByEntrenador_Usuario(usuario);
         if (equipo == null) {
