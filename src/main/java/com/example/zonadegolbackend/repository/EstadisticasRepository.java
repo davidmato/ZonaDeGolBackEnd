@@ -50,4 +50,37 @@ public interface EstadisticasRepository extends JpaRepository<Estadisticas,Integ
     ORDER BY e.porteriaCero DESC
     """)
     Page<Estadisticas> findTop5GoalkeepersWithMostCleanSheets(Pageable pageable);
+
+    // Mayor goleador del equipo
+    @Query("SELECT e FROM Estadisticas e " +
+            "WHERE e.jugador.equipo.id = :equipoId " +
+            "ORDER BY e.goles DESC LIMIT 1")
+    Estadisticas findTopScorerByEquipo(@Param("equipoId") Integer equipoId);
+
+    // Delantero con más goles
+    @Query("SELECT e FROM Estadisticas e " +
+            "WHERE e.jugador.equipo.id = :equipoId " +
+            "AND e.jugador.posicion = com.example.zonadegolbackend.enums.Posicion.DELANTERO " +
+            "ORDER BY e.goles DESC LIMIT 1")
+    Estadisticas findTopScoringForward(@Param("equipoId") Integer equipoId);
+
+    // Mayor asistente
+    @Query("SELECT e FROM Estadisticas e " +
+            "WHERE e.jugador.equipo.id = :equipoId " +
+            "ORDER BY e.asistencias DESC LIMIT 1")
+    Estadisticas findTopAssistant(@Param("equipoId") Integer equipoId);
+
+    // Jugador más expulsado
+    @Query("SELECT e FROM Estadisticas e " +
+            "WHERE e.jugador.equipo.id = :equipoId " +
+            "ORDER BY e.tarjetasRojas DESC LIMIT 1")
+    Estadisticas findMostSentOffPlayer(@Param("equipoId") Integer equipoId);
+
+    // Suma de porterías a cero por defensas
+    @Query("SELECT SUM(e.porteriaCero) FROM Estadisticas e " +
+            "WHERE e.jugador.equipo.id = :equipoId " +
+            "AND e.jugador.posicion = com.example.zonadegolbackend.enums.Posicion.PORTERO")
+    Integer countCleanSheetsByDefenders(@Param("equipoId") Integer equipoId);
+
+
 }

@@ -119,4 +119,9 @@ public class EstadisticasController {
         return estadisticasService.findTop5GoalkeepersWithMostCleanSheets();
     }
 
+    @GetMapping("/equipo/{equipoId}/resumen")
+    public Map<String, Object> getEstadisticasEquipo(@PathVariable Integer equipoId) {
+        return estadisticasService.getEstadisticasEquipo(equipoId);
+    }
+
 }

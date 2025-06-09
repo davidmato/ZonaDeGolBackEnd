@@ -18,7 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -250,5 +252,35 @@ public class EstadisticasService {
 
         return dtoList;
     }
+
+    public Map<String, Object> getEstadisticasEquipo(Integer equipoId) {
+        Map<String, Object> estadisticas = new HashMap<>();
+
+        Estadisticas goleador = estadisticasRepository.findTopScorerByEquipo(equipoId);
+        Estadisticas asistente = estadisticasRepository.findTopAssistant(equipoId);
+        Estadisticas delanteroGoleador = estadisticasRepository.findTopScoringForward(equipoId);
+        Estadisticas masExpulsado = estadisticasRepository.findMostSentOffPlayer(equipoId);
+
+        Integer porteriasDefensas = estadisticasRepository.countCleanSheetsByDefenders(equipoId);
+
+        if (goleador != null)
+            estadisticas.put("goleador", goleador.getJugador().getNombre() + " " + goleador.getJugador().getApellido());
+
+        if (delanteroGoleador != null)
+            estadisticas.put("delanteroGoleador", delanteroGoleador.getJugador().getNombre() + " " + delanteroGoleador.getJugador().getApellido());
+
+        if (asistente != null)
+            estadisticas.put("asistente", asistente.getJugador().getNombre() + " " + asistente.getJugador().getApellido());
+
+        if (masExpulsado != null)
+            estadisticas.put("expulsado", masExpulsado.getJugador().getNombre() + " " + masExpulsado.getJugador().getApellido());
+        if (masExpulsado != null)
+            estadisticas.put("expulsiones", masExpulsado.getTarjetasRojas());
+
+        estadisticas.put("porteriasDefensas", porteriasDefensas != null ? porteriasDefensas : 0);
+
+        return estadisticas;
+    }
+
 
 }
