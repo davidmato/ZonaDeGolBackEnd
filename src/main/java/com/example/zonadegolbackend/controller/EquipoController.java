@@ -1,9 +1,6 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.AsociarEquiposLigaDTO;
-import com.example.zonadegolbackend.dtos.CrearEquipo;
-import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
-import com.example.zonadegolbackend.dtos.TemporadaDTO;
+import com.example.zonadegolbackend.dtos.*;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.entity.Temporada;
@@ -84,15 +81,18 @@ public class EquipoController {
 
 
     @GetMapping("/jornadas")
-    public List<Jornada> obtenerJornadasEquipoLogueado() {
+    public List<JornadaDTO> obtenerJornadasEquipoLogueado() {
         List<Jornada> jornadas = equipoService.obtenerJornadasDelEquipoLogueado();
 
         if (jornadas != null && !jornadas.isEmpty()) {
-            return jornadas;
+            return jornadas.stream()
+                    .map(JornadaDTO::new)
+                    .toList();
         } else {
             throw new RuntimeException("No se encontraron jornadas para el equipo logueado");
         }
     }
+
 
 //    @GetMapping("/jugadores")
 //    public ResponseEntity<List<Jugador>> obtenerJugadoresDelEquipo() {
