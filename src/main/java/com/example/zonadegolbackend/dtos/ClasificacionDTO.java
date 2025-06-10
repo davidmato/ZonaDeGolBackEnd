@@ -22,5 +22,6 @@ public class ClasificacionDTO {
     private Integer golEnContra;
     private Integer golDiferencia;
     private Integer puntos;
+    private String imagenEquipo;
     private List<String> forma;
 }
