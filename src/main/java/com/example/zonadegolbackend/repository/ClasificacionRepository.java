@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ClasificacionRepository extends JpaRepository<Clasificacion, Integer> {
@@ -22,5 +23,10 @@ public interface ClasificacionRepository extends JpaRepository<Clasificacion, In
     List<Clasificacion> findByEquipoId(@Param("idEquipo") Integer idEquipo);
 
     List<Clasificacion> findByTemporadaIdOrderByPuestoAsc(Integer temporadaId);
+
+    @Query("SELECT SUM(c.golAFavor) AS totalGolesAFavor, SUM(c.golEnContra) AS totalGolesEnContra " +
+            "FROM Clasificacion c " +
+            "WHERE c.equipo.entrenador.id = :entrenadorId")
+    Map<String, Long> findTotalGolesByEntrenadorId(@Param("entrenadorId") Integer entrenadorId);
 
 }

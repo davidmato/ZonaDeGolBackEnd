@@ -163,5 +163,8 @@ public class ClasificacionService {
         }).toList();
     }
 
+    public Map<String, Long> obtenerTotalGolesPorEntrenador(Integer entrenadorId) {
+        return clasificacionRepository.findTotalGolesByEntrenadorId(entrenadorId);
+    }
 
 }
