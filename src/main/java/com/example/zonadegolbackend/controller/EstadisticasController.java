@@ -1,6 +1,7 @@
 package com.example.zonadegolbackend.controller;
 
 import com.example.zonadegolbackend.dtos.EntrenadorDTO;
+import com.example.zonadegolbackend.dtos.EstadisticaTopDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
 import com.example.zonadegolbackend.entity.Estadisticas;
@@ -100,6 +101,27 @@ public class EstadisticasController {
     public List<Estadisticas> cargarEstadisticasPorEquipo(@RequestBody Map<String, String> request) {
         String nombreEquipo = request.get("nombreEquipo");
         return estadisticasService.cargarEstadisticasPorEquipo(nombreEquipo);
+    }
+
+    @GetMapping("/top-goleadores")
+    public List<EstadisticaTopDTO> getTopScorers() {
+        return estadisticasService.getTopScorers();
+    }
+
+    @GetMapping("/top-asistentes")
+    public List<EstadisticaTopDTO> getTopAssistants() {
+        return estadisticasService.getTopAssistants();
+    }
+
+
+    @GetMapping("/top-porteros")
+    public List<EstadisticaTopDTO> getTop5GoalkeepersWithMostCleanSheets() {
+        return estadisticasService.findTop5GoalkeepersWithMostCleanSheets();
+    }
+
+    @GetMapping("/equipo/{equipoId}/resumen")
+    public Map<String, Object> getEstadisticasEquipo(@PathVariable Integer equipoId) {
+        return estadisticasService.getEstadisticasEquipo(equipoId);
     }
 
 }

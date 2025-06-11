@@ -57,4 +57,9 @@ public class ClasificacionController {
         return clasificacionService.obtenerClasificacionConForma(ligaId, temporadaId);
     }
 
+    @GetMapping("/goles/entrenador/{entrenadorId}")
+    public Map<String, Long> obtenerTotalGolesPorEntrenador(@PathVariable Integer entrenadorId) {
+        return clasificacionService.obtenerTotalGolesPorEntrenador(entrenadorId);
+    }
+
 }

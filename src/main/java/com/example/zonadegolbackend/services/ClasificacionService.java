@@ -134,6 +134,7 @@ public class ClasificacionService {
             dto.setGolAFavor(c.getGolAFavor());
             dto.setGolEnContra(c.getGolEnContra());
             dto.setGolDiferencia(c.getGolDiferencia());
+            dto.setImagenEquipo(c.getEquipo().getImagen());
             dto.setPuntos(c.getPuntos());
 
 
@@ -163,5 +164,8 @@ public class ClasificacionService {
         }).toList();
     }
 
+    public Map<String, Long> obtenerTotalGolesPorEntrenador(Integer entrenadorId) {
+        return clasificacionRepository.findTotalGolesByEntrenadorId(entrenadorId);
+    }
 
 }

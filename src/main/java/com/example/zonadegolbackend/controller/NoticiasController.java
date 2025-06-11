@@ -36,4 +36,10 @@ public class NoticiasController {
     public void eliminarNoticia(@PathVariable Integer id) {
         noticiasService.eliminarNoticia(id);
     }
+
+    @GetMapping("/top")
+    public List<Noticias> getTop3Noticias() {
+        return noticiasService.findTop3();
+    }
+
 }

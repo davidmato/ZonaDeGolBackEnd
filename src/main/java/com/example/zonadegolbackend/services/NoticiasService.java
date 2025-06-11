@@ -63,7 +63,6 @@ public class NoticiasService {
         noticiaExistente.setImagen(noticia.getImagen());
         noticiaExistente.setTitulo(noticia.getTitulo());
         noticiaExistente.setDescripcion(noticia.getDescripcion());
-//        noticiaExistente.setFecha(LocalDate.now());
 
         return noticiasRepository.save(noticiaExistente);
     }
@@ -82,6 +81,12 @@ public class NoticiasService {
         if (!noticiasRepository.existsById(id)) {
             throw new RuntimeException("Noticia no encontrada");
         }
+
         noticiasRepository.deleteById(id);
     }
+
+    public List<Noticias> findTop3() {
+        return noticiasRepository.findTop3ByOrderByIdDesc();
+    }
+
 }

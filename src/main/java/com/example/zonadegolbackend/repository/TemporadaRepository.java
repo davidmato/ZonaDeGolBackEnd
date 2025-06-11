@@ -17,4 +17,17 @@ public interface TemporadaRepository extends JpaRepository<Temporada, Integer> {
 
     @Query("SELECT t FROM Temporada t ORDER BY t.fechaFin DESC")
     List<Temporada> findLatest();
+
+    @Query("""
+        SELECT tl.temporada
+        FROM TemporadaLiga tl
+        WHERE tl.liga.id = :ligaId
+        ORDER BY tl.temporada.fechaInicio DESC
+        """)
+    List<Temporada> findTemporadasByLigaIdOrderByFechaInicioDesc(@Param("ligaId") Integer ligaId);
+
+    default Temporada findUltimaTemporadaPorLigaId(Integer ligaId) {
+        List<Temporada> temporadas = findTemporadasByLigaIdOrderByFechaInicioDesc(ligaId);
+        return temporadas.isEmpty() ? null : temporadas.getFirst();
+    }
 }

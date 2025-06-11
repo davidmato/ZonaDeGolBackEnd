@@ -1,6 +1,10 @@
 package com.example.zonadegolbackend.services;
 
 
+import com.example.zonadegolbackend.dtos.ClasificacionHomeDTO;
+import com.example.zonadegolbackend.dtos.EquipoHomeDTO;
+import com.example.zonadegolbackend.dtos.LigaClasificacionHomeDTO;
+import com.example.zonadegolbackend.dtos.LigaHomeDTO;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
@@ -10,7 +14,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -101,6 +107,7 @@ public class LigaService {
         ligaExistente.setNumEquipos(liga.getNumEquipos());
         ligaExistente.setDescripcion(liga.getDescripcion());
         ligaExistente.setFecha_fundacion(liga.getFecha_fundacion());
+        ligaExistente.setImagen(liga.getImagen());
 
         return ligaRepository.save(ligaExistente);
     }
@@ -126,5 +133,34 @@ public class LigaService {
         clasificacionService.actualizarPuestosYObtenerClasificacion(ligaId, temporadaReciente.getId());
         return clasificacionRepository.findByEquipo_Liga_IdAndTemporada_Id(ligaId, temporadaReciente.getId());
     }
+
+    public LigaClasificacionHomeDTO getLigaConClasificacionAleatoriaDTO() {
+        Liga liga = ligaRepository.findRandomLiga();
+        Temporada temporada = temporadaRepository.findUltimaTemporadaPorLigaId(liga.getId());
+        List<Clasificacion> clasificaciones = clasificacionRepository
+                .findByTemporadaIdOrderByPuestoAsc(temporada.getId());
+
+        LigaHomeDTO ligaDTO = new LigaHomeDTO(liga.getNombre(), liga.getDescripcion(), liga.getImagen());
+
+        List<ClasificacionHomeDTO> clasificacionDTOs = clasificaciones.stream().map(c -> {
+            Equipo equipo = c.getEquipo();
+            EquipoHomeDTO equipoDTO = new EquipoHomeDTO(equipo.getNombre(), equipo.getImagen());
+            return new ClasificacionHomeDTO(
+                    c.getPuesto(),
+                    c.getPuntos(),
+                    c.getPartidosJugados(),
+                    c.getVictorias(),
+                    c.getEmpates(),
+                    c.getDerrotas(),
+                    c.getGolAFavor(),
+                    c.getGolEnContra(),
+                    c.getGolDiferencia(),
+                    equipoDTO
+            );
+        }).toList();
+
+        return new LigaClasificacionHomeDTO(ligaDTO, clasificacionDTOs);
+    }
+
 
 }

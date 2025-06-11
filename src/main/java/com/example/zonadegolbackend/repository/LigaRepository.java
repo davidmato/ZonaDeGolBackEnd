@@ -11,4 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface LigaRepository extends JpaRepository<Liga, Integer> {
     @Query("SELECT l FROM Liga l WHERE l.id = :id")
     Liga findLigaById(@Param("id") Integer id);
+
+    @Query(value = "SELECT * FROM zona_de_gol.liga ORDER BY RANDOM() LIMIT 1", nativeQuery = true)
+    Liga findRandomLiga();
 }

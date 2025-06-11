@@ -2,6 +2,7 @@ package com.example.zonadegolbackend.controller;
 
 
 import com.example.zonadegolbackend.dtos.JugadorDTO;
+import com.example.zonadegolbackend.dtos.LigaClasificacionHomeDTO;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.repository.LigaRepository;
 import com.example.zonadegolbackend.services.LigaService;
@@ -9,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +20,6 @@ import java.util.List;
 public class LigaController {
 
     private final LigaService ligaService;
-    private final LigaRepository ligaRepository;
 
     @GetMapping("/all")
     public List<Liga> findAll() {
@@ -52,5 +54,10 @@ public class LigaController {
     @GetMapping("/clasificacion/{ligaId}")
     public List<Clasificacion> obtenerClasificacionLigaTemporadaReciente(@PathVariable Integer ligaId) {
         return ligaService.obtenerClasificacionLigaTemporadaReciente(ligaId);
+    }
+
+    @GetMapping("/random-clasificacion")
+    public LigaClasificacionHomeDTO getLigaConClasificacionAleatoria() {
+        return ligaService.getLigaConClasificacionAleatoriaDTO();
     }
 }

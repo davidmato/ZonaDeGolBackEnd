@@ -130,4 +130,27 @@ public class JugadorService {
 //            equipoJugadorRepository.save(equipoJugador);
 //        }
 //    }
+
+    public List<JugadorDTO> findJugadoresByEntrenadorId(Integer idEntrenador) {
+        List<Jugador> jugadores = jugadorRepository.findByEquipo_Entrenador_Id(idEntrenador);
+        return jugadores.stream().map(jugador -> {
+            JugadorDTO jugadorDTO = new JugadorDTO();
+            jugadorDTO.setNombre(jugador.getNombre());
+            jugadorDTO.setApellido(jugador.getApellido());
+            jugadorDTO.setPosicion(jugador.getPosicion());
+            jugadorDTO.setDorsal(jugador.getDorsal());
+            jugadorDTO.setImagen(jugador.getImagen());
+            jugadorDTO.setDni(jugador.getDni());
+            jugadorDTO.setActivo(jugador.getActivo());
+            jugadorDTO.setExpulsado(jugador.getExpulsado());
+            jugadorDTO.setFechaNacimiento(jugador.getFechaNacimiento());
+            jugadorDTO.setCorreo(jugador.getUsuario().getCorreo());
+            jugadorDTO.setEquipoNombre(jugador.getEquipo().getNombre());
+            jugadorDTO.setLigaNombre(jugador.getEquipo().getLiga().getNombre());
+            jugadorDTO.setEquipoFoto(jugador.getEquipo().getImagen());
+            jugadorDTO.setEquipoId(jugador.getEquipo().getId());
+            return jugadorDTO;
+        }).toList();
+    }
+
 }

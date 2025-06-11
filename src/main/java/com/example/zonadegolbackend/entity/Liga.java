@@ -38,6 +38,6 @@ public class Liga {
     @Column(name="fecha_fundacion", nullable = false)
     private LocalDate fecha_fundacion;
 
-    @Column(name = "imagen", nullable = true)
+    @Column(name="imagen", nullable = false)
     private String imagen;
 }

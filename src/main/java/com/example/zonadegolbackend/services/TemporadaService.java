@@ -143,7 +143,7 @@ public class TemporadaService {
             temporadaLigaRepository.save(temporadaLiga);
             Trofeo trofeo = new Trofeo();
             trofeo.setNombre("Trofeo de " + liga.getNombre() + " " + temporada.getFechaInicio().getYear());
-            trofeo.setImagen("default-trophy.png"); // Puedes cambiar esto por una imagen real si la tienes
+            trofeo.setImagen("icons8-trofeo-de-la-eurocopa-de-la-uefa-70.png"); // Puedes cambiar esto por una imagen real si la tienes
             trofeo.setTemporadaLiga(temporadaLiga);
             trofeoRepository.save(trofeo);
         }

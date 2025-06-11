@@ -38,4 +38,10 @@ public class JugadorController {
         return jugadorService.editarJugador(id, jugadorActualizado);
     }
 
+    @GetMapping("/entrenador/{idEntrenador}")
+    public List<JugadorDTO> obtenerJugadoresPorEntrenador(@PathVariable Integer idEntrenador) {
+        return jugadorService.findJugadoresByEntrenadorId(idEntrenador);
+    }
+
+
 }
