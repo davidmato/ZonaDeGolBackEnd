@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/jornada/editar/**").hasRole("ADMIN");
                     auth.requestMatchers("/api/jornada/eliminar/**").hasRole("ADMIN");
                     auth.requestMatchers("/api/jornada/generar/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/estadio/admin/**").hasRole("ADMIN");
                     auth.anyRequest().permitAll();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
