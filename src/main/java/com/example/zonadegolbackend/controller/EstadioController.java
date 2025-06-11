@@ -12,15 +12,15 @@ public class EstadioController {
 
     private final EstadioService estadioService;
 
-    @PostMapping("/crear")
+    @PostMapping("/admin/crear")
     public Estadio nuevoEstadio(@RequestBody Estadio estadio) {return estadioService.crearEstadio(estadio);}
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("/admin/editar/{id}")
     public Estadio actualizarEstadio(@PathVariable Integer id, @RequestBody Estadio estadioActualizado) {
         return estadioService.editarEstadio(id, estadioActualizado);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/admin/eliminar/{id}")
     public void borrarEstadio(@PathVariable Integer id) {
         estadioService.eliminarEstadio(id);
     }
