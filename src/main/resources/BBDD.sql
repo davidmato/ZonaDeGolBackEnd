@@ -62,7 +62,8 @@ id SERIAL PRIMARY KEY,
 nombre VARCHAR(200) NOT NULL,
 num_equipos INT NOT NULL,
 descripcion VARCHAR(700) NOT NULL,
-fecha_fundacion TIMESTAMP NOT NULL
+fecha_fundacion TIMESTAMP NOT NULL,
+imagen VARCHAR(800) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS equipo (
@@ -81,15 +82,14 @@ CREATE TABLE IF NOT EXISTS noticias (
 id SERIAL PRIMARY KEY,
 imagen VARCHAR(800),
 titulo VARCHAR(450) NOT NULL,
-descripcion VARCHAR(1000) NOT NULL
+descripcion VARCHAR(1000) NOT NULL,
+fecha TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS temporada (
 id SERIAL PRIMARY KEY,
 fecha_inicio TIMESTAMP NOT NULL,
-fecha_fin TIMESTAMP NOT NULL,
-id_liga INT NOT NULL,
-CONSTRAINT fk_temporada_liga FOREIGN KEY(id_liga) REFERENCES liga(id)
+fecha_fin TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS temporada_liga (
@@ -166,6 +166,7 @@ CONSTRAINT fk_estadisticas_jugador FOREIGN KEY(id_jugador) REFERENCES jugador(id
 CREATE TABLE IF NOT EXISTS clasificacion (
 id SERIAL PRIMARY KEY,
 puesto INT NOT NULL,
+partidos_jugados INT NOT NULL,
 victorias INT NOT NULL,
 empates INT NOT NULL,
 derrotas INT NOT NULL,
