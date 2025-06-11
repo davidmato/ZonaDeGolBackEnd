@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.services;
 
+import com.example.zonadegolbackend.dtos.EstadioDTO;
 import com.example.zonadegolbackend.entity.Estadio;
 import com.example.zonadegolbackend.repository.EstadioRepository;
 import lombok.AllArgsConstructor;
@@ -11,26 +12,30 @@ public class EstadioService {
 
     private final EstadioRepository estadioRepository;
 
-    public Estadio crearEstadio(Estadio estadio) {
+    public EstadioDTO crearEstadio(EstadioDTO estadioDTO) {
 
         Estadio estadioNuevo = new Estadio();
-        estadioNuevo.setNombre(estadio.getNombre());
-        estadioNuevo.setDireccion(estadio.getDireccion());
-        estadioNuevo.setAforo(estadio.getAforo());
+        estadioNuevo.setNombre(estadioDTO.getNombre());
+        estadioNuevo.setDireccion(estadioDTO.getDireccion());
+        estadioNuevo.setAforo(estadioDTO.getAforo());
 
-        return estadioRepository.save(estadioNuevo);
+        Estadio estadioGuardado = estadioRepository.save(estadioNuevo);
+
+        return new EstadioDTO(estadioGuardado.getId(), estadioGuardado.getNombre(), estadioGuardado.getDireccion(), estadioGuardado.getAforo());
     }
 
-    public Estadio editarEstadio(Integer id, Estadio estadio) {
+    public EstadioDTO editarEstadio(Integer id, EstadioDTO estadioDTO) {
 
         Estadio estadioExistente = estadioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Estadio no encontrado"));
 
-        estadioExistente.setNombre(estadio.getNombre());
-        estadioExistente.setDireccion(estadio.getDireccion());
-        estadioExistente.setAforo(estadio.getAforo());
+        estadioExistente.setNombre(estadioDTO.getNombre());
+        estadioExistente.setDireccion(estadioDTO.getDireccion());
+        estadioExistente.setAforo(estadioDTO.getAforo());
 
-        return estadioRepository.save(estadioExistente);
+        Estadio estadioActualizado = estadioRepository.save(estadioExistente);
+
+        return new EstadioDTO(estadioActualizado.getId(), estadioActualizado.getNombre(), estadioActualizado.getDireccion(), estadioActualizado.getAforo());
     }
 
     public void eliminarEstadio(Integer id) {

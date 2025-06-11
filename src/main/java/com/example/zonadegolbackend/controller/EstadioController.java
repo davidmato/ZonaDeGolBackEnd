@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.controller;
 
+import com.example.zonadegolbackend.dtos.EstadioDTO;
 import com.example.zonadegolbackend.entity.Estadio;
 import com.example.zonadegolbackend.services.EstadioService;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +14,10 @@ public class EstadioController {
     private final EstadioService estadioService;
 
     @PostMapping("/crear")
-    public Estadio nuevoEstadio(@RequestBody Estadio estadio) {return estadioService.crearEstadio(estadio);}
+    public EstadioDTO nuevoEstadio(@RequestBody EstadioDTO estadio) {return estadioService.crearEstadio(estadio);}
 
     @PutMapping("/editar/{id}")
-    public Estadio actualizarEstadio(@PathVariable Integer id, @RequestBody Estadio estadioActualizado) {
+    public EstadioDTO actualizarEstadio(@PathVariable Integer id, @RequestBody EstadioDTO estadioActualizado) {
         return estadioService.editarEstadio(id, estadioActualizado);
     }
 
