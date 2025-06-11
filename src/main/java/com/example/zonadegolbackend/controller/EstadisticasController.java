@@ -37,12 +37,12 @@ public class EstadisticasController {
         return estadisticasService.findByJugadorId(jugadorId);
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/admin/crear")
     public Estadisticas crearEstadisticas(@RequestBody Estadisticas estadisticas) {
         return estadisticasService.crearEstadisticas(estadisticas);
     }
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("/admin/editar/{id}")
     public Estadisticas editarEstadisticas(@PathVariable Integer id, @RequestBody Estadisticas estadisticas) {
         return estadisticasService.editarEstadisticas(id, estadisticas);
     }
