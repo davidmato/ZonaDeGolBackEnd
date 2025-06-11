@@ -85,6 +85,7 @@ public class StripeService {
                         .setSuccessUrl("http://localhost:4200/success")
                         .setCancelUrl("http://localhost:4200/cancel")
                         .addLineItem(lineItem)
+                        .setCustomerEmail(usuario.getCorreo())
                         .build();
 
         // Crear la sesión de Stripe
@@ -92,12 +93,7 @@ public class StripeService {
         try {
             session = Session.create(params);
 
-            usuarioRepository.findById(usuarioId).ifPresent(u -> {
-                u.setPagado(true);
-                usuarioRepository.save(u);
-            });
 
-            // Enviar correo al usuario
             try{
                 MimeMessage mimeMessage = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
