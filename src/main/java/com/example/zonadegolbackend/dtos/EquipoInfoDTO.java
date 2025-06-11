@@ -18,5 +18,8 @@ public class EquipoInfoDTO {
     private String entrenadorNombre;
     private String entrenadorImagen;
     private String ligaNombre;
+    private String ligaImagen;
+    private Integer ligaId;
+    private LocalDate entrenadorFechaNacimiento;
     private String jugadorId;
 }
