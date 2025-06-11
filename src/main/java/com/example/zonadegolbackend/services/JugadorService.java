@@ -54,6 +54,7 @@ public class JugadorService {
         jugadorDTO.setEquipoNombre(jugador.getEquipo().getNombre());
         jugadorDTO.setLigaNombre(jugador.getEquipo().getLiga().getNombre());
         jugadorDTO.setEquipoFoto(jugador.getEquipo().getImagen());
+        jugadorDTO.setFechaFundacion(jugador.getEquipo().getFechaFundacion());
         jugadorDTO.setEquipoId(jugador.getEquipo().getId());
         return jugadorDTO;
     }
