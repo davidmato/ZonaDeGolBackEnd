@@ -59,6 +59,7 @@ public class LigaService {
         nuevaLiga.setNumEquipos(liga.getNumEquipos());
         nuevaLiga.setDescripcion(liga.getDescripcion());
         nuevaLiga.setFecha_fundacion(liga.getFecha_fundacion());
+        nuevaLiga.setImagen(liga.getImagen());
         ligaRepository.save(nuevaLiga);
 
         Temporada temporadaActual = temporadaService.buscarTemporadaMasReciente();
@@ -83,6 +84,7 @@ public class LigaService {
         ligaExistente.setNumEquipos(liga.getNumEquipos());
         ligaExistente.setDescripcion(liga.getDescripcion());
         ligaExistente.setFecha_fundacion(liga.getFecha_fundacion());
+        ligaExistente.setImagen(liga.getImagen());
 
         return ligaRepository.save(ligaExistente);
     }
