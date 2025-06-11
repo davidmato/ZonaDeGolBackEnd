@@ -40,13 +40,19 @@ public class SecurityConfiguration {
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/**").permitAll();
-//                    auth.requestMatchers("/api/liga/buscar/**").permitAll();
-//                    auth.requestMatchers("/swagger-ui/**",  // Permite acceso a Swagger UI
-//                            "/v3/api-docs/**", // Permite acceso a la documentación OpenAPI
-//                            "/swagger-resources/**",
-//                            "/webjars/**").permitAll();
-
-                    auth.anyRequest().authenticated();
+                    auth.requestMatchers("/api/usuario/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/temporadas/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/noticias/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/liga/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/estadisticas/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/equipo/crear").hasRole("ENTRENADOR");
+                    auth.requestMatchers("/api/equipo/editar/**").hasRole("ENTRENADOR");
+                    auth.requestMatchers("/api/jornada/arbitro/**").hasRole("ARBITRO");
+                    auth.requestMatchers("/api/jornada/crear").hasRole("ADMIN");
+                    auth.requestMatchers("/api/jornada/editar/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/jornada/eliminar/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/jornada/generar/**").hasRole("ADMIN");
+                    auth.anyRequest().permitAll();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
