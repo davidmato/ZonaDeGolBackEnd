@@ -1,18 +1,11 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.AsociarEquiposLigaDTO;
-import com.example.zonadegolbackend.dtos.CrearEquipo;
-import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
-import com.example.zonadegolbackend.dtos.TemporadaDTO;
+import com.example.zonadegolbackend.dtos.*;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
-import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,6 +75,10 @@ public class EquipoController {
     }
 
 
+    @GetMapping("/jugadores/{idEquipo}")
+    public List<JugadorDTO> obtenerJugadoresPorEquipo(@PathVariable Integer idEquipo) {
+        return equipoService.obtenerJugadoresPorEquipo(idEquipo);
+    }
 
     @GetMapping("/jornadas")
     public List<Jornada> obtenerJornadasEquipoLogueado() {
