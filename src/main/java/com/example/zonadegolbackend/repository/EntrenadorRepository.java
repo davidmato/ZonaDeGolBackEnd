@@ -13,4 +13,7 @@ public interface EntrenadorRepository extends JpaRepository<Entrenador,Integer> 
 //    Entrenador findByUsuario(Usuario usuario);
     Optional<Entrenador> findByUsuario(Usuario usuario);
 
+    Optional<Entrenador> findByUsuario_Id(Integer userId);
+
+
 }
