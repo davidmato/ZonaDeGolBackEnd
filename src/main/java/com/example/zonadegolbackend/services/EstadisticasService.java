@@ -2,15 +2,12 @@ package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
-import com.example.zonadegolbackend.entity.Equipo;
-import com.example.zonadegolbackend.entity.Estadisticas;
-import com.example.zonadegolbackend.entity.Jugador;
-import com.example.zonadegolbackend.entity.Temporada;
-import com.example.zonadegolbackend.repository.EquipoRepository;
-import com.example.zonadegolbackend.repository.EstadisticasRepository;
-import com.example.zonadegolbackend.repository.JugadorRepository;
-import com.example.zonadegolbackend.repository.TemporadaRepository;
+import com.example.zonadegolbackend.entity.*;
+import com.example.zonadegolbackend.enums.Rol;
+import com.example.zonadegolbackend.repository.*;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +21,7 @@ public class EstadisticasService {
     private final JugadorRepository jugadorRepository;
     private final EquipoRepository equipoRepository;
     private final TemporadaRepository temporadaRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public List<Estadisticas> findAll() {
         return estadisticasRepository.findAll();
@@ -57,6 +55,15 @@ public class EstadisticasService {
     }
 
     public Estadisticas crearEstadisticas(Estadisticas estadisticas) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede ver los árbitros");
+        }
 
         Estadisticas nuevaEstadisticas = new Estadisticas();
 
@@ -73,6 +80,16 @@ public class EstadisticasService {
     }
 
     public Estadisticas editarEstadisticas(Integer idEstadisticas, Estadisticas estadisticas) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede ver los árbitros");
+        }
+
         Estadisticas estadisticasExistente = estadisticasRepository.findById(idEstadisticas)
                 .orElseThrow(() -> new RuntimeException("Estadisticas no encontradas"));
 
