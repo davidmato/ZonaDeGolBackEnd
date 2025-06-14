@@ -118,16 +118,7 @@ public class JornadaService {
 //    }
 
     private JornadaDTO mapToDTO(Jornada jornada) {
-        return new JornadaDTO(
-                jornada.getId(),
-                jornada.getFecha(),
-                jornada.getGolLocal(),
-                jornada.getGolVisitante(),
-                jornada.getEquipoLocal().getNombre(),
-                jornada.getEquipoVisitante().getNombre(),
-                jornada.getArbitro() != null ? jornada.getArbitro().getNombre() + " " + jornada.getArbitro().getApellidos() : null,
-                jornada.getEstadio() != null ? jornada.getEstadio().getNombre() : null
-        );
+        return new JornadaDTO(jornada);
     }
 
 
