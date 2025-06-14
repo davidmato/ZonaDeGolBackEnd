@@ -23,6 +23,9 @@ public class JornadaConIdsDTO {
     private Integer equipoVisitanteId;
     private String equipoVisitanteNombre;
 
+    private String equipoLocalImagen;
+    private String equipoVisitanteImagen;
+
     private String arbitroNombre;
     private String estadioNombre;
 
@@ -34,9 +37,11 @@ public class JornadaConIdsDTO {
 
         this.equipoLocalId = jornada.getEquipoLocal() != null ? jornada.getEquipoLocal().getId() : null;
         this.equipoLocalNombre = jornada.getEquipoLocal() != null ? jornada.getEquipoLocal().getNombre() : null;
+        this.equipoLocalImagen = jornada.getEquipoLocal().getImagen();
 
         this.equipoVisitanteId = jornada.getEquipoVisitante() != null ? jornada.getEquipoVisitante().getId() : null;
         this.equipoVisitanteNombre = jornada.getEquipoVisitante() != null ? jornada.getEquipoVisitante().getNombre() : null;
+        this.equipoVisitanteImagen = jornada.getEquipoVisitante().getImagen();
 
         this.arbitroNombre = jornada.getArbitro() != null ? jornada.getArbitro().getNombre() : null;
         this.estadioNombre = jornada.getEstadio() != null ? jornada.getEstadio().getNombre() : null;
