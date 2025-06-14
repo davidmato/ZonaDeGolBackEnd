@@ -87,9 +87,9 @@ public class EntrenadorController {
     }
 
     @GetMapping("/entrenador/usuario/{userId}")
-    public ResponseEntity<Entrenador> getEntrenadorPorUserId(@PathVariable Integer userId) {
-        Optional<Entrenador> entrenador = entrenadorRepository.findByUsuario_Id(userId);
-        return entrenador.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public Entrenador getEntrenadorPorUserId(@PathVariable Integer userId) {
+        return entrenadorRepository.findByUsuario_Id(userId)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
     }
 
 }

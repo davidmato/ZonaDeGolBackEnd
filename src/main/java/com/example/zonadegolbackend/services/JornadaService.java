@@ -275,4 +275,22 @@ public class JornadaService {
                 .collect(Collectors.toList());
     }
 
+    public List<JornadaDTO> obtenerJornadasPorEquipo(Integer equipoId) {
+        List<Jornada> jornadas = jornadaRepository.findByEquipoLocal_IdOrEquipoVisitante_Id(equipoId, equipoId);
+        return jornadas.stream().map(JornadaDTO::new).toList();
+    }
+
+    public List<JornadaDTO> obtenerProximasJornadasAleatorias() {
+        List<Jornada> futuras = jornadaRepository.findFuturasJornadas(LocalDateTime.now());
+        Collections.shuffle(futuras);
+        return futuras.stream()
+                .limit(3)
+                .map(JornadaDTO::new)
+                .toList();
+    }
+
+
+
+
+
 }
