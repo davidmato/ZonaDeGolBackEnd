@@ -4,14 +4,9 @@ package com.example.zonadegolbackend.services;
 import com.example.zonadegolbackend.dtos.ArbitroDTO;
 import com.example.zonadegolbackend.dtos.AuthenticationDTO;
 import com.example.zonadegolbackend.dtos.UsuarioDto;
-import com.example.zonadegolbackend.entity.Arbitro;
-import com.example.zonadegolbackend.entity.Entrenador;
-import com.example.zonadegolbackend.entity.TokenAcceso;
-import com.example.zonadegolbackend.entity.Usuario;
+import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
-import com.example.zonadegolbackend.repository.ArbitroRepository;
-import com.example.zonadegolbackend.repository.EntrenadorRepository;
-import com.example.zonadegolbackend.repository.UsuarioRepository;
+import com.example.zonadegolbackend.repository.*;
 import com.example.zonadegolbackend.security.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +41,8 @@ public class UsuarioService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final ArbitroRepository arbitroRepository;
+    private final EquipoRepository equipoRepository;
+    private final JugadorRepository jugadorRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -180,17 +177,16 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
-    public void crearUsuario(Usuario usuario) {
+    public void crearUsuario(Usuario userDTO) {
 
-        Usuario usuarioNuevo = new Usuario();
-
-        usuarioNuevo.setUsername(usuario.getUsername());
-        usuarioNuevo.setCorreo(usuario.getCorreo());
-        usuarioNuevo.setPassword(usuario.getPassword());
-        usuarioNuevo.setFechaRegistro(LocalDateTime.now());
-        usuarioNuevo.setRol(Rol.JUGADOR);
-
-        usuarioRepository.save(usuarioNuevo);
+        Usuario usuario = new Usuario();
+        usuario.setUsername(userDTO.getUsername());
+        usuario.setCorreo(userDTO.getCorreo());
+        usuario.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        usuario.setRol(Rol.ADMIN);
+        usuario.setFechaRegistro(LocalDateTime.now());
+        usuario.setPagado(true);
+        usuarioRepository.save(usuario);
     }
 
 
@@ -329,6 +325,64 @@ public class UsuarioService implements UserDetailsService {
         return usuario != null && Boolean.TRUE.equals(usuario.getPagado());
     }
 
+
+    public void marcarUsuariosEquipoComoNoPagados(Integer idEquipo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede realizar esta acción");
+        }
+
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        Entrenador entrenador = equipo.getEntrenador();
+        if (entrenador != null && entrenador.getUsuario() != null) {
+            Usuario usuarioEntrenador = entrenador.getUsuario();
+            usuarioEntrenador.setPagado(false);
+            usuarioRepository.save(usuarioEntrenador);
+        }
+
+        List<Jugador> jugadores = jugadorRepository.findByEquipo(equipo);
+        for (Jugador jugador : jugadores) {
+            Usuario usuarioJugador = jugador.getUsuario();
+            if (usuarioJugador != null) {
+                usuarioJugador.setPagado(false);
+                usuarioRepository.save(usuarioJugador);
+            }
+        }
+    }
+
+    public void marcarUsuariosEquipoComoPagados(Integer idEquipo) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede realizar esta acción");
+        }
+
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+
+        Entrenador entrenador = equipo.getEntrenador();
+        if (entrenador != null && entrenador.getUsuario() != null) {
+            Usuario usuarioEntrenador = entrenador.getUsuario();
+            usuarioEntrenador.setPagado(true);
+            usuarioRepository.save(usuarioEntrenador);
+        }
+
+        List<Jugador> jugadores = jugadorRepository.findByEquipo(equipo);
+        for (Jugador jugador : jugadores) {
+            Usuario usuarioJugador = jugador.getUsuario();
+            if (usuarioJugador != null) {
+                usuarioJugador.setPagado(true);
+                usuarioRepository.save(usuarioJugador);
+            }
+        }
+    }
 
     @Scheduled(cron = "0 0 3 * * ?") // Todos los días a las 3:00 AM
     @Transactional

@@ -3,22 +3,21 @@ package com.example.zonadegolbackend.services;
 import com.example.zonadegolbackend.dtos.EstadisticaTopDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
-import com.example.zonadegolbackend.entity.Equipo;
-import com.example.zonadegolbackend.entity.Estadisticas;
-import com.example.zonadegolbackend.entity.Jugador;
-import com.example.zonadegolbackend.entity.Temporada;
-import com.example.zonadegolbackend.repository.EquipoRepository;
-import com.example.zonadegolbackend.repository.EstadisticasRepository;
-import com.example.zonadegolbackend.repository.JugadorRepository;
-import com.example.zonadegolbackend.repository.TemporadaRepository;
+import com.example.zonadegolbackend.entity.*;
+import com.example.zonadegolbackend.enums.Rol;
+import com.example.zonadegolbackend.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +27,7 @@ public class EstadisticasService {
     private final JugadorRepository jugadorRepository;
     private final EquipoRepository equipoRepository;
     private final TemporadaRepository temporadaRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public List<Estadisticas> findAll() {
         return estadisticasRepository.findAll();
@@ -61,6 +61,15 @@ public class EstadisticasService {
     }
 
     public Estadisticas crearEstadisticas(Estadisticas estadisticas) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede ver los árbitros");
+        }
 
         Estadisticas nuevaEstadisticas = new Estadisticas();
 
@@ -77,6 +86,16 @@ public class EstadisticasService {
     }
 
     public Estadisticas editarEstadisticas(Integer idEstadisticas, Estadisticas estadisticas) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede ver los árbitros");
+        }
+
         Estadisticas estadisticasExistente = estadisticasRepository.findById(idEstadisticas)
                 .orElseThrow(() -> new RuntimeException("Estadisticas no encontradas"));
 
@@ -250,5 +269,35 @@ public class EstadisticasService {
 
         return dtoList;
     }
+
+    public Map<String, Object> getEstadisticasEquipo(Integer equipoId) {
+        Map<String, Object> estadisticas = new HashMap<>();
+
+        Estadisticas goleador = estadisticasRepository.findTopScorerByEquipo(equipoId);
+        Estadisticas asistente = estadisticasRepository.findTopAssistant(equipoId);
+        Estadisticas delanteroGoleador = estadisticasRepository.findTopScoringForward(equipoId);
+        Estadisticas masExpulsado = estadisticasRepository.findMostSentOffPlayer(equipoId);
+
+        Integer porteriasDefensas = estadisticasRepository.countCleanSheetsByDefenders(equipoId);
+
+        if (goleador != null)
+            estadisticas.put("goleador", goleador.getJugador().getNombre() + " " + goleador.getJugador().getApellido());
+
+        if (delanteroGoleador != null)
+            estadisticas.put("delanteroGoleador", delanteroGoleador.getJugador().getNombre() + " " + delanteroGoleador.getJugador().getApellido());
+
+        if (asistente != null)
+            estadisticas.put("asistente", asistente.getJugador().getNombre() + " " + asistente.getJugador().getApellido());
+
+        if (masExpulsado != null)
+            estadisticas.put("expulsado", masExpulsado.getJugador().getNombre() + " " + masExpulsado.getJugador().getApellido());
+        if (masExpulsado != null)
+            estadisticas.put("expulsiones", masExpulsado.getTarjetasRojas());
+
+        estadisticas.put("porteriasDefensas", porteriasDefensas != null ? porteriasDefensas : 0);
+
+        return estadisticas;
+    }
+
 
 }

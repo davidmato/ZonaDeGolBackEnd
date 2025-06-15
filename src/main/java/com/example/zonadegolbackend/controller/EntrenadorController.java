@@ -7,12 +7,15 @@ import com.example.zonadegolbackend.dtos.CrearJugador;
 import com.example.zonadegolbackend.entity.Entrenador;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
+import com.example.zonadegolbackend.repository.EntrenadorRepository;
 import com.example.zonadegolbackend.services.EntrenadorService;
+import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class EntrenadorController {
 
 
     private final EntrenadorService entrenadorService;
+    private final EntrenadorRepository entrenadorRepository;
 
     @GetMapping("/all")
     public List<Entrenador> findAll() {
@@ -80,6 +84,12 @@ public class EntrenadorController {
     @PostMapping("/enviar-correo-admin")
     public void enviarCorreoAdmin(@RequestBody CorreoAdminDTO request) {
         entrenadorService.enviarCorreoAdmin(request.getAsunto(), request.getContenido());
+    }
+
+    @GetMapping("/entrenador/usuario/{userId}")
+    public Entrenador getEntrenadorPorUserId(@PathVariable Integer userId) {
+        return entrenadorRepository.findByUsuario_Id(userId)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
     }
 
 }

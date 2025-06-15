@@ -21,4 +21,10 @@ public interface JugadorRepository extends JpaRepository<Jugador,Integer> {
 
     List<Jugador> findByEquipoAndExpulsadoTrue(Equipo equipo);
 
+    List<Jugador> findByEquipo_Entrenador_Id(Integer entrenadorId);
+
+    List<Jugador> findJugadorByExpulsadoTrue();
+
+
+
 }

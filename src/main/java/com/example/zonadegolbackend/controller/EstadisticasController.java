@@ -38,12 +38,12 @@ public class EstadisticasController {
         return estadisticasService.findByJugadorId(jugadorId);
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/admin/crear")
     public Estadisticas crearEstadisticas(@RequestBody Estadisticas estadisticas) {
         return estadisticasService.crearEstadisticas(estadisticas);
     }
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("/admin/editar/{id}")
     public Estadisticas editarEstadisticas(@PathVariable Integer id, @RequestBody Estadisticas estadisticas) {
         return estadisticasService.editarEstadisticas(id, estadisticas);
     }
@@ -117,6 +117,11 @@ public class EstadisticasController {
     @GetMapping("/top-porteros")
     public List<EstadisticaTopDTO> getTop5GoalkeepersWithMostCleanSheets() {
         return estadisticasService.findTop5GoalkeepersWithMostCleanSheets();
+    }
+
+    @GetMapping("/equipo/{equipoId}/resumen")
+    public Map<String, Object> getEstadisticasEquipo(@PathVariable Integer equipoId) {
+        return estadisticasService.getEstadisticasEquipo(equipoId);
     }
 
 }

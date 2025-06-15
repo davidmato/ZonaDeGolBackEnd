@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -28,17 +29,18 @@ public class NoticiasService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (usuario.getRol() != Rol.ADMIN) {
-            throw new RuntimeException("Solo un administrador puede crear noticias");
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede crear una noticia");
         }
 
         Noticias noticiaNueva = new Noticias();
         noticiaNueva.setImagen(noticia.getImagen());
         noticiaNueva.setTitulo(noticia.getTitulo());
         noticiaNueva.setDescripcion(noticia.getDescripcion());
+        noticiaNueva.setFecha(LocalDate.now());
 
         return noticiasRepository.save(noticiaNueva);
     }
@@ -47,11 +49,11 @@ public class NoticiasService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (usuario.getRol() != Rol.ADMIN) {
-            throw new RuntimeException("Solo un administrador puede editar noticias");
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede editar una noticia");
         }
 
         Noticias noticiaExistente = noticiasRepository.findById(id)
@@ -68,11 +70,11 @@ public class NoticiasService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (usuario.getRol() != Rol.ADMIN) {
-            throw new RuntimeException("Solo un administrador puede eliminar noticias");
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede eliminar una noticia");
         }
 
         if (!noticiasRepository.existsById(id)) {

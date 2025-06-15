@@ -31,17 +31,17 @@ public class LigaController {
        return ligaService.findById(id);
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/admin/crear")
     public Liga crearLiga(@RequestBody Liga liga) {
         return ligaService.crearLiga(liga);
     }
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("/admin/editar/{id}")
     public Liga editarLiga(@PathVariable Integer id, @RequestBody Liga liga) {
         return ligaService.editarLiga(id, liga);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/admin/eliminar/{id}")
     public void eliminarLiga(@PathVariable Integer id) {
         ligaService.eliminarLiga(id);
     }

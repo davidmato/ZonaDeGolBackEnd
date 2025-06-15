@@ -1,9 +1,12 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.entity.*;
+import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
 import lombok.AllArgsConstructor;
 import org.antlr.v4.runtime.tree.pattern.ParseTreePattern;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,12 +25,22 @@ public class TemporadaService {
     private final LigaRepository ligaRepository;
     private final TemporadaLigaRepository temporadaLigaRepository;
     private final TrofeoRepository trofeoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public List<Temporada> findAll() {
         return temporadaRepository.findAll();
     }
 
     public Temporada crearTemporada(Temporada temporada) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede crear temporadas");
+        }
 
         Temporada nuevaTemporada = new Temporada();
 
@@ -42,6 +55,16 @@ public class TemporadaService {
     }
 
     public Temporada editarTemporada(Integer id, Temporada temporada) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede editar temporadas");
+        }
+
         Temporada temporadaExistente = temporadaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Temporada no encontrada"));
 
@@ -52,6 +75,16 @@ public class TemporadaService {
     }
 
     public void eliminarTemporada(Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede eliminar temporadas");
+        }
+
         temporadaRepository.deleteById(id);
     }
 

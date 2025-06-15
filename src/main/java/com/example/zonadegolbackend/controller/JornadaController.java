@@ -58,8 +58,8 @@ public class JornadaController {
     }
 
     @GetMapping("/equipo/{equipoId}")
-    public List<Jornada> obtenerJornadasPorEquipo(@PathVariable Integer equipoId) {
-        return jornadaRepository.findByEquipoLocal_IdOrEquipoVisitante_Id(equipoId, equipoId);
+    public List<JornadaDTO> obtenerJornadasPorEquipo(@PathVariable Integer equipoId) {
+        return jornadaService.obtenerJornadasPorEquipo(equipoId);
     }
 
     @PutMapping("/arbitro/editar/{id}")
@@ -70,6 +70,11 @@ public class JornadaController {
     @GetMapping("/arbitro/listar")
     public List<JornadaDTO> obtenerJornadasPorUsername() {
         return jornadaService.obtenerJornadasSegunArbitro();
+    }
+
+    @GetMapping("/proximas-aleatorias")
+    public List<JornadaDTO> getProximasJornadasAleatorias() {
+        return jornadaService.obtenerProximasJornadasAleatorias();
     }
 
 }

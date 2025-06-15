@@ -21,17 +21,17 @@ public class TemporadaController {
         return temporadaService.findAll();
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/admin/crear")
     public Temporada crearTemporada(@RequestBody Temporada temporada) {
         return temporadaService.crearTemporada(temporada);
     }
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("/admin/editar/{id}")
     public Temporada editarTemporada(@PathVariable Integer id, @RequestBody Temporada temporada) {
         return temporadaService.editarTemporada(id, temporada);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/admin/eliminar/{id}")
     public void eliminarTemporada(@PathVariable Integer id) {
         temporadaService.eliminarTemporada(id);
     }

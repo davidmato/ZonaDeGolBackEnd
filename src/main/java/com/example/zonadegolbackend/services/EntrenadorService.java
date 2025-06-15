@@ -120,6 +120,15 @@ public class EntrenadorService {
     }
 
     public void delete(Integer idEntrenador) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede editar entrenadores");
+        }
         Entrenador entrenador = entrenadorRepository.findById(idEntrenador)
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
         entrenadorRepository.delete(entrenador);
@@ -192,8 +201,8 @@ public class EntrenadorService {
         }
 
         int cantidadJugadoresActivos = jugadorRepository.countByEquipoAndActivoTrue(equipo);
-        if (cantidadJugadoresActivos >= 12) {
-            throw new RuntimeException("No se pueden crear más de 12 activos jugadores por equipo");
+        if (cantidadJugadoresActivos >=13) {
+            throw new RuntimeException("No se pueden crear más de 13 activos jugadores por equipo");
         }
 
         int cantidadJugadores = jugadorRepository.countByEquipo(equipo);
@@ -233,7 +242,11 @@ public class EntrenadorService {
         estadisticas.setTarjetasRojas(0);
         estadisticas.setPartidosJugados(0);
         estadisticas.setPorteriaCero(0);
-        estadisticas.setTemporada(temporadaService.buscarTemporadaPorAnioActual());
+        Temporada temporada = temporadaService.buscarTemporadaPorAnioActual();
+        if (temporada == null) {
+            throw new RuntimeException("No existe una temporada para el año actual");
+        }
+        estadisticas.setTemporada(temporada);
         estadisticas.setJugador(jugador);
         estadisticasRepository.save(estadisticas);
 
@@ -333,8 +346,8 @@ public class EntrenadorService {
 
         if (!jugador.isActivo()) {
             int activos = jugadorRepository.countByEquipoAndActivoTrue(equipo);
-            if (activos >= 11) {
-                throw new RuntimeException("No puede haber más de 11 jugadores activos en el equipo");
+            if (activos >= 12) {
+                throw new RuntimeException("No puede haber más de 12 jugadores activos en el equipo");
             }
         }
 

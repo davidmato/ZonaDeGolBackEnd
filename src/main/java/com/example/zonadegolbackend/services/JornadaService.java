@@ -7,6 +7,7 @@ import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.*;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
+import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
 import lombok.AllArgsConstructor;
@@ -56,6 +57,16 @@ public class JornadaService {
     }
 
     public Jornada crearJornada(JornadaDTO jornadaDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede crear jornadas");
+        }
+
         Jornada nuevaJornada = new Jornada();
 
         nuevaJornada.setGolLocal(jornadaDTO.getGolLocal());
@@ -79,6 +90,16 @@ public class JornadaService {
     }
 
     public JornadaDTO editarJornada(Integer idJornada, JornadaDTO jornadaDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador editar las jornadas");
+        }
+
         Jornada jornadaExistente = jornadaRepository.findById(idJornada)
                 .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
 
@@ -105,33 +126,37 @@ public class JornadaService {
     }
 
     public void eliminarJornada(Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede eliminar jornadas");
+        }
+
         jornadaRepository.deleteById(id);
     }
 
-//    public List<Jornada> generarJornadas(Temporada temporada) {
-//        List<EquipoLiga> equiposLiga = ligaEquipoRepository.findByTemporada(temporada);
-//        List<Equipo> equipos = new ArrayList<Equipo>();
-//        for (EquipoLiga equipoLiga : equiposLiga) {
-//            equipos.add(equipoLiga.getEquipo());
-//        }
-//        return generarJornadas(equipos, temporada);
-//    }
+
 
     private JornadaDTO mapToDTO(Jornada jornada) {
-        return new JornadaDTO(
-                jornada.getId(),
-                jornada.getFecha(),
-                jornada.getGolLocal(),
-                jornada.getGolVisitante(),
-                jornada.getEquipoLocal().getNombre(),
-                jornada.getEquipoVisitante().getNombre(),
-                jornada.getArbitro() != null ? jornada.getArbitro().getNombre() + " " + jornada.getArbitro().getApellidos() : null,
-                jornada.getEstadio() != null ? jornada.getEstadio().getNombre() : null
-        );
+        return new JornadaDTO(jornada);
     }
 
 
     public List<JornadaDTO> generarJornadas(List<Integer> equipoIds) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede generar jornadas");
+        }
+
         List<Equipo> equipos = equipoRepository.findAllById(equipoIds);
         Temporada temporada = temporadaRepository.findLatest().getFirst();
 
@@ -249,6 +274,15 @@ public class JornadaService {
     }
 
     public JornadaDTO editarJornadaArbitro(Integer idJornada, JornadaArbitroDTO jornadaArbitroDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ARBITRO) {
+            throw new RuntimeException("Solo un arbitro puede editar las jornadas");
+        }
         Jornada jornadaExistente = jornadaRepository.findById(idJornada)
                 .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
 
@@ -266,6 +300,8 @@ public class JornadaService {
                 jornadaExistente.getGolVisitante(),
                 jornadaExistente.getEquipoLocal().getNombre(),
                 jornadaExistente.getEquipoVisitante().getNombre(),
+                jornadaExistente.getEquipoLocal().getImagen(),
+                jornadaExistente.getEquipoVisitante().getImagen(),
                 jornadaExistente.getArbitro() != null ? jornadaExistente.getArbitro().getNombre() + " " + jornadaExistente.getArbitro().getApellidos() : null,
                 jornadaExistente.getEstadio() != null ? jornadaExistente.getEstadio().getNombre() : null
         );
@@ -283,5 +319,23 @@ public class JornadaService {
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
+
+    public List<JornadaDTO> obtenerJornadasPorEquipo(Integer equipoId) {
+        List<Jornada> jornadas = jornadaRepository.findByEquipoLocal_IdOrEquipoVisitante_Id(equipoId, equipoId);
+        return jornadas.stream().map(JornadaDTO::new).toList();
+    }
+
+    public List<JornadaDTO> obtenerProximasJornadasAleatorias() {
+        List<Jornada> futuras = jornadaRepository.findFuturasJornadas(LocalDateTime.now());
+        Collections.shuffle(futuras);
+        return futuras.stream()
+                .limit(3)
+                .map(JornadaDTO::new)
+                .toList();
+    }
+
+
+
+
 
 }

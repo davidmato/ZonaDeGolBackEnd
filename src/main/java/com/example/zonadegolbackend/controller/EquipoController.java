@@ -1,9 +1,10 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.AsociarEquiposLigaDTO;
-import com.example.zonadegolbackend.dtos.CrearEquipo;
-import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
-import com.example.zonadegolbackend.dtos.TemporadaDTO;
+import com.example.zonadegolbackend.entity.*;
+import com.example.zonadegolbackend.dtos.*;
+import com.example.zonadegolbackend.repository.EntrenadorRepository;
+import com.example.zonadegolbackend.repository.EquipoRepository;
+import com.example.zonadegolbackend.repository.JugadorRepository;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.entity.Temporada;
@@ -23,6 +24,9 @@ import java.util.List;
 public class EquipoController {
 
     private final EquipoService equipoService;
+    private final EquipoRepository equipoRepository;
+    private final JugadorRepository jugadorRepository;
+    private final EntrenadorRepository entrenadorRepository;
 
     @GetMapping("/listar")
     public List<Equipo> listarEquipos() {
@@ -82,13 +86,19 @@ public class EquipoController {
     }
 
 
+    @GetMapping("/jugadores/{idEquipo}")
+    public List<JugadorDTO> obtenerJugadoresPorEquipo(@PathVariable Integer idEquipo) {
+        return equipoService.obtenerJugadoresPorEquipo(idEquipo);
+    }
 
     @GetMapping("/jornadas")
-    public List<Jornada> obtenerJornadasEquipoLogueado() {
+    public List<JornadaConIdsDTO> obtenerJornadasEquipoLogueado() {
         List<Jornada> jornadas = equipoService.obtenerJornadasDelEquipoLogueado();
 
         if (jornadas != null && !jornadas.isEmpty()) {
-            return jornadas;
+            return jornadas.stream()
+                    .map(JornadaConIdsDTO::new)
+                    .toList();
         } else {
             throw new RuntimeException("No se encontraron jornadas para el equipo logueado");
         }
@@ -103,5 +113,20 @@ public class EquipoController {
 //            return ResponseEntity.badRequest().body(null);
 //        }
 //    }
+
+    @GetMapping("/buscar/jugadores/equipo/{idEquipo}")
+    public List<Jugador> getJugadoresPorEquipo(@PathVariable Integer idEquipo) {
+        Equipo equipo = equipoRepository.findById(idEquipo)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+        return jugadorRepository.findByEquipo(equipo);
+    }
+
+    @GetMapping("/entrenador/usuario/{userId}")
+    public Entrenador getEntrenadorPorUserId(@PathVariable Integer userId) {
+        return entrenadorRepository.findByUsuario_Id(userId)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+    }
+
+
 
 }
