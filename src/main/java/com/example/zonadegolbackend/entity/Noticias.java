@@ -27,5 +27,8 @@ public class Noticias {
     @Column(name="descripcion", nullable = false)
     private String descripcion;
 
+    @Column(name="fecha", nullable = true)
+    private String fecha;
+
 
 }
