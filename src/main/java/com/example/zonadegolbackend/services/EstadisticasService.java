@@ -92,7 +92,7 @@ public class EstadisticasService {
         Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+        if (usuarioAutenticado.getRol() != Rol.ARBITRO) {
             throw new RuntimeException("Solo un administrador puede ver los árbitros");
         }
 
@@ -106,10 +106,22 @@ public class EstadisticasService {
         estadisticasExistente.setTarjetasRojas(estadisticasExistente.getTarjetasRojas() + estadisticas.getTarjetasRojas());
         estadisticasExistente.setPorteriaCero(estadisticasExistente.getPorteriaCero() + estadisticas.getPorteriaCero());
 
+        evaluarExpulsion(estadisticasExistente.getJugador());
+
         return estadisticasRepository.save(estadisticasExistente);
     }
 
     public Estadisticas editarEstadisticasJugador(Integer idJugador, Estadisticas estadisticas) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede ver los árbitros");
+        }
+
         List<Estadisticas> estadisticasExistentes = estadisticasRepository.findLatestByJugadorId(idJugador);
 
         if (estadisticasExistentes.isEmpty()) {
