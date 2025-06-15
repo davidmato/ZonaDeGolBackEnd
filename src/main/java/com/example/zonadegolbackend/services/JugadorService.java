@@ -1,15 +1,16 @@
 package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.JugadorDTO;
-//import com.example.zonadegolbackend.entity.EquipoJugador;
 import com.example.zonadegolbackend.entity.Estadisticas;
 import com.example.zonadegolbackend.entity.Jugador;
-//import com.example.zonadegolbackend.repository.EquipoJugadorRepository;
-import com.example.zonadegolbackend.entity.Temporada;
-import com.example.zonadegolbackend.repository.EquipoRepository;
+import com.example.zonadegolbackend.entity.Usuario;
+import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.EstadisticasRepository;
 import com.example.zonadegolbackend.repository.JugadorRepository;
+import com.example.zonadegolbackend.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +19,10 @@ import java.util.List;
 @AllArgsConstructor
 public class JugadorService {
 
-    private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
-//    private final EquipoJugadorRepository equipoJugadorRepository;
     private final EstadisticasRepository estadisticasRepository;
     private final TemporadaService temporadaService;
+    private final UsuarioRepository usuarioRepository;
 
 
     public List<Jugador> findAll() {
@@ -97,6 +97,17 @@ public class JugadorService {
     }
 
     public Jugador editarJugador(Integer id, Jugador jugadorActualizado) {
+        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol()!= Rol.ADMIN && usuarioAutenticado.getRol() != Rol.ENTRENADOR) {
+            throw new RuntimeException("No tienes permiso para editar jugadores");
+        }
+
+
         Jugador jugadorExistente = jugadorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
 
