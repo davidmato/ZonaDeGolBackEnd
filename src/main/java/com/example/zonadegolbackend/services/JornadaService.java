@@ -114,7 +114,10 @@ public class JornadaService {
 
         jornadaRepository.save(jornadaExistente);
 
-        actualizarPuntos(jornadaExistente);
+        clasificacionService.actualizarPuestosYObtenerClasificacion(
+                jornadaExistente.getEquipoLocal().getLiga().getId(),
+                jornadaExistente.getTemporada().getId()
+        );
 
         return jornadaDTO;
     }
@@ -300,6 +303,11 @@ public class JornadaService {
         jornadaRepository.save(jornadaExistente);
 
         actualizarPuntos(jornadaExistente);
+
+        clasificacionService.actualizarPuestosYObtenerClasificacion(
+                jornadaExistente.getEquipoLocal().getLiga().getId(),
+                jornadaExistente.getTemporada().getId()
+        );
 
         return new JornadaDTO(
                 jornadaExistente.getId(),
