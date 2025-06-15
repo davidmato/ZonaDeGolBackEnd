@@ -1,20 +1,15 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.CorreoAdminDTO;
-import com.example.zonadegolbackend.dtos.EntrenadorDTO;
-import com.example.zonadegolbackend.dtos.CrearEquipo;
-import com.example.zonadegolbackend.dtos.CrearJugador;
+import com.example.zonadegolbackend.dtos.*;
 import com.example.zonadegolbackend.entity.Entrenador;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.repository.EntrenadorRepository;
 import com.example.zonadegolbackend.services.EntrenadorService;
-import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
