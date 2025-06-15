@@ -67,9 +67,7 @@ public class Usuario implements UserDetails {
     }
 
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private TokenAcceso token;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
