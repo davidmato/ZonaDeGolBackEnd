@@ -26,8 +26,8 @@ public class EquipoController {
     private final EntrenadorRepository entrenadorRepository;
 
     @GetMapping("/listar")
-    public List<EquipoInfoDTO> listarEquipos() {
-        return equipoService.listarEquipos();
+    public List<Equipo> listarEquipos() {
+        return equipoService.findAll();
     }
 
     @PostMapping("/crear")

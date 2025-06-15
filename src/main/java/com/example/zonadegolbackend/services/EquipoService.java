@@ -56,6 +56,10 @@ public class EquipoService {
         return dtos;
     }
 
+    public List<Equipo> findAll() {
+        return equipoRepository.findAll();
+    }
+
     public Equipo create(CrearEquipo crearEquipo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
