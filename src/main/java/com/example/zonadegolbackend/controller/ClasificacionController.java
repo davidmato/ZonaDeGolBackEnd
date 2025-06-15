@@ -42,9 +42,9 @@ public class ClasificacionController {
     }
 
     @GetMapping("/buscar/liga/temporada/{ligaId}/{temporadaId}")
-    public List<Clasificacion> obtenerClasificacion(@PathVariable Integer ligaId, @PathVariable Integer temporadaId) {
+    public List<ClasificacionDTO> obtenerClasificacion(@PathVariable Integer ligaId, @PathVariable Integer temporadaId) {
         clasificacionService.actualizarPuestosYObtenerClasificacion(ligaId, temporadaId);
-        return clasificacionService.obtenerClasificacion(ligaId, temporadaId);
+        return clasificacionService.obtenerClasificacionConForma(ligaId, temporadaId);
     }
 
 //    @GetMapping("/{idLiga}")
