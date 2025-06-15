@@ -1,6 +1,5 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.EntrenadorDTO;
 import com.example.zonadegolbackend.dtos.EstadisticaTopDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasDTO;
 import com.example.zonadegolbackend.dtos.EstadisticasLigaTemporadaDTO;
@@ -8,7 +7,6 @@ import com.example.zonadegolbackend.entity.Estadisticas;
 import com.example.zonadegolbackend.entity.Jugador;
 import com.example.zonadegolbackend.repository.JugadorRepository;
 import com.example.zonadegolbackend.services.EstadisticasService;
-import com.example.zonadegolbackend.services.JugadorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

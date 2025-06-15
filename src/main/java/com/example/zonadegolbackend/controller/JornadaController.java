@@ -4,14 +4,10 @@ import com.example.zonadegolbackend.dtos.EstadioDTO;
 import com.example.zonadegolbackend.dtos.GenerarJornadaDTO;
 import com.example.zonadegolbackend.dtos.JornadaArbitroDTO;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
-import com.example.zonadegolbackend.entity.Equipo;
-import com.example.zonadegolbackend.entity.Estadio;
 import com.example.zonadegolbackend.entity.Jornada;
-import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.repository.JornadaRepository;
 import com.example.zonadegolbackend.services.JornadaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +34,7 @@ public class JornadaController {
     }
 
     @PutMapping("/editar/{id}")
-    public Jornada editarJornada(@PathVariable Integer id, @RequestBody JornadaDTO jornada) {
+    public JornadaDTO editarJornada(@PathVariable Integer id, @RequestBody JornadaDTO jornada) {
         return jornadaService.editarJornada(id, jornada);
     }
 
