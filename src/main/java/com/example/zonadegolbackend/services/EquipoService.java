@@ -14,7 +14,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +36,25 @@ public class EquipoService {
     private final JornadaRepository jornadaRepository;
     private final EntrenadorService entrenadorService;
 
-    public List<Equipo> findAll() {
-        return equipoRepository.findAll();
+
+
+    public List<EquipoInfoDTO> listarEquipos() {
+        List<Equipo> equipos = equipoRepository.findAll();
+        List<EquipoInfoDTO> dtos = new ArrayList<>();
+        for (Equipo equipo : equipos) {
+            EquipoInfoDTO dto = new EquipoInfoDTO();
+            dto.setId(equipo.getId());
+            dto.setNombre(equipo.getNombre());
+            dto.setDescripcion(equipo.getDescripcion());
+            dto.setFechaFundacion(equipo.getFechaFundacion());
+            dto.setImagen(equipo.getImagen());
+            dto.setEntrenadorNombre(equipo.getEntrenador().getNombre()+" "+equipo.getEntrenador().getApellido());
+            dto.setLigaNombre(equipo.getLiga().getNombre());
+            dto.setPagado(equipo.getEntrenador().getUsuario().getPagado());
+            dtos.add(dto);
+        }
+        return dtos;
     }
-
-
 
     public Equipo create(CrearEquipo crearEquipo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
