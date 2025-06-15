@@ -28,13 +28,6 @@ token_expiracion TIMESTAMP,
 fecha_registro TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS token_acceso (
-id SERIAL PRIMARY KEY,
-token VARCHAR(500) NOT NULL,
-fecha_expiracion TIMESTAMP NOT NULL,
-id_usuario INT NOT NULL,
-CONSTRAINT fk_token_acceso_usuario FOREIGN KEY(id_usuario) REFERENCES usuario(id)
-);
 
 CREATE TABLE IF NOT EXISTS entrenador (
 id SERIAL PRIMARY KEY,
