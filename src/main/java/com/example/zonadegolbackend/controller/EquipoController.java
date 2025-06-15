@@ -7,13 +7,16 @@ import com.example.zonadegolbackend.repository.EquipoRepository;
 import com.example.zonadegolbackend.repository.JugadorRepository;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
+import com.example.zonadegolbackend.entity.Temporada;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.services.EquipoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -100,7 +103,6 @@ public class EquipoController {
             throw new RuntimeException("No se encontraron jornadas para el equipo logueado");
         }
     }
-
 
 //    @GetMapping("/jugadores")
 //    public ResponseEntity<List<Jugador>> obtenerJugadoresDelEquipo() {

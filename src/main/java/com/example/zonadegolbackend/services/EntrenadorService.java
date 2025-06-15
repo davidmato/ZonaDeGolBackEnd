@@ -182,7 +182,6 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
@@ -261,7 +260,6 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
@@ -290,7 +288,6 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {
@@ -326,7 +323,6 @@ public class EntrenadorService {
 
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         validarPago(usuario);
 
         if (usuario.getRol() != Rol.ENTRENADOR) {

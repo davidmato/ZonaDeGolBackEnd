@@ -89,7 +89,7 @@ public class JornadaService {
         return jornadaRepository.save(nuevaJornada);
     }
 
-    public Jornada editarJornada(Integer idJornada, JornadaDTO jornadaDTO) {
+    public JornadaDTO editarJornada(Integer idJornada, JornadaDTO jornadaDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -125,7 +125,7 @@ public class JornadaService {
                 jornadaExistente.getTemporada().getId()
         );
 
-        return jornadaExistente;
+        return jornadaDTO;
     }
 
     public void eliminarJornada(Integer id) {
@@ -276,7 +276,7 @@ public class JornadaService {
         jugadorRepository.saveAll(jugadoresExpulsados);
     }
 
-    public Jornada editarJornadaArbitro(Integer idJornada, JornadaArbitroDTO jornadaArbitroDTO) {
+    public JornadaDTO editarJornadaArbitro(Integer idJornada, JornadaArbitroDTO jornadaArbitroDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -286,7 +286,6 @@ public class JornadaService {
         if (usuarioAutenticado.getRol() != Rol.ARBITRO) {
             throw new RuntimeException("Solo un arbitro puede editar las jornadas");
         }
-
         Jornada jornadaExistente = jornadaRepository.findById(idJornada)
                 .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
 
@@ -302,7 +301,18 @@ public class JornadaService {
                 jornadaExistente.getTemporada().getId()
         );
 
-        return jornadaExistente;
+        return new JornadaDTO(
+                jornadaExistente.getId(),
+                jornadaExistente.getFecha(),
+                jornadaExistente.getGolLocal(),
+                jornadaExistente.getGolVisitante(),
+                jornadaExistente.getEquipoLocal().getNombre(),
+                jornadaExistente.getEquipoVisitante().getNombre(),
+                jornadaExistente.getEquipoLocal().getImagen(),
+                jornadaExistente.getEquipoVisitante().getImagen(),
+                jornadaExistente.getArbitro() != null ? jornadaExistente.getArbitro().getNombre() + " " + jornadaExistente.getArbitro().getApellidos() : null,
+                jornadaExistente.getEstadio() != null ? jornadaExistente.getEstadio().getNombre() : null
+        );
     }
 
     public List<JornadaDTO> obtenerJornadasSegunArbitro() {

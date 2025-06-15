@@ -38,7 +38,7 @@ public class JornadaController {
     }
 
     @PutMapping("/editar/{id}")
-    public Jornada editarJornada(@PathVariable Integer id, @RequestBody JornadaDTO jornada) {
+    public JornadaDTO editarJornada(@PathVariable Integer id, @RequestBody JornadaDTO jornada) {
         return jornadaService.editarJornada(id, jornada);
     }
 
@@ -63,7 +63,7 @@ public class JornadaController {
     }
 
     @PutMapping("/arbitro/editar/{id}")
-    public Jornada arbitroEditarJornada(@PathVariable Integer id, @RequestBody JornadaArbitroDTO jornada) {
+    public JornadaDTO arbitroEditarJornada(@PathVariable Integer id, @RequestBody JornadaArbitroDTO jornada) {
         return jornadaService.editarJornadaArbitro(id, jornada);
     }
 
