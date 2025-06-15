@@ -81,20 +81,20 @@ public class UsuarioController {
         return usuarioService.usuarioHaPagado(id);
     }
 
-    @PostMapping("/admin/quitar-pago/{idEquipo}")
-    public void quitarPago(@PathVariable Integer idEquipo) {
-        usuarioService.marcarUsuariosEquipoComoNoPagados(idEquipo);
+    @GetMapping("/admin/equipos/pagados")
+    public List<EquipoInfoDTO> equiposPagados() {
+        return usuarioService.findEquiposConPagoEntrenador();
     }
 
-    @PostMapping("/admin/validar-pago/{idEquipo}")
+    @GetMapping("/admin/equipos/no-pagados")
+    public List<EquipoInfoDTO> equiposNoPagados() {
+        return usuarioService.findEquiposSinPagoEntrenador();
+    }
+
+    @PutMapping("/admin/alternar-pago/{idEquipo}")
     public void aceptarPago(@PathVariable Integer idEquipo) {
-        usuarioService.marcarUsuariosEquipoComoPagados(idEquipo);
+        usuarioService.alternarPagoUsuariosEquipo(idEquipo);
     }
 
-    //
-    //    @GetMapping("/restablecer")
-    //    public String mostrarFormularioRestablecer(@RequestParam String token) {
-    //        // Aquí puedes devolver una vista, un mensaje o simplemente validar el token
-    //        return "Token recibido: " + token;
-    //    }
+
 }
