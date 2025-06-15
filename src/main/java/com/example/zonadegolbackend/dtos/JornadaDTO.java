@@ -22,6 +22,28 @@ public class JornadaDTO {
     private String equipoVisitanteNombre;
     private String arbitroNombre;
     private String estadioNombre;
+    private String equipoLocalImagen;
+    private String equipoVisitanteImagen;
+
+
+    public JornadaDTO(Jornada jornada) {
+        this.id = jornada.getId();
+        this.fecha = jornada.getFecha();
+        this.golLocal = jornada.getGolLocal();
+        this.golVisitante = jornada.getGolVisitante();
+
+        if (jornada.getEquipoLocal() != null) {
+            this.equipoLocalNombre = jornada.getEquipoLocal().getNombre();
+            this.equipoLocalImagen = jornada.getEquipoLocal().getImagen();
+        }
+
+        if (jornada.getEquipoVisitante() != null) {
+            this.equipoVisitanteNombre = jornada.getEquipoVisitante().getNombre();
+            this.equipoVisitanteImagen = jornada.getEquipoVisitante().getImagen();
+        }
+        this.arbitroNombre = jornada.getArbitro() != null ? jornada.getArbitro().getNombre() : null;
+        this.estadioNombre = jornada.getEstadio() != null ? jornada.getEstadio().getNombre() : null;
+    }
 
 
 }

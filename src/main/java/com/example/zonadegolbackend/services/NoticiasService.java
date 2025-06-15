@@ -37,7 +37,6 @@ public class NoticiasService {
         }
 
         Noticias noticiaNueva = new Noticias();
-
         noticiaNueva.setImagen(noticia.getImagen());
         noticiaNueva.setTitulo(noticia.getTitulo());
         noticiaNueva.setDescripcion(noticia.getDescripcion());

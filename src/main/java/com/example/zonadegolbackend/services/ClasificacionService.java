@@ -102,20 +102,6 @@ public class ClasificacionService {
                 .sorted(Comparator.comparingInt(Clasificacion::getPuesto))
                 .collect(Collectors.toList());    }
 
-    public void actualizarPuestosYObtenerClasificacion(Integer ligaId, Integer temporadaId) {
-        List<Clasificacion> clasificaciones = clasificacionRepository.findByEquipo_Liga_IdAndTemporada_Id(ligaId, temporadaId)
-                .stream()
-                .sorted(Comparator.comparingInt(Clasificacion::getPuntos)
-                        .thenComparingInt(Clasificacion::getGolDiferencia)
-                        .reversed())
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < clasificaciones.size(); i++) {
-            clasificaciones.get(i).setPuesto(i + 1);
-        }
-
-        clasificacionRepository.saveAll(clasificaciones);
-    }
 
     public List<ClasificacionDTO> obtenerClasificacionConForma(Integer ligaId, Integer temporadaId) {
         List<Clasificacion> clasificaciones = clasificacionRepository.findByEquipo_Liga_IdAndTemporada_Id(ligaId, temporadaId)
@@ -137,6 +123,62 @@ public class ClasificacionService {
             dto.setImagenEquipo(c.getEquipo().getImagen());
             dto.setPuntos(c.getPuntos());
 
+
+            List<Jornada> ultimos5 = jornadaRepository.findLast5ByEquipoAndTemporada(
+                    c.getEquipo(), c.getTemporada(), PageRequest.of(0, 5));
+
+            List<String> forma = ultimos5.stream().map(j -> {
+                int golesEquipo, golesRival;
+                boolean esLocal = j.getEquipoLocal().getId().equals(c.getEquipo().getId());
+
+                if (esLocal) {
+                    golesEquipo = j.getGolLocal();
+                    golesRival = j.getGolVisitante();
+                } else {
+                    golesEquipo = j.getGolVisitante();
+                    golesRival = j.getGolLocal();
+                }
+
+                if (golesEquipo > golesRival) return "✅";
+                else if (golesEquipo == golesRival) return "➖";
+                else return "❌";
+            }).toList();
+
+            dto.setForma(forma);
+
+            return dto;
+        }).toList();
+    }
+
+    //esto puede estar mal, revisar
+
+    public List<ClasificacionDTO> actualizarPuestosYObtenerClasificacion(Integer ligaId, Integer temporadaId) {
+        List<Clasificacion> clasificaciones = clasificacionRepository.findByEquipo_Liga_IdAndTemporada_Id(ligaId, temporadaId)
+                .stream()
+                .sorted(Comparator.comparingInt(Clasificacion::getPuntos)
+                        .thenComparingInt(Clasificacion::getGolDiferencia)
+                        .reversed())
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < clasificaciones.size(); i++) {
+            clasificaciones.get(i).setPuesto(i + 1);
+        }
+
+        clasificacionRepository.saveAll(clasificaciones);
+
+        return clasificaciones.stream().map(c -> {
+            ClasificacionDTO dto = new ClasificacionDTO();
+            dto.setPuesto(c.getPuesto());
+            dto.setNombre(c.getEquipo().getNombre());
+            dto.setPartidosJugados(c.getPartidosJugados());
+            dto.setVictorias(c.getVictorias());
+            dto.setEmpates(c.getEmpates());
+            dto.setDerrotas(c.getDerrotas());
+            dto.setGolAFavor(c.getGolAFavor());
+            dto.setGolEnContra(c.getGolEnContra());
+            dto.setGolDiferencia(c.getGolDiferencia());
+            dto.setImagenEquipo(c.getEquipo().getImagen());
+            dto.setPuntos(c.getPuntos());
 
             List<Jornada> ultimos5 = jornadaRepository.findLast5ByEquipoAndTemporada(
                     c.getEquipo(), c.getTemporada(), PageRequest.of(0, 5));

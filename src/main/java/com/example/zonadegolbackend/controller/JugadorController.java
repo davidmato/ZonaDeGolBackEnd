@@ -43,5 +43,10 @@ public class JugadorController {
         return jugadorService.findJugadoresByEntrenadorId(idEntrenador);
     }
 
+    @GetMapping("/expulsados")
+    public List<JugadorDTO> getJugadoresExpulsados() {
+        return jugadorService.obtenerJugadoresExpulsados();
+    }
+
 
 }

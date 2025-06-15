@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -163,5 +164,30 @@ public class JugadorService {
             return jugadorDTO;
         }).toList();
     }
+
+    public List<JugadorDTO> obtenerJugadoresExpulsados() {
+        List<Jugador> jugadores = jugadorRepository.findJugadorByExpulsadoTrue();
+
+        return jugadores.stream().map(jugador -> {
+            JugadorDTO dto = new JugadorDTO();
+            dto.setNombre(jugador.getNombre());
+            dto.setApellido(jugador.getApellido());
+            dto.setPosicion(jugador.getPosicion());
+            dto.setDorsal(jugador.getDorsal());
+            dto.setImagen(jugador.getImagen());
+            dto.setDni(jugador.getDni());
+            dto.setFechaNacimiento(jugador.getFechaNacimiento());
+            dto.setCorreo(jugador.getUsuario() != null ? jugador.getUsuario().getCorreo() : null);
+            dto.setActivo(jugador.getActivo());
+            dto.setExpulsado(jugador.getExpulsado());
+            dto.setEquipoNombre(jugador.getEquipo().getNombre());
+            dto.setLigaNombre(jugador.getEquipo().getLiga() != null ? jugador.getEquipo().getLiga().getNombre() : null);
+            dto.setEquipoFoto(jugador.getEquipo().getImagen());
+            dto.setEquipoId(jugador.getEquipo().getId());
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 
 }

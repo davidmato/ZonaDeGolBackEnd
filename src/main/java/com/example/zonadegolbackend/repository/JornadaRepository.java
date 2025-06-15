@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.repository;
 
+import com.example.zonadegolbackend.dtos.JornadaDTO;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jornada;
 import com.example.zonadegolbackend.entity.Temporada;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -28,4 +30,10 @@ public interface JornadaRepository extends JpaRepository<Jornada, Integer> {
     List<Jornada> findLast5ByEquipoAndTemporada(@Param("equipo") Equipo equipo, @Param("temporada") Temporada temporada, Pageable pageable);
 
     List<Jornada> findByArbitro_Id(Integer arbitroId);
+
+    @Query("""
+    SELECT j FROM Jornada j
+    WHERE j.fecha >= :now
+    """)
+    List<Jornada> findFuturasJornadas(@Param("now") LocalDateTime now);
 }
