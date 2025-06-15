@@ -1,9 +1,6 @@
 package com.example.zonadegolbackend.controller;
 
-import com.example.zonadegolbackend.dtos.CorreoAdminDTO;
-import com.example.zonadegolbackend.dtos.EntrenadorDTO;
-import com.example.zonadegolbackend.dtos.CrearEquipo;
-import com.example.zonadegolbackend.dtos.CrearJugador;
+import com.example.zonadegolbackend.dtos.*;
 import com.example.zonadegolbackend.entity.Entrenador;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.Jugador;
@@ -79,6 +76,11 @@ public class EntrenadorController {
     @PostMapping("/enviar-correo-admin")
     public void enviarCorreoAdmin(@RequestBody CorreoAdminDTO request) {
         entrenadorService.enviarCorreoAdmin(request.getAsunto(), request.getContenido());
+    }
+
+    @GetMapping("/clasificacion/equipo")
+    public List<ClasificacionDTO> buscarEntrenadorPorId() {
+        return entrenadorService.obtenerClasificacionUltimaTemporadaLigaEntrenadorLogueado();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.zonadegolbackend.services;
 
+import com.example.zonadegolbackend.dtos.ClasificacionDTO;
 import com.example.zonadegolbackend.dtos.EntrenadorDTO;
 import com.example.zonadegolbackend.dtos.CrearEquipo;
 import com.example.zonadegolbackend.dtos.CrearJugador;
@@ -9,7 +10,7 @@ import com.example.zonadegolbackend.repository.*;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -34,6 +36,8 @@ public class EntrenadorService {
     private final EstadisticasRepository estadisticasRepository;
     private final TemporadaService temporadaService;
     private final JavaMailSender mailSender;
+    private final ClasificacionRepository clasificacionRepository;
+    private final JornadaRepository jornadaRepository;
 
 
 
@@ -408,6 +412,79 @@ public class EntrenadorService {
     }
 
 
+    public List<ClasificacionDTO> obtenerClasificacionUltimaTemporadaLigaEntrenadorLogueado() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Entrenador entrenador = entrenadorRepository.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
+
+        Equipo equipo = equipoRepository.findByEntrenador(entrenador);
+        if (equipo == null) {
+            throw new RuntimeException("El entrenador no tiene equipo asignado");
+        }
+
+        Integer ligaId = equipo.getLiga().getId();
+
+        // Buscar la última clasificación del equipo para obtener la última temporada jugada
+        List<Clasificacion> clasificacionesEquipo = clasificacionRepository.findByEquipoId(equipo.getId());
+        if (clasificacionesEquipo == null || clasificacionesEquipo.isEmpty()) {
+            throw new RuntimeException("No hay clasificaciones para el equipo");
+        }
+        Clasificacion ultimaClasificacion = clasificacionesEquipo.stream()
+                .max((c1, c2) -> c1.getTemporada().getFechaInicio().compareTo(c2.getTemporada().getFechaInicio()))
+                .orElseThrow(() -> new RuntimeException("No se encontró la última clasificación"));
+
+        Integer temporadaId = ultimaClasificacion.getTemporada().getId();
+
+        // Obtener todas las clasificaciones de la liga y temporada
+        List<Clasificacion> clasificaciones = clasificacionRepository.findByEquipo_Liga_IdAndTemporada_Id(ligaId, temporadaId)
+                .stream()
+                .sorted(Comparator.comparingInt(Clasificacion::getPuesto))
+                .toList();
+
+        // Mapear a DTO incluyendo la forma de los últimos 5 partidos
+        return clasificaciones.stream().map(c -> {
+            ClasificacionDTO dto = new ClasificacionDTO();
+            dto.setPuesto(c.getPuesto());
+            dto.setNombre(c.getEquipo().getNombre());
+            dto.setPartidosJugados(c.getPartidosJugados());
+            dto.setVictorias(c.getVictorias());
+            dto.setEmpates(c.getEmpates());
+            dto.setDerrotas(c.getDerrotas());
+            dto.setGolAFavor(c.getGolAFavor());
+            dto.setGolEnContra(c.getGolEnContra());
+            dto.setGolDiferencia(c.getGolDiferencia());
+            dto.setImagenEquipo(c.getEquipo().getImagen());
+            dto.setPuntos(c.getPuntos());
+
+            List<Jornada> ultimos5 = jornadaRepository.findLast5ByEquipoAndTemporada(
+                    c.getEquipo(), c.getTemporada(), PageRequest.of(0, 5));
+
+            List<String> forma = ultimos5.stream().map(j -> {
+                int golesEquipo, golesRival;
+                boolean esLocal = j.getEquipoLocal().getId().equals(c.getEquipo().getId());
+
+                if (esLocal) {
+                    golesEquipo = j.getGolLocal();
+                    golesRival = j.getGolVisitante();
+                } else {
+                    golesEquipo = j.getGolVisitante();
+                    golesRival = j.getGolLocal();
+                }
+
+                if (golesEquipo > golesRival) return "✅";
+                else if (golesEquipo == golesRival) return "➖";
+                else return "❌";
+            }).toList();
+
+            dto.setForma(forma);
+
+            return dto;
+        }).toList();
+    }
 
 
 
