@@ -3,6 +3,8 @@ package com.example.zonadegolbackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "noticias", schema = "zona_de_gol", catalog = "postgres")
 @Getter
@@ -27,8 +29,8 @@ public class Noticias {
     @Column(name="descripcion", nullable = false)
     private String descripcion;
 
-    @Column(name="fecha", nullable = true)
-    private String fecha;
+    @Column(name="fecha", nullable = false)
+    private LocalDate fecha;
 
 
 }

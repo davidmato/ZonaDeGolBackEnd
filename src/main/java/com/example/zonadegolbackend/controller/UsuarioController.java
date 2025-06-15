@@ -81,6 +81,16 @@ public class UsuarioController {
         return usuarioService.usuarioHaPagado(id);
     }
 
+    @PostMapping("/admin/quitar-pago/{idEquipo}")
+    public void quitarPago(@PathVariable Integer idEquipo) {
+        usuarioService.marcarUsuariosEquipoComoNoPagados(idEquipo);
+    }
+
+    @PostMapping("/admin/validar-pago/{idEquipo}")
+    public void aceptarPago(@PathVariable Integer idEquipo) {
+        usuarioService.marcarUsuariosEquipoComoPagados(idEquipo);
+    }
+
     //
     //    @GetMapping("/restablecer")
     //    public String mostrarFormularioRestablecer(@RequestParam String token) {

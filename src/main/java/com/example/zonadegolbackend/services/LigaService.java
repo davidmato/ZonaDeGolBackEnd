@@ -6,9 +6,12 @@ import com.example.zonadegolbackend.dtos.EquipoHomeDTO;
 import com.example.zonadegolbackend.dtos.LigaClasificacionHomeDTO;
 import com.example.zonadegolbackend.dtos.LigaHomeDTO;
 import com.example.zonadegolbackend.entity.*;
+import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -27,6 +30,7 @@ public class LigaService {
     private final TemporadaLigaRepository temporadaLigaRepository;
     private final ClasificacionService clasificacionService;
     private final TemporadaService temporadaService;
+    private final UsuarioRepository usuarioRepository;
 
     public List<Liga> findAll() {
         return ligaRepository.findAll();
@@ -52,6 +56,15 @@ public class LigaService {
 //    }
 
     public Liga crearLiga(Liga liga){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador crear una liga");
+        }
 
         Liga nuevaLiga = new Liga();
 
@@ -79,6 +92,16 @@ public class LigaService {
     }
 
     public Liga editarLiga(Integer id, Liga liga){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede editar una liga");
+        }
+
         Liga ligaExistente = ligaRepository.findById(id).orElseThrow(() -> new RuntimeException("Liga no encontrada"));
         ligaExistente.setNombre(liga.getNombre());
         ligaExistente.setNumEquipos(liga.getNumEquipos());
@@ -90,6 +113,16 @@ public class LigaService {
     }
 
     public void eliminarLiga(Integer id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede eliminar una liga");
+        }
+
         Liga ligaExistente = ligaRepository.findById(id).orElseThrow(() -> new RuntimeException("Liga no encontrada"));
 
         ligaRepository.delete(ligaExistente);

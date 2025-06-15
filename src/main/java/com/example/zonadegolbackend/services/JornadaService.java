@@ -7,6 +7,7 @@ import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.*;
 //import com.example.zonadegolbackend.entity.EquipoLiga;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
+import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
 //import com.example.zonadegolbackend.repository.LigaEquipoRepository;
 import lombok.AllArgsConstructor;
@@ -56,6 +57,16 @@ public class JornadaService {
     }
 
     public Jornada crearJornada(JornadaDTO jornadaDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede crear jornadas");
+        }
+
         Jornada nuevaJornada = new Jornada();
 
         nuevaJornada.setGolLocal(jornadaDTO.getGolLocal());
@@ -79,6 +90,16 @@ public class JornadaService {
     }
 
     public Jornada editarJornada(Integer idJornada, JornadaDTO jornadaDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador editar las jornadas");
+        }
+
         Jornada jornadaExistente = jornadaRepository.findById(idJornada)
                 .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
 
@@ -105,17 +126,20 @@ public class JornadaService {
     }
 
     public void eliminarJornada(Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede eliminar jornadas");
+        }
+
         jornadaRepository.deleteById(id);
     }
 
-//    public List<Jornada> generarJornadas(Temporada temporada) {
-//        List<EquipoLiga> equiposLiga = ligaEquipoRepository.findByTemporada(temporada);
-//        List<Equipo> equipos = new ArrayList<Equipo>();
-//        for (EquipoLiga equipoLiga : equiposLiga) {
-//            equipos.add(equipoLiga.getEquipo());
-//        }
-//        return generarJornadas(equipos, temporada);
-//    }
+
 
     private JornadaDTO mapToDTO(Jornada jornada) {
         return new JornadaDTO(jornada);
@@ -123,6 +147,16 @@ public class JornadaService {
 
 
     public List<JornadaDTO> generarJornadas(List<Integer> equipoIds) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede generar jornadas");
+        }
+
         List<Equipo> equipos = equipoRepository.findAllById(equipoIds);
         Temporada temporada = temporadaRepository.findLatest().getFirst();
 
@@ -240,6 +274,16 @@ public class JornadaService {
     }
 
     public Jornada editarJornadaArbitro(Integer idJornada, JornadaArbitroDTO jornadaArbitroDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (usuarioAutenticado.getRol() != Rol.ARBITRO) {
+            throw new RuntimeException("Solo un arbitro puede editar las jornadas");
+        }
+
         Jornada jornadaExistente = jornadaRepository.findById(idJornada)
                 .orElseThrow(() -> new RuntimeException("Jornada no encontrada"));
 

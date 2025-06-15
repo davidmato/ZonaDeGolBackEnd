@@ -23,16 +23,16 @@ public class NoticiasController {
         return noticiasService.findAll();
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/admin/crear")
     public Noticias crearNoticia(@RequestBody Noticias noticia) { return noticiasService.crearNoticia(noticia);
     }
 
-    @PutMapping("/editar/{id}")
+    @PutMapping("/admin/editar/{id}")
     public Noticias editarNoticia(@PathVariable Integer id, @RequestBody Noticias noticia) {
         return noticiasService.editarNoticia(id, noticia);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @DeleteMapping("/admin/eliminar/{id}")
     public void eliminarNoticia(@PathVariable Integer id) {
         noticiasService.eliminarNoticia(id);
     }
