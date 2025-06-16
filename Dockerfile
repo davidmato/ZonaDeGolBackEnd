@@ -21,7 +21,7 @@ RUN ./mvnw dependency:resolve dependency:go-offline
 COPY src/ src/
 
 # Compila la aplicación con codificación forzada a UTF-8
-RUN ./mvnw clean package -DskipTests -Dfile.encoding=UTF-8
+RUN ./mvnw clean package -DskipTests -Dfile.encoding=UTF-8 -X
 
 # Verifica que el JAR se haya generado
 RUN ls -l target/
