@@ -1,7 +1,8 @@
 package com.example.zonadegolbackend.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
+
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Jornada {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +36,12 @@ public class Jornada {
     private Integer golVisitante;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "id_equipo_local", nullable = false)
     private Equipo equipoLocal;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "id_equipo_visitante", nullable = false)
     private Equipo equipoVisitante;
 

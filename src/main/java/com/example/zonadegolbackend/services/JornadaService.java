@@ -5,14 +5,10 @@ import com.example.zonadegolbackend.dtos.JornadaArbitroDTO;
 import com.example.zonadegolbackend.entity.Clasificacion;
 import com.example.zonadegolbackend.entity.Equipo;
 import com.example.zonadegolbackend.entity.*;
-//import com.example.zonadegolbackend.entity.EquipoLiga;
 import com.example.zonadegolbackend.dtos.JornadaDTO;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
-//import com.example.zonadegolbackend.repository.LigaEquipoRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
@@ -73,7 +69,6 @@ public class JornadaService {
         nuevaJornada.setGolVisitante(jornadaDTO.getGolVisitante());
         nuevaJornada.setFecha(jornadaDTO.getFecha());
 
-        // Buscar entidades relacionadas por sus nombres o IDs
         nuevaJornada.setEquipoLocal(equipoRepository.findByNombre(jornadaDTO.getEquipoLocalNombre())
                 .orElseThrow(() -> new RuntimeException("Equipo local no encontrado")));
         nuevaJornada.setEquipoVisitante(equipoRepository.findByNombre(jornadaDTO.getEquipoVisitanteNombre())
@@ -83,7 +78,6 @@ public class JornadaService {
         nuevaJornada.setEstadio(estadioRepository.findByNombre(jornadaDTO.getEstadioNombre())
                 .orElseThrow(() -> new RuntimeException("Estadio no encontrado")));
 
-        // Asignar la temporada más reciente
         nuevaJornada.setTemporada(temporadaRepository.findLatest().getFirst());
 
         return jornadaRepository.save(nuevaJornada);
@@ -148,7 +142,6 @@ public class JornadaService {
         return new JornadaDTO(jornada);
     }
 
-
     public List<JornadaDTO> generarJornadas(List<Integer> equipoIds) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -160,7 +153,16 @@ public class JornadaService {
             throw new RuntimeException("Solo un administrador puede generar jornadas");
         }
 
+        List<Equipo> equiposFiltrados = new ArrayList<>();
         List<Equipo> equipos = equipoRepository.findAllById(equipoIds);
+        for (Equipo equipo : equipos) {
+            if (equipo.getEntrenador() != null
+                    && equipo.getEntrenador().getUsuario() != null
+                    && Boolean.TRUE.equals(equipo.getEntrenador().getUsuario().getPagado())) {
+                equiposFiltrados.add(equipo);
+            }
+        }
+
         Temporada temporada = temporadaRepository.findLatest().getFirst();
 
         List<Arbitro> arbitros = arbitroRepository.findAll();
@@ -168,16 +170,22 @@ public class JornadaService {
         List<Jornada> jornadas = new ArrayList<>();
         Random random = new Random();
 
-        if (equipos.size() < 2) {
+        if (equiposFiltrados.size() < 2) {
             throw new IllegalArgumentException("Debe haber al menos dos equipos para generar jornadas.");
+        }
+        if (arbitros.isEmpty()) {
+            throw new IllegalStateException("Debe haber al menos un árbitro para generar jornadas.");
+        }
+        if (estadios.isEmpty()) {
+            throw new IllegalStateException("Debe haber al menos un estadio para generar jornadas.");
         }
 
         Map<String, Integer> enfrentamientos = new HashMap<>();
         List<List<Equipo>> enfrentamientosPendientes = new ArrayList<>();
 
-        for (int i = 0; i < equipos.size(); i++) {
-            for (int j = i + 1; j < equipos.size(); j++) {
-                enfrentamientosPendientes.add(Arrays.asList(equipos.get(i), equipos.get(j)));
+        for (int i = 0; i < equiposFiltrados.size(); i++) {
+            for (int j = i + 1; j < equiposFiltrados.size(); j++) {
+                enfrentamientosPendientes.add(Arrays.asList(equiposFiltrados.get(i), equiposFiltrados.get(j)));
             }
         }
 

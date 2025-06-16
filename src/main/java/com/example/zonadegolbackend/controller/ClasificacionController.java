@@ -4,9 +4,7 @@ import com.example.zonadegolbackend.dtos.ClasificacionDTO;
 import com.example.zonadegolbackend.dtos.CrearClasificacionDTO;
 import com.example.zonadegolbackend.entity.Clasificacion;
 import com.example.zonadegolbackend.services.ClasificacionService;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,10 +45,6 @@ public class ClasificacionController {
         return clasificacionService.obtenerClasificacionConForma(ligaId, temporadaId);
     }
 
-//    @GetMapping("/{idLiga}")
-//    public List<Map<String, Object>> obtenerClasificacion(@PathVariable int idLiga) {
-//        return clasificacionService.obtenerClasificacionPorLiga(idLiga);
-//    }
 
     @GetMapping("/ultimosCinco")
     public List<ClasificacionDTO> obtenerClasificacionDTO(@RequestParam Integer ligaId, @RequestParam Integer temporadaId) {

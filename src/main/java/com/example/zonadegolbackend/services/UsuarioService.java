@@ -3,13 +3,14 @@ package com.example.zonadegolbackend.services;
 
 import com.example.zonadegolbackend.dtos.ArbitroDTO;
 import com.example.zonadegolbackend.dtos.AuthenticationDTO;
+import com.example.zonadegolbackend.dtos.EquipoInfoDTO;
 import com.example.zonadegolbackend.dtos.UsuarioDto;
 import com.example.zonadegolbackend.entity.*;
 import com.example.zonadegolbackend.enums.Rol;
 import com.example.zonadegolbackend.repository.*;
 import com.example.zonadegolbackend.security.JwtService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,23 +27,35 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class UsuarioService implements UserDetailsService {
+
+    @Value("${frontend.url}")
+    private  String frontendUrl;
 
     @Autowired
     private JavaMailSender mailSender;
 
     private final UsuarioRepository usuarioRepository;
     private final EntrenadorRepository entrenadorRepository;
-    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final ArbitroRepository arbitroRepository;
     private final EquipoRepository equipoRepository;
     private final JugadorRepository jugadorRepository;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, EntrenadorRepository entrenadorRepository, PasswordEncoder passwordEncoder, JwtService jwtService, ArbitroRepository arbitroRepository, EquipoRepository equipoRepository, JugadorRepository jugadorRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.entrenadorRepository = entrenadorRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.arbitroRepository = arbitroRepository;
+        this.equipoRepository = equipoRepository;
+        this.jugadorRepository = jugadorRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -73,11 +86,28 @@ public class UsuarioService implements UserDetailsService {
         entrenador.setImagen(userDTO.getImagenEntrenador());
         entrenadorRepository.save(entrenador);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(usuario.getCorreo());
-        message.setSubject("Bienvenido a Zona de Gol");
-        message.setText("¡Bienvenido, " + usuario.getUsername() + "! Tu registro ha sido exitoso.");
-        mailSender.send(message);
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(usuario.getCorreo());
+            helper.setSubject("Bienvenido a Zona de Gol");
+            String html = "<div style=\"max-width:400px;margin:40px auto;padding:24px;background:#f9f9f9;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-family:Arial,sans-serif;\">" +
+                    "<div style='text-align:center; margin-bottom:16px;'>" +
+                    "<img src='https://res.cloudinary.com/dyfoaulb5/image/upload/fl_preserve_transparency/v1747739581/logo_ohmfq7.jpg' alt='Logo' style='max-width:120px;'>" +
+                    "</div>" +
+                    "<h2 style=\"color:#333;text-align:center;\">¡Bienvenido a Zona de Gol!</h2>" +
+                    "<p style=\"text-align:center;\">Hola <b>" + usuario.getUsername() + "</b>, tu registro ha sido exitoso.</p>" +
+                    "<div style=\"text-align:center;margin:24px 0;\">" +
+                    "<span style=\"display:inline-block;padding:12px 28px;background:#344353;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px;box-shadow:0 1px 4px rgba(0,0,0,0.10);\">¡Ya puedes acceder a la plataforma!</span>" +
+                    "</div>" +
+                    "<p style=\"margin-top:20px;color:#888;font-size:12px;text-align:center;\">Si tienes dudas, contacta con el soporte.</p>" +
+                    "<div style=\"display:none;max-width:0;overflow:hidden;\">&nbsp;</div>" +
+                    "</div>";
+            helper.setText(html, true);
+            mailSender.send(mimeMessage);
+        } catch (jakarta.mail.MessagingException e) {
+            throw new RuntimeException("Error al enviar el correo de bienvenida", e);
+        }
 
         var jwtToken = jwtService.generateToken(usuario, usuario.getId(), usuario.getRol().name());
         return AuthenticationDTO.builder().token(jwtToken).build();
@@ -100,17 +130,9 @@ public class UsuarioService implements UserDetailsService {
         } else if (!validarPassword(usuario, usuarioDTO.getPassword())) {
             mensaje = "Contraseña no válida";
         } else {
-            if (usuario.getToken() == null || jwtService.isTokenExpired(usuario.getToken().getToken())) {
                 apiKey = jwtService.generateToken(usuario, usuario.getId(), usuario.getRol().name());
-//                TokenAcceso token = usuario.getToken() == null ? new TokenAcceso() : usuario.getToken();
-//                token.setUsuario(usuario);
-//                token.setToken(apiKey);
-//                token.setFechaExpiracion(LocalDateTime.now().plusDays(1));
-//                tokenService.save(token);
-            } else {
-                apiKey = usuario.getToken().getToken();
-            }
         }
+
 
         return AuthenticationDTO.builder().token(apiKey).build();
     }
@@ -136,7 +158,8 @@ public class UsuarioService implements UserDetailsService {
         usuario.setTokenExpiracion(LocalDateTime.now().plusHours(1));
         usuarioRepository.save(usuario);
 
-        String enlace = "http://localhost:4200/restablecer?token=" + token;
+
+        String enlace = frontendUrl + "/restablecer?token=" + token;
 
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -313,7 +336,6 @@ public class UsuarioService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Eliminar árbitro si existe
         Arbitro arbitro = arbitroRepository.findByUsuarioUsername(usuario.getUsername()).orElse(null);
         if (arbitro != null) {
             arbitroRepository.delete(arbitro);
@@ -326,7 +348,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
-    public void marcarUsuariosEquipoComoNoPagados(Integer idEquipo) {
+    public void alternarPagoUsuariosEquipo(Integer idEquipo) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
@@ -341,21 +363,48 @@ public class UsuarioService implements UserDetailsService {
         Entrenador entrenador = equipo.getEntrenador();
         if (entrenador != null && entrenador.getUsuario() != null) {
             Usuario usuarioEntrenador = entrenador.getUsuario();
-            usuarioEntrenador.setPagado(false);
+            boolean nuevoEstado = !Boolean.TRUE.equals(usuarioEntrenador.getPagado());
+            usuarioEntrenador.setPagado(nuevoEstado);
             usuarioRepository.save(usuarioEntrenador);
+
+
+            try {
+                MimeMessage mimeMessage = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+                helper.setTo(usuarioEntrenador.getCorreo());
+                helper.setSubject("Estado de pago actualizado - Zona de Gol");
+                String estado = nuevoEstado ? "ACTIVADO" : "DESACTIVADO";
+                String mensaje = nuevoEstado
+                        ? "¡Enhorabuena! El administrador ha activado el pago de tu equipo. Ahora tienes acceso completo a las funcionalidades de Zona de Gol."
+                        : "El administrador ha desactivado el pago de tu equipo. Algunas funcionalidades pueden estar restringidas hasta que se regularice el pago.";
+                String html = "<div style=\"max-width:400px;margin:40px auto;padding:24px;background:#f9f9f9;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-family:Arial,sans-serif;\">" +
+                        "<div style='text-align:center; margin-bottom:16px;'>" +
+                        "<img src='https://res.cloudinary.com/dyfoaulb5/image/upload/fl_preserve_transparency/v1747739581/logo_ohmfq7.jpg' alt='Logo' style='max-width:120px;'>" +
+                        "</div>" +
+                        "<h2 style=\"color:#333;text-align:center;\">Estado de pago " + estado + "</h2>" +
+                        "<p style=\"text-align:center;\">" + mensaje + "</p>" +
+                        "<p style=\"margin-top:20px;color:#888;font-size:12px;text-align:center;\">Si tienes dudas, contacta con el administrador.</p>" +
+                        "<div style=\"display:none;max-width:0;overflow:hidden;\">&nbsp;</div>" +
+                        "</div>";
+                helper.setText(html, true);
+                mailSender.send(mimeMessage);
+            } catch (jakarta.mail.MessagingException e) {
+                throw new RuntimeException("Error al enviar el correo de notificación de pago", e);
+            }
         }
+
 
         List<Jugador> jugadores = jugadorRepository.findByEquipo(equipo);
         for (Jugador jugador : jugadores) {
             Usuario usuarioJugador = jugador.getUsuario();
             if (usuarioJugador != null) {
-                usuarioJugador.setPagado(false);
+                usuarioJugador.setPagado(!Boolean.TRUE.equals(usuarioJugador.getPagado()));
                 usuarioRepository.save(usuarioJugador);
             }
         }
     }
 
-    public void marcarUsuariosEquipoComoPagados(Integer idEquipo) {
+    public List<EquipoInfoDTO> findEquiposConPagoEntrenador() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
@@ -364,25 +413,63 @@ public class UsuarioService implements UserDetailsService {
             throw new RuntimeException("Solo un administrador puede realizar esta acción");
         }
 
-        Equipo equipo = equipoRepository.findById(idEquipo)
-                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
-
-        Entrenador entrenador = equipo.getEntrenador();
-        if (entrenador != null && entrenador.getUsuario() != null) {
-            Usuario usuarioEntrenador = entrenador.getUsuario();
-            usuarioEntrenador.setPagado(true);
-            usuarioRepository.save(usuarioEntrenador);
-        }
-
-        List<Jugador> jugadores = jugadorRepository.findByEquipo(equipo);
-        for (Jugador jugador : jugadores) {
-            Usuario usuarioJugador = jugador.getUsuario();
-            if (usuarioJugador != null) {
-                usuarioJugador.setPagado(true);
-                usuarioRepository.save(usuarioJugador);
+        List<Equipo> equipos = equipoRepository.findAll();
+        List<EquipoInfoDTO> resultado = new ArrayList<>();
+        for (Equipo equipo : equipos) {
+            Entrenador entrenador = equipo.getEntrenador();
+            if (entrenador != null && entrenador.getUsuario() != null && Boolean.TRUE.equals(entrenador.getUsuario().getPagado())) {
+                EquipoInfoDTO dto = new EquipoInfoDTO();
+                dto.setId(equipo.getId());
+                dto.setNombre(equipo.getNombre());
+                dto.setDescripcion(equipo.getDescripcion());
+                dto.setFechaFundacion(equipo.getFechaFundacion());
+                dto.setImagen(equipo.getImagen());
+                dto.setEntrenadorNombre(entrenador.getNombre() + " " + entrenador.getApellido());
+                dto.setEntrenadorImagen(entrenador.getImagen());
+                dto.setLigaNombre(equipo.getLiga().getNombre());
+                dto.setLigaImagen(equipo.getLiga().getImagen());
+                dto.setLigaId(equipo.getLiga().getId());
+                dto.setPagado(equipo.getEntrenador().getUsuario().getPagado());
+                dto.setEntrenadorFechaNacimiento(entrenador.getFechaNacimiento());
+                resultado.add(dto);
             }
         }
+        return resultado;
     }
+
+    public List<EquipoInfoDTO> findEquiposSinPagoEntrenador() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Usuario usuarioAutenticado = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        if (usuarioAutenticado.getRol() != Rol.ADMIN) {
+            throw new RuntimeException("Solo un administrador puede realizar esta acción");
+        }
+
+        List<Equipo> equipos = equipoRepository.findAll();
+        List<EquipoInfoDTO> resultado = new ArrayList<>();
+        for (Equipo equipo : equipos) {
+            Entrenador entrenador = equipo.getEntrenador();
+            if (entrenador != null && entrenador.getUsuario() != null && !Boolean.TRUE.equals(entrenador.getUsuario().getPagado())) {
+                EquipoInfoDTO dto = new EquipoInfoDTO();
+                dto.setId(equipo.getId());
+                dto.setNombre(equipo.getNombre());
+                dto.setDescripcion(equipo.getDescripcion());
+                dto.setFechaFundacion(equipo.getFechaFundacion());
+                dto.setImagen(equipo.getImagen());
+                dto.setEntrenadorNombre(entrenador.getNombre() + " " + entrenador.getApellido());
+                dto.setEntrenadorImagen(entrenador.getImagen());
+                dto.setLigaNombre(equipo.getLiga().getNombre());
+                dto.setLigaImagen(equipo.getLiga().getImagen());
+                dto.setLigaId(equipo.getLiga().getId());
+                dto.setPagado(equipo.getEntrenador().getUsuario().getPagado());
+                dto.setEntrenadorFechaNacimiento(entrenador.getFechaNacimiento());
+                resultado.add(dto);
+            }
+        }
+        return resultado;
+    }
+
 
     @Scheduled(cron = "0 0 3 * * ?") // Todos los días a las 3:00 AM
     @Transactional

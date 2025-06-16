@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/equipo")
@@ -33,6 +34,12 @@ public class EquipoController {
         return equipoService.findAll();
     }
 
+    @GetMapping("/listar/dto")
+    public List<EquipoInfoDTO> listarEquiposDto() {
+        return equipoService.listarEquipos();
+    }
+
+
     @PostMapping("/crear")
     public Equipo crearEquipo(@RequestBody CrearEquipo equipo) {
         return equipoService.create(equipo);
@@ -43,15 +50,6 @@ public class EquipoController {
         return equipoService.update(idEquipo, equipo);
     }
 
-//    @PostMapping("/asociarEquiposConLiga")
-//    public void asociarEquiposConLiga(@RequestBody AsociarEquiposLigaDTO request) {
-//        equipoService.associateTeamsWithLeague(request.getIdLiga(), request.getIdEquipos(), request.getIdTemporada());
-//    }
-//
-//    @PostMapping("/asociarTemporadaConEquipo/{idEquipo}/temporada")
-//    public void asociarTemporadaConEquipo(@PathVariable Integer idEquipo, @RequestBody List<Integer> idTemporada) {
-//        equipoService.associateTemporadasWithTeam(idEquipo, idTemporada);
-//    }
 
     @DeleteMapping("/eliminar/{idEquipo}")
     public void eliminarEquipo(@PathVariable Integer idEquipo) {
@@ -104,15 +102,7 @@ public class EquipoController {
         }
     }
 
-//    @GetMapping("/jugadores")
-//    public ResponseEntity<List<Jugador>> obtenerJugadoresDelEquipo() {
-//        try {
-//            List<Jugador> jugadores = equipoService.getEquipoJugadores();
-//            return ResponseEntity.ok(jugadores);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//    }
+
 
     @GetMapping("/buscar/jugadores/equipo/{idEquipo}")
     public List<Jugador> getJugadoresPorEquipo(@PathVariable Integer idEquipo) {

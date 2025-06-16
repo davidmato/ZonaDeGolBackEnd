@@ -21,5 +21,6 @@ public class EquipoInfoDTO {
     private String ligaImagen;
     private Integer ligaId;
     private LocalDate entrenadorFechaNacimiento;
+    private boolean pagado;
     private String jugadorId;
 }

@@ -6,7 +6,6 @@ import com.example.zonadegolbackend.entity.Usuario;
 import com.example.zonadegolbackend.repository.UsuarioRepository;
 import com.example.zonadegolbackend.services.StripeService;
 import com.stripe.model.Event;
-//import com.stripe.model.billingportal.Session;
 import com.stripe.net.Webhook;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.stripe.model.checkout.Session;
 import com.fasterxml.jackson.databind.*;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/stripe")

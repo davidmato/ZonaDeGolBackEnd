@@ -25,9 +25,9 @@ public class StripeService {
     @Value("${stripe.secretKey}")
     private String secretKey;
 
-    //stripe -API
-    //-> productName , amount , quantity , currency
-    //-> return sessionId and url
+    @Value("${frontend.url}")
+    private  String frontendUrl;
+
 
     private final UsuarioRepository usuarioRepository;
 
@@ -82,8 +82,8 @@ public class StripeService {
         SessionCreateParams params =
                 SessionCreateParams.builder()
                         .setMode(SessionCreateParams.Mode.PAYMENT)
-                        .setSuccessUrl("http://localhost:4200/success")
-                        .setCancelUrl("http://localhost:4200/cancel")
+                        .setSuccessUrl(frontendUrl+"/success")
+                        .setCancelUrl(frontendUrl+"/cancel")
                         .addLineItem(lineItem)
                         .setCustomerEmail(usuario.getCorreo())
                         .build();
