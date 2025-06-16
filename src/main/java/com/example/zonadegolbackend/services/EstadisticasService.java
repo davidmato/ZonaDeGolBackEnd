@@ -106,7 +106,12 @@ public class EstadisticasService {
         estadisticasExistente.setTarjetasRojas(estadisticasExistente.getTarjetasRojas() + estadisticas.getTarjetasRojas());
         estadisticasExistente.setPorteriaCero(estadisticasExistente.getPorteriaCero() + estadisticas.getPorteriaCero());
 
-        evaluarExpulsion(estadisticasExistente.getJugador());
+        Jugador jugador = estadisticasExistente.getJugador();
+        if (estadisticas.getTarjetasRojas() > 0 || estadisticas.getTarjetasAmarillas() >= 2) {
+            jugador.setExpulsado(true);
+        } else {
+            jugador.setExpulsado(false);
+        }
 
         return estadisticasRepository.save(estadisticasExistente);
     }
