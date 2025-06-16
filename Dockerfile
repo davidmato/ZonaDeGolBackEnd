@@ -15,7 +15,7 @@ COPY mvnw mvnw.cmd pom.xml ./
 RUN chmod +x mvnw
 
 # Descarga las dependencias para mejorar la cacheabilidad
-RUN ./mvnw dependency:resolve dependency:go-offline -Dfile.encoding=UTF-8
+RUN ./mvnw dependency:resolve dependency:go-offline
 
 # Copia el código fuente
 COPY src/ src/
@@ -30,4 +30,4 @@ RUN ls -l target/
 EXPOSE 8080
 
 # Ejecuta la aplicación
-CMD ["java", "-Dfile.encoding=UTF-8", "-jar", "target/safajobs-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/safajobs-0.0.1-SNAPSHOT.jar"]
