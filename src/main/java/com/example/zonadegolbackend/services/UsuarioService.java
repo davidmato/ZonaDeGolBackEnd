@@ -86,11 +86,28 @@ public class UsuarioService implements UserDetailsService {
         entrenador.setImagen(userDTO.getImagenEntrenador());
         entrenadorRepository.save(entrenador);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(usuario.getCorreo());
-        message.setSubject("Bienvenido a Zona de Gol");
-        message.setText("¡Bienvenido, " + usuario.getUsername() + "! Tu registro ha sido exitoso.");
-        mailSender.send(message);
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(usuario.getCorreo());
+            helper.setSubject("Bienvenido a Zona de Gol");
+            String html = "<div style=\"max-width:400px;margin:40px auto;padding:24px;background:#f9f9f9;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08);font-family:Arial,sans-serif;\">" +
+                    "<div style='text-align:center; margin-bottom:16px;'>" +
+                    "<img src='https://res.cloudinary.com/dyfoaulb5/image/upload/fl_preserve_transparency/v1747739581/logo_ohmfq7.jpg' alt='Logo' style='max-width:120px;'>" +
+                    "</div>" +
+                    "<h2 style=\"color:#333;text-align:center;\">¡Bienvenido a Zona de Gol!</h2>" +
+                    "<p style=\"text-align:center;\">Hola <b>" + usuario.getUsername() + "</b>, tu registro ha sido exitoso.</p>" +
+                    "<div style=\"text-align:center;margin:24px 0;\">" +
+                    "<span style=\"display:inline-block;padding:12px 28px;background:#344353;color:#fff;text-decoration:none;border-radius:6px;font-weight:bold;font-size:16px;box-shadow:0 1px 4px rgba(0,0,0,0.10);\">¡Ya puedes acceder a la plataforma!</span>" +
+                    "</div>" +
+                    "<p style=\"margin-top:20px;color:#888;font-size:12px;text-align:center;\">Si tienes dudas, contacta con el soporte.</p>" +
+                    "<div style=\"display:none;max-width:0;overflow:hidden;\">&nbsp;</div>" +
+                    "</div>";
+            helper.setText(html, true);
+            mailSender.send(mimeMessage);
+        } catch (jakarta.mail.MessagingException e) {
+            throw new RuntimeException("Error al enviar el correo de bienvenida", e);
+        }
 
         var jwtToken = jwtService.generateToken(usuario, usuario.getId(), usuario.getRol().name());
         return AuthenticationDTO.builder().token(jwtToken).build();
