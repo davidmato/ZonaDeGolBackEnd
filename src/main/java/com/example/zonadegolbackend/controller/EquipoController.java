@@ -34,6 +34,12 @@ public class EquipoController {
         return equipoService.findAll();
     }
 
+    @GetMapping("/listar/dto")
+    public List<EquipoInfoDTO> listarEquiposDto() {
+        return equipoService.listarEquipos();
+    }
+
+
     @PostMapping("/crear")
     public Equipo crearEquipo(@RequestBody CrearEquipo equipo) {
         return equipoService.create(equipo);
