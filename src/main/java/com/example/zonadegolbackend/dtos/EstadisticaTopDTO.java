@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 public class EstadisticaTopDTO {
 
+    private Integer id;
     private String nombreCompleto;
     private String equipo;
     private String posicion;

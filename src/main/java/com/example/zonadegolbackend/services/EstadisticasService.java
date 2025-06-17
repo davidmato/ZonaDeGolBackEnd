@@ -261,11 +261,12 @@ public class EstadisticasService {
 
 
     private EstadisticaTopDTO toDTO(Estadisticas e, int valor) {
+        Integer id = e.getJugador().getId();
         String nombre = e.getJugador().getNombre() + " " + e.getJugador().getApellido();
         String equipo = e.getJugador().getEquipo().getNombre();
         String posicion = e.getJugador().getPosicion().name();
         String imagen = e.getJugador().getImagen();
-        return new EstadisticaTopDTO(nombre, equipo, posicion, imagen, valor);
+        return new EstadisticaTopDTO(id,nombre, equipo, posicion, imagen, valor);
     }
 
     public List<EstadisticaTopDTO> findTop5GoalkeepersWithMostCleanSheets() {
@@ -274,13 +275,14 @@ public class EstadisticasService {
 
         List<EstadisticaTopDTO> dtoList = new ArrayList<>();
         for (Estadisticas estadisticas : estadisticasList) {
+            Integer id = estadisticas.getJugador().getId();
             String nombreCompleto = estadisticas.getJugador().getNombre() + " " + estadisticas.getJugador().getApellido();
             String equipo = estadisticas.getJugador().getEquipo().getNombre();
             String posicion = estadisticas.getJugador().getPosicion().name();
             String imagen = estadisticas.getJugador().getImagen();
             int valor = estadisticas.getPorteriaCero();
 
-            EstadisticaTopDTO dto = new EstadisticaTopDTO(nombreCompleto, equipo, posicion, imagen, valor);
+            EstadisticaTopDTO dto = new EstadisticaTopDTO(id,nombreCompleto, equipo, posicion, imagen, valor);
             dtoList.add(dto);
         }
 
