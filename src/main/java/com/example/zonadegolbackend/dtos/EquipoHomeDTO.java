@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class EquipoHomeDTO {
 
+    private Integer id;
     private String nombre;
     private String imagen;
 }

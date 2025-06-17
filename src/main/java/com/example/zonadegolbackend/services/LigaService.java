@@ -144,7 +144,7 @@ public class LigaService {
 
         List<ClasificacionHomeDTO> clasificacionDTOs = clasificaciones.stream().map(c -> {
             Equipo equipo = c.getEquipo();
-            EquipoHomeDTO equipoDTO = new EquipoHomeDTO(equipo.getNombre(), equipo.getImagen());
+            EquipoHomeDTO equipoDTO = new EquipoHomeDTO(equipo.getId(), equipo.getNombre(), equipo.getImagen());
             return new ClasificacionHomeDTO(
                     c.getPuesto(),
                     c.getPuntos(),
