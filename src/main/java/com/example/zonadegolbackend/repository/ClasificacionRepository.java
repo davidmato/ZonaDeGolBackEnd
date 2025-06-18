@@ -29,4 +29,8 @@ public interface ClasificacionRepository extends JpaRepository<Clasificacion, In
             "WHERE c.equipo.entrenador.id = :entrenadorId")
     Map<String, Long> findTotalGolesByEntrenadorId(@Param("entrenadorId") Integer entrenadorId);
 
+    @Query("SELECT c FROM Clasificacion c WHERE c.temporada.id = :temporadaId AND c.equipo.liga.id = :ligaId ORDER BY c.puesto ASC")
+    List<Clasificacion> findByTemporadaIdAndLigaIdOrderByPuestoAsc(@Param("temporadaId") Integer temporadaId, @Param("ligaId") Integer ligaId);
+
+
 }

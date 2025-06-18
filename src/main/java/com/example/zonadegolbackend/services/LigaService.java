@@ -138,7 +138,8 @@ public class LigaService {
         Liga liga = ligaRepository.findRandomLiga();
         Temporada temporada = temporadaRepository.findUltimaTemporadaPorLigaId(liga.getId());
         List<Clasificacion> clasificaciones = clasificacionRepository
-                .findByTemporadaIdOrderByPuestoAsc(temporada.getId());
+                .findByTemporadaIdAndLigaIdOrderByPuestoAsc(temporada.getId(), liga.getId());
+
 
         LigaHomeDTO ligaDTO = new LigaHomeDTO(liga.getNombre(), liga.getDescripcion(), liga.getImagen());
 
